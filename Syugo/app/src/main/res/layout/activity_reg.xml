@@ -29,6 +29,7 @@
         android:textSize="20dp"
         android:maxLength="20"
         android:inputType="text"
+        android:hint="k"
         android:background="@color/colorLightBackground"
         android:colorControlNormal="@color/colorLightBackground"
         android:colorControlActivated="@color/colorBackground"
@@ -78,8 +79,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/textView3"
+        android:id="@+id/id_show"
+        android:setText=""
         android:textColor="@color/colorGreen"
         android:textSize="30dp"
         android:layout_gravity="center_horizontal"

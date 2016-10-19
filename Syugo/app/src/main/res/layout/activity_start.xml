@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingBottom="16dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp"
+    android:background="@color/colorBackground">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/colorWhite"
+            android:textSize="50dp"
+            android:layout_weight="1.25"
+            android:text="モード選択"
+            android:layout_gravity="center_horizontal" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="登録"
+            android:id="@+id/button_share"
+            android:textColor="@color/colorWhite"
+            android:textSize="60dp"
+            android:layout_weight="1"
+            android:background="@drawable/custom_button_green"/>
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1.5" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="検索"
+            android:id="@+id/button_findmode"
+            android:textColor="@color/colorWhite"
+            android:textSize="60dp"
+            android:layout_weight="1"
+            android:background="@drawable/custom_button_green"/>
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -30,7 +30,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Register.RegActivity"/>
+        <activity android:name=".Registor.RegActivity"/>
     </application>
 
 </manifest>
