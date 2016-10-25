@@ -1,4 +1,4 @@
-package jp.enpitsu.paseri.syugo.Register;
+package jp.enpitsu.paseri.syugo.Registor;
 
 import android.app.Activity;
 import android.content.Intent;
