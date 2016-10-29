@@ -10,17 +10,13 @@
     android:weightSum="1">
 
     <TextView
-        android:layout_width="352dp"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="友達を探す"
-        android:id="@+id/text1"
         android:textSize="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:textColor="@color/colorWhite"
-        android:layout_marginTop="29dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:gravity="center" />
+        android:gravity="center"
+        android:id="@+id/text1"/>
 
     <Space
         android:layout_width="match_parent"
@@ -30,25 +26,20 @@
     <TextView
         android:text="友達のIDを入力してください"
         android:textSize="20dp"
-        android:textColor="@color/colorWhite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/text2"
-        android:layout_weight="0.00" />
+        android:textColor="@color/colorWhite"
+        android:id="@+id/text2"/>
 
     <EditText
         android:ems="10"
+        android:textSize="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:layout_weight="0.06"
-        android:textSize="20dp"
-        android:maxLength="20"
+        android:maxLength="10"
         android:inputType="text"
         android:background="@color/colorLightBackground"
-        android:colorControlNormal="@color/colorLightBackground"
-        android:colorControlActivated="@color/colorBackground"
-        android:textCursorDrawable="@color/colorBackground"
         android:id="@+id/id_enter" />
 
     <Space
@@ -67,13 +58,12 @@
         android:gravity="center_vertical|center_horizontal"
         android:background="@drawable/custom_button_green"
         android:paddingLeft="40dp"
-        android:paddingRight="40dp"
-        />
+        android:paddingRight="40dp"/>
 
     <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.06" />
+        android:layout_weight="0.1" />
 
     <TextView
         android:text="このIDのユーザ名は"
@@ -84,32 +74,30 @@
         android:id="@+id/text3" />
 
     <TextView
-        android:text=""
-        android:textSize="20dp"
+        android:textSize="50dp"
+        android:layout_weight="0.13"
         android:textColor="@color/colorWhite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/name_show"
-        android:layout_weight="0.06" />
+        android:gravity="center"
+        android:id="@+id/name_show" />
 
     <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.14" />
+        android:layout_weight="0.17" />
 
     <Button
         android:text="検索"
         android:textSize="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/button2"
         android:textColor="@color/colorWhite"
         android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical|center_horizontal"
         android:background="@drawable/custom_button_green"
         android:paddingLeft="40dp"
         android:paddingRight="40dp"
-        />
+        android:id="@+id/button2" />
 
 
 </LinearLayout>
