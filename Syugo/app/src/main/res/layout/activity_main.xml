@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="jp.enpitsu.paseri.syugo.MainActivity"
+    tools:context=".Rader.MainActivity"
     android:background="#7c7c7c"
     >
 
@@ -62,7 +62,7 @@
 
         </LinearLayout>
 
-        <jp.enpitsu.paseri.syugo.GraphView
+        <jp.enpitsu.paseri.syugo.Rader.GraphView
             android:id="@+id/graph_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
