@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="jp.enpitsu.paseri.syugo">
 
+    <!-- 位置情報の利用 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -9,11 +10,28 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_GPS" />
 
-    <!-- 位置情報の利用 -->
     <uses-feature android:name="android.hardware.location" android:required="true" />
 
     <!--振動-->
     <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <!--センサ-->
+    <uses-permission android:name="android.permission.SENSOR"/>
+
+    <!--カメラ-->
+    <uses-sdk
+        android:minSdkVersion="21"
+        android:targetSdkVersion="21" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera2.full" />
+
+
+    <!-- Google プレイ (旧 Android マーケット) からダウンロード可能な端末を OpenGL ES 2.0 を使用可能な端末に制限 -->
+    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
 
 
 
