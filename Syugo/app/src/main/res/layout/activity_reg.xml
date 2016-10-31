@@ -80,7 +80,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/id_show"
-        android:setText=""
+        android:text=""
         android:textColor="@color/colorGreen"
         android:textSize="30dp"
         android:layout_gravity="center_horizontal"
