@@ -2,6 +2,7 @@ package jp.enpitsu.paseri.syugo.Lookfor;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,19 +14,22 @@ import jp.enpitsu.paseri.syugo.R;
 
 public class LookActivity extends Activity {
 
-    TextView name;
+    TextView name, id2;
     Button search ;
     Button find;
     EditText id;
+    SharedPreferences name_data;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_look);
 
+        id2 = (TextView) findViewById(R.id.id_show);
         name = (TextView) findViewById(R.id.name_show);
         search = (Button) findViewById(R.id.button1);
         find = (Button) findViewById(R.id.button2);
-
+        id = (EditText) findViewById(R.id.id_enter);
+        name_data = getSharedPreferences("DataStore", MODE_PRIVATE);
         search.setOnClickListener(searchListener);
         find.setOnClickListener(findListener);
     }
@@ -33,6 +37,13 @@ public class LookActivity extends Activity {
     private View.OnClickListener searchListener = new View.OnClickListener() {
         public void onClick(View v) {
             name.setText("k");
+            // エディットテキストのテキストを取得
+            String text = id.getText().toString();
+            id2.setText(text);
+            // 入力文字列を"input"に書き込む
+            SharedPreferences.Editor editor = name_data.edit();
+            editor.putString("input", text);
+            editor.commit();
 
             }
         };
