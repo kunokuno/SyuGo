@@ -33,6 +33,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+<<<<<<< Updated upstream
 <<<<<<< HEAD
         <activity android:name=".Lookfor.LookActivity"/>
         <activity android:name=".Registor.RegActivity"/>
@@ -41,6 +42,11 @@
         <activity android:name=".Registor.RegActivity"/>
         <activity android:name=".MainActivity"/>
 >>>>>>> develop
+=======
+        <activity android:name="jp.enpitsu.paseri.syugo.Lookfor.LookActivity"/>
+        <activity android:name="jp.enpitsu.paseri.syugo.MainActivity" />
+
+>>>>>>> Stashed changes
     </application>
 
 </manifest>
