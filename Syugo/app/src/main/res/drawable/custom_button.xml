@@ -4,5 +4,5 @@
     <!--白の枠線-->
     <stroke
         android:width="5dp"
-        android:color="#ffffff" />
+        android:color="@color/colorWhite" />
 </shape>
