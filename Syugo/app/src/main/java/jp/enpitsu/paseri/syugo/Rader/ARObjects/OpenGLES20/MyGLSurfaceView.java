@@ -26,8 +26,8 @@ public class MyGLSurfaceView extends GLSurfaceView {
         setEGLConfigChooser(8, 8, 8, 8, 0, 0); // setRendererする前にやらんとerror吐く
         setEGLContextClientVersion( OPENGL_ES_VERSION );
         setRenderer( mRenderer );
-        setRenderMode( RENDERMODE_WHEN_DIRTY ); // 描画命令時に描画
-//        setRenderMode( RENDERMODE_CONTINUOUSLY ); // 常時描画
+//        setRenderMode( RENDERMODE_WHEN_DIRTY ); // 描画命令時に描画
+        setRenderMode( RENDERMODE_CONTINUOUSLY ); // 常時描画
 
         setZOrderOnTop(true);                            // 最前面に描画
         getHolder().setFormat(PixelFormat.TRANSLUCENT); // 透明部分を透過

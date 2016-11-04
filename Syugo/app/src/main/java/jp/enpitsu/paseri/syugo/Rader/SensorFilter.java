@@ -3,6 +3,8 @@ package jp.enpitsu.paseri.syugo.Rader;
 /**
  * Created by iyobe on 2016/09/29.
  */
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -15,7 +17,8 @@ public class SensorFilter {
     public int sampleCount=9;//サンプリング数
     public int sampleNum = 5;//サンプリングした値の使用値のインデックス
 
-    private float[] mParam = new float[3];//フィルタをかけた後の値
+    private float[] mParam = new float[3];// フィルタをかけた後の値
+    private float[] lastParam = new float[3];// 前回フィルタをかけた結果の値
 
     private boolean mSampleEnable=false;//規定のサンプリング数に達したか
 
@@ -39,9 +42,19 @@ public class SensorFilter {
         mSecond.add(sample[1]);
         mThrad.add(sample[2]);
 
+        for( int i = 0; i < sample.length; ++i ) {
+            if( sample[i] < 0 ) sample[i] = sample[i] + 360;
+        }
+
+        if( sample[0] < 0 || sample[1] < 0 || sample[2] < 0 )
+            Log.d( "Sensor minus", sample[0] + "," + sample[1] + "," + sample[2] );
+
+
         //必要なサンプリング数に達したら
         if(mFirst.size() == sampleCount)
         {
+            // TODO: 0と360の境界をなくしたい
+
             //メディアンフィルタ(サンプリング数をソートして中央値を使用)かけて値を取得
             //その値にさらにローパスフィルタをかける
 

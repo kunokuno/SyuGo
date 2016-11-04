@@ -10,7 +10,8 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
 
-/* VBOしてみたけどよくわかんなかった */
+
+// TODO : 頭悪すぎるからうまくやれ
 
 /**
  * Created by iyobe on 2016/09/28.
@@ -26,6 +27,11 @@ public class RaderObject_UI {
     float MAX_DISTANCE;    // レーダー中に表示される最大距離[m]
 
     float ROTATE_TO_DEFAULT; // レーダーを初期状態にするための角度
+
+    int distance_state;     // 距離の状況
+    // めっちゃ近い : 0 , 近い : 1, 遠い : 2, 圏外 : -1
+    float BORDER_NEAR;
+    float BORDER_NEAREST;
 
     double locationDirection;
     double deviceDirection;
@@ -60,6 +66,10 @@ public class RaderObject_UI {
     private ByteBuffer  frameLines_indexBuffer; //インデックスバッファ
     private FloatBuffer frameLines_normalBuffer;//法線バッファ
 
+    private FloatBuffer arcRing_vertexBuffer;//頂点バッファ
+    private ByteBuffer  arcRing_indexBuffer; //インデックスバッファ
+    private FloatBuffer arcRing_normalBuffer;//法線バッファ
+
 
 
     RaderObject_UI() {
@@ -74,10 +84,17 @@ public class RaderObject_UI {
 
         frameCount = 0.0f;
 
+        distance_state = -1; // 初期状態は圏外
+
         RADIUS = 2f;         // レーダーの半径
         MAX_DISTANCE = 40;  // レーダー中に表示される最大距離[m]
+//        ROTATE_TO_DEFAULT = 60 - 30.5f; // レーダーを初期位置にするための角度
         ROTATE_TO_DEFAULT = 60; // レーダーを初期位置にするための角度
 //        ROTATE_TO_DEFAULT = 117; // レーダーを初期位置にするための角度
+
+        BORDER_NEAR = (RADIUS*2)/3;  // [遠い]と[近い]の境界
+        BORDER_NEAREST = RADIUS/3;  // [近い]と[めっちゃ近い]の境界
+
 
         circleBuffersesList = new ArrayList<CircleBuffers>();
 
@@ -93,6 +110,7 @@ public class RaderObject_UI {
         initBar( 0f, 0f, 0f, RADIUS-0.01f );
         //外側の半径，内側の半径，台形近似する台形の数，台形を高さ方向分割する数
         initRing( (RADIUS*2)/3, RADIUS/3, 50, 1 );
+        initArcRing( (RADIUS*2)/3, RADIUS/3, 50, 1 );
 
         initFrameLines( 0f, 0f, 0f, RADIUS );
     }
@@ -352,11 +370,11 @@ public class RaderObject_UI {
         bar_normalBuffer = makeFloatBuffer(normals);
     }
 
-    int nIndexs;
     public void initRing(float RadiusOuter, float RadiusInner, int nSlices, int nStacks) {
+        // TODO : 端の部分詰める
         //頂点座標
         int numPoints = (nSlices+1)*(nStacks+1);
-        nIndexs = nSlices*(nStacks+1)*2;
+        int nIndexs = nSlices*(nStacks+1)*2;
         int sizeArray=numPoints*3;
         float[] vertexs= new float[sizeArray];
         float[] normals= new float[sizeArray];
@@ -397,6 +415,53 @@ public class RaderObject_UI {
         ring_normalBuffer = makeFloatBuffer(normals);
     }
 
+
+    public void initArcRing(float RadiusOuter, float RadiusInner, int nSlices, int nStacks) {
+        //頂点座標
+        int numPoints = (nSlices+1)*(nStacks+1);
+        int nIndexs = nSlices*(nStacks+1)*2;
+        int sizeArray=numPoints*3;
+        float[] vertexs= new float[sizeArray];
+        float[] normals= new float[sizeArray];
+        byte[] indexs= new byte[nIndexs];
+        int i,j;
+        double theta0=2.0*3.1415956535/nSlices;
+        double theta;
+        double dr = (RadiusOuter-RadiusInner)/nStacks;
+        double r;
+
+        nSlices /= 6;
+
+        int p=0;
+        for (i=0; i<=nSlices; i++) {
+            theta = theta0 * i;
+            for (j = 0; j <= nStacks; j++) {
+                r = (RadiusOuter - j * dr);
+                vertexs[p++] = (float) (r * Math.sin(theta));
+                vertexs[p++] = (float) (r * Math.cos(theta));
+                vertexs[p++] = 0f;
+            }
+        }
+        p=0;
+        for (i=0; i<=nSlices; i++) {
+            for (j = 0; j <= nStacks; j++) {
+                normals[p++] = 0f;
+                normals[p++] = 0f;
+                normals[p++] = 1f;
+            }
+        }
+        p=0;
+        int nStacks1=nStacks+1;
+        for (i=0; i<nSlices; i++) {
+            for (j = 0; j <= nStacks; j++) {
+                indexs[p++] = (byte)(i*nStacks1+j);
+                indexs[p++] = (byte)((i+1)*nStacks1+j);
+            }
+        }
+        arcRing_vertexBuffer = makeFloatBuffer(vertexs);
+        arcRing_indexBuffer = makeByteBuffer( indexs );
+        arcRing_normalBuffer = makeFloatBuffer(normals);
+    }
 
     public void draw( boolean isModeAR ) {
 
@@ -440,6 +505,7 @@ public class RaderObject_UI {
                 Matrix.rotateM(GLES.mMatrix, 0, -ROTATE_TO_DEFAULT, 0, 0, 1); // 初期配置（レーダーが指す範囲の中心に来るように）
                 Log.d( "DISTANCE", "distance@RaderObject_draw = " + distance );
                 distanceOnRader = distance * ( RADIUS / MAX_DISTANCE );
+
                 // 1m当たりのレーダー上での距離 = RADIUS[レーダーの半径]/MAX_DISTANCE[距離(m)]
                 Matrix.translateM(GLES.mMatrix, 0, 0f, (float)distanceOnRader, 0f);
                 GLES.updateMatrix();
@@ -468,7 +534,7 @@ public class RaderObject_UI {
 
             GLES.updateMatrix();
             drawFillCircle( 0f, 0f, 0f, 0.2f );   // 半透明の円
-//            drawFillArc( 1,1,1,0.3f );       // 円弧
+            drawFillArc( 1,1,1,0.3f );       // 円弧
 
             drawRing( 1f, 1f, 1f, 0.05f );         // なんか輪
 
@@ -486,11 +552,36 @@ public class RaderObject_UI {
                 Matrix.rotateM(GLES.mMatrix, 0, -ROTATE_TO_DEFAULT, 0, 0, 1); // 初期配置（レーダーが指す範囲の中心に来るように）
                 Log.d( "DISTANCE", "distance@RaderObject_draw = " + distance );
                 distanceOnRader = distance * ( RADIUS / MAX_DISTANCE );
+
+
+                if( distanceOnRader <= BORDER_NEAR ) { // [近い]圏内
+                    if (distanceOnRader <= BORDER_NEAREST) { // [めっちゃ近い]圏内
+                        if( distance_state != 0 ) { // 状態が変化する場合
+                            distance_state = 0;
+                            initArcRing( 0f, BORDER_NEAREST, 30, 1 );
+                        }
+                    }
+                    else {
+                        if( distance_state != 1 ) { // 状態が変化する場合
+                            distance_state = 1;
+                            initArcRing( BORDER_NEAREST, BORDER_NEAR, 50, 1 );
+                        }
+                    }
+                }
+                else {
+                    if( distance_state != 2 ) { // 状態が変化する場合
+                        distance_state = 2;
+                        initArcRing( BORDER_NEAR, MAX_DISTANCE, 50, 1 );
+                    }
+                }
+
                 // 1m当たりのレーダー上での距離 = RADIUS[レーダーの半径]/MAX_DISTANCE[距離(m)]
                 Matrix.translateM(GLES.mMatrix, 0, 0f, (float)distanceOnRader, 0f);
                 GLES.updateMatrix();
                 drawTarget( 1f, 0.2f, 0.5f, 0.3f );       // レーダー上の相手の位置
                 GLES.glPopMatrix();
+            } else {
+                distance_state = -1; // レーダー圏外
             }
 
             GLES.glPopMatrix();
@@ -513,7 +604,7 @@ public class RaderObject_UI {
 
         //描画
         setMaterial( r, g, b, a );
-        GLES20.glLineWidth( 100f );
+        GLES20.glLineWidth( 6f );
         // 円の枠線
         frameLines_indexBuffer.position( 0 );
         GLES20.glDrawElements( GLES20.GL_LINE_LOOP,
@@ -649,6 +740,28 @@ public class RaderObject_UI {
         ring_indexBuffer.position(ring_indexBuffer.capacity()-3);
         GLES20.glDrawElements( GLES20.GL_TRIANGLE_STRIP,
                 3, GLES20.GL_UNSIGNED_BYTE, ring_indexBuffer );
+    }
+
+    public void drawArcRing( float r, float g, float b, float a ) {
+        //頂点バッファの指定
+        GLES20.glVertexAttribPointer( GLES.positionHandle, 3,
+                GLES20.GL_FLOAT, false, 0, arcRing_vertexBuffer );
+
+        //法線バッファの指定
+        GLES20.glVertexAttribPointer( GLES.normalHandle, 3,
+                GLES20.GL_FLOAT, false, 0, arcRing_normalBuffer );
+
+        //描画
+        setMaterial( r, g, b, a );
+        arcRing_indexBuffer.position(0);
+        GLES20.glDrawElements( GLES20.GL_TRIANGLE_STRIP,
+                arcRing_indexBuffer.capacity(), GLES20.GL_UNSIGNED_BYTE, arcRing_indexBuffer );
+//        ring_indexBuffer.position(0);
+//        GLES20.glDrawElements( GLES20.GL_TRIANGLE_STRIP,
+//                3, GLES20.GL_UNSIGNED_BYTE, arcRing_indexBuffer );
+//        ring_indexBuffer.position(ring_indexBuffer.capacity()-3);
+//        GLES20.glDrawElements( GLES20.GL_TRIANGLE_STRIP,
+//                3, GLES20.GL_UNSIGNED_BYTE, ring_indexBuffer );
     }
 
 
