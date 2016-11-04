@@ -29,7 +29,7 @@ public class HttpCommunication extends AsyncTask<Integer, Integer, LocationData>
 
     boolean TorF = false;
 
-    MainActivity activity;
+    RaderActivity activity;
 
     TextView tv_response, tv_distance;
 

@@ -15,34 +15,6 @@ public class MyGLSurfaceView extends GLSurfaceView {
     private static final int OPENGL_ES_VERSION = 2;
     private MyRenderer mRenderer;
 
-    ////////////////////////////////////////////////////////////
-    // コンパス用のセンサ関連
-    private SensorManager mSensorManager = null;
-    private SensorEventListener mSensorEventListener = null;
-
-    private float[] fAccell = null;
-    private float[] fMagnetic = null;
-    ///////////////////////////////////////////////////////////
-
-    //センサー
-    private SensorManager sensorManager = null;
-    //センサーのフラグ
-    private boolean sensorMRegisted = false;
-    private boolean sensorARegisted = false;
-
-    //回転行列
-    private static final int MATRIX_SIZE = 16;
-    float[] inR = new float[MATRIX_SIZE];
-    float[] outR = new float[MATRIX_SIZE];
-    float[] I = new float[MATRIX_SIZE];
-
-    //センサーの値保持
-    private float[] orientationValues = new float[3];
-    private float[] magneticValues = new float[3];
-    private float[] accelerometerValues = new float[3];
-
-    //傾きの角度
-    private int[] orientDgrees = new int[3];
     Context context;
 
     public MyGLSurfaceView(Context context) {
@@ -54,8 +26,8 @@ public class MyGLSurfaceView extends GLSurfaceView {
         setEGLConfigChooser(8, 8, 8, 8, 0, 0); // setRendererする前にやらんとerror吐く
         setEGLContextClientVersion( OPENGL_ES_VERSION );
         setRenderer( mRenderer );
-//        setRenderMode( RENDERMODE_WHEN_DIRTY );
-        setRenderMode( RENDERMODE_CONTINUOUSLY );
+        setRenderMode( RENDERMODE_WHEN_DIRTY ); // 描画命令時に描画
+//        setRenderMode( RENDERMODE_CONTINUOUSLY ); // 常時描画
 
         setZOrderOnTop(true);                            // 最前面に描画
         getHolder().setFormat(PixelFormat.TRANSLUCENT); // 透明部分を透過
