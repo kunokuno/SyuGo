@@ -1,6 +1,7 @@
-package jp.enpitsu.paseri.syugo.Rader;
+package jp.enpitsu.paseri.syugo.Rader.ARObjects.Graph;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -17,6 +18,10 @@ public class GraphView extends View {
     private double rotation = 0;
     private double deviceDirection = 0, locationDirection = 0;
 
+    private Bitmap bitmap;
+
+    private int lastrotation = 0;
+
     // [コンストラクタ]
     public GraphView(Context context, AttributeSet attr) {
         super( context, attr );
@@ -24,6 +29,7 @@ public class GraphView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+//        Log.d( "GraphView", "onDraw" );
         super.onDraw(canvas);
 
         float diameter; // 円の直径
@@ -34,12 +40,14 @@ public class GraphView extends View {
         if( this.getWidth() < this.getHeight() ) diameter = this.getWidth();
         else diameter = this.getWidth();
 
+
         ViewGroup.LayoutParams params = this.getLayoutParams();
         // 縦幅に合わせる
         params.width = (int)diameter;
         params.height = (int)diameter;
         this.setLayoutParams(params);
 
+        diameter /= 2;
         // 円の線の太さだけ引く
         diameter = diameter - 40;
 
@@ -50,6 +58,21 @@ public class GraphView extends View {
         // 背景、透明
         canvas.drawColor(Color.argb(0, 0, 0, 0));
 
+        ///////////////////////////////////////////////////////////////////////
+        if( rotation <= 60 && rotation >= -60 ) {
+                mPaint.setColor(Color.argb(200, 255, 100, 255));
+                mPaint.setStrokeWidth(10);
+                mPaint.setAntiAlias(true);
+                mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+                // (x1,y1,r,paint) 中心x1座標, 中心y1座標, r半径
+                // 下駄履かせべ
+                int geta = (int)( rotation * (getWidth() / 60) );
+
+                canvas.drawCircle(centerX+geta, 120, 120, mPaint);
+            lastrotation = (int)rotation;
+        }
+        ///////////////////////////////////////////////////////////////////////
+
         // とむ君デザイン再現
         // 円
         mPaint.setColor(Color.argb( 255, 50, 255, 219 ));
@@ -58,7 +81,6 @@ public class GraphView extends View {
         mPaint.setStyle(Paint.Style.STROKE);
         // (x1,y1,r,paint) 中心x1座標, 中心y1座標, r半径
         canvas.drawCircle( centerX, centerY, diameter/2, mPaint );
-
 
         // 円弧
         float top, bottom, right, left;
@@ -69,13 +91,14 @@ public class GraphView extends View {
         right = left + diameter-diff;
 
         mPaint.setColor(Color.argb( 255, 255, 255, 255));
+        Log.d( "GraphView", "rotation : " + rotation );
         // キャンバスを回転　（-120は円弧を扱いやすい初期位置にするための調整）
         canvas.rotate( -120 + (float)rotation, centerX, centerY );
+
         // 「矩形に内接する円」の円弧を描く
         RectF rectf = new RectF( left, top, right, bottom );
         mPaint.setStyle(Paint.Style.FILL);
         canvas.drawArc( rectf, 0, 60, true, mPaint );
-
     }
 
     public void onLocationChanged( double direction ) {

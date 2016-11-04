@@ -1,15 +1,10 @@
-/*
-    円グラフレーダーとか位置情報取得とかであっちゃこっちゃしてるキメラプログラム
-    もうちょっときれいに書けると思う
- */
-
 package jp.enpitsu.paseri.syugo.Rader;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Typeface;
+import android.graphics.SurfaceTexture;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -22,36 +17,40 @@ import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.enpitsu.paseri.syugo.Rader.ARObjects.Graph.GraphView;
+import jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20.MyGLSurfaceView;
 import jp.enpitsu.paseri.syugo.R;
 
+/**
+ * Created by iyobe on 2016/09/26.
+ */
+public class RaderActivity extends Activity {
+    private Camera2 mCamera;
+    private float[] mCamAngle = null;
+    private GraphView graphView;
 
-public class MainActivity extends Activity {
+    private MyGLSurfaceView glView;
 
-    ///////////////////////////////////////////////////////////////////////////
-    String myID = "r3uhr3";
-    String reqID = "4hfeu";
-//    String myID = "4hfeu";
-//    String reqID = "r3uhr3";
-
-    private double lat = 30;
-    private double lon = 30;
-
-    private Button button;
-    private boolean flag_vibrator = true;
-
-    GraphView graphView;
+    private ToggleButton arSwitchButton;
+    private ImageView backgroundImageView;
+    TextureView textureView;
 
     TextView textView_DistanceMessage;
     TextView textView_AccuracyMessage;
     TextView textView_Message;
+    Button button_StopVibration;
 
     ////////////////////////////////////////////////////////////
     // コンパス用のセンサ関連
@@ -61,6 +60,19 @@ public class MainActivity extends Activity {
     private float[] fAccell = null;
     private float[] fMagnetic = null;
     ///////////////////////////////////////////////////////////
+
+    // バイブレータ
+    Vibrator vibrator;
+    private boolean flag_vibrator = true; // 振動させるかさせないか
+
+
+    //    String myID = "r3uhr3";
+//    String reqID = "4hfeu";
+    String myID = "4hfeu";
+    String reqID = "r3uhr3";
+
+    private double lat = 30;
+    private double lon = 30;
 
     /** 位置情報の更新を受信するためのリスナー。これを、ARchitectViewに通知して、ARchitect Worldの位置情報を更新します。*/
     protected LocationListener locationListener;
@@ -75,28 +87,73 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
+        glView = new MyGLSurfaceView( this );
+        glView.setZOrderOnTop(true);
 
-        graphView = (GraphView)findViewById(R.id.graph_view);
+        final View view = this.getLayoutInflater().inflate(R.layout.activity_rader, null);
+//        // [参考] http://language-and-engineering.hatenablog.jp/entry/20110908/p1
+
+        // GLSurfaceViewを最初にセット
+        this.setContentView( glView,
+                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
+
+        // カメラプレビュー・コンパスのレイアウトをセット
+        this.addContentView( view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT ));
+
+
+//        graphView = (GraphView)findViewById( R.id.AR_graph_view );
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        arSwitchButton = (ToggleButton)findViewById( R.id.ARSwitchButton );
+        backgroundImageView = (ImageView)findViewById( R.id.backgroundImageView );
 
         textView_Message = (TextView)findViewById( R.id.textView_Message );
         textView_DistanceMessage = (TextView)findViewById( R.id.textView_DistanceMessage );
         textView_AccuracyMessage = (TextView)findViewById( R.id.textView_AccuracyMessage );
-        button = (Button)findViewById(R.id.button_vibration);
+        button_StopVibration = (Button)findViewById(R.id.button_vibration);
 
-        // フォント設定
-        textView_Message.setTypeface( Typeface.createFromAsset( getAssets(), "irohamaru-Regular.ttf" ), Typeface.NORMAL );
-        textView_AccuracyMessage.setTypeface( Typeface.createFromAsset( getAssets(), "irohamaru-Regular.ttf" ), Typeface.NORMAL );
-        textView_DistanceMessage.setTypeface( Typeface.createFromAsset( getAssets(), "irohamaru-Regular.ttf" ), Typeface.BOLD );
-        button.setTypeface( Typeface.createFromAsset( getAssets(), "irohamaru-Regular.ttf" ), Typeface.NORMAL );
+        textureView = (TextureView) findViewById( R.id.texture_view );
+        textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
+            @Override
+            public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+//                Log.d( "mCamera open", "start" + " " + isEnd );
+//                while( isEnd == false );
+//                mCamera.open();
+//                Log.d( "mCamera open", "end" );
+            }
+
+            @Override
+            public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+            }
+
+            @Override
+            public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+                return false;
+            }
+
+            @Override
+            public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+                // mCamAnge[0] : 横の画角
+                //         [1] : 縦の画角
+//                mCamAngle = mCamera.getAngle();
+//                glView.setCameraAngle( mCamAngle );
+            }
+        });
+//
+////        Log.d( "mew Camera", "start" );
+//        mCamera = new Camera(textureView, this);
+////        Log.d( "mew Camera", "end" );
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         // センサのコピペ //////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////////////
-        mSensorManager = (SensorManager) getSystemService( Context.SENSOR_SERVICE );
+        mSensorManager = (SensorManager) getSystemService( Context.SENSOR_SERVICE );    // SensorManager取得
 
+        // SensorManagerに加速度センサと自機センサについてSensorEventListenerを登録
         mSensorEventListener = new SensorEventListener()
         {
+            SensorFilter sensorFilter = new SensorFilter();
             public void onSensorChanged (SensorEvent event) {
                 // センサの取得値をそれぞれ保存しておく
                 switch( event.sensor.getType()) {
@@ -129,14 +186,34 @@ public class MainActivity extends Activity {
                             outR,
                             fAttitude );
 
-//                    String buf =
-//                            "---------- Orientation --------\n" +
-//                                    String.format( "方位角\n\t%f\n", rad2deg( fAttitude[0] )) +
-//                                    String.format( "前後の傾斜\n\t%f\n", rad2deg( fAttitude[1] )) +
-//                                    String.format( "左右の傾斜\n\t%f\n", rad2deg( fAttitude[2] ));
-//                    textView_DistanceMessage.setText( buf );
+                    // fAttitude[0] : 方位角（北が0, 時計回りに値増加）
+                    //          [1] : 前後の傾斜
+                    //          [2] : 左右の傾斜
+                    fAttitude[0] = (float)rad2deg( fAttitude[0] );  // 方位角を変換(ラジアン→度)
+                    if( fAttitude[0] < 0 ) {
+                        // 0～360度の値にする
+                        fAttitude[0] = 360f + fAttitude[0];
+                    }
+                    // フィルタを掛ける
+                    sensorFilter.addSample( fAttitude );
 
-                    graphView.onDeviceDirectionChanged( rad2deg( fAttitude[0] ) );
+                    // サンプルが必要数溜まったら
+                    if( sensorFilter.isSampleEnable() ) {
+                        fAttitude = sensorFilter.getParam();
+
+                        Log.d("ARActivity", "rotation : " + fAttitude[0] + ", " + fAttitude[1] + ", " + fAttitude[2]);
+
+                        double direction =  fAttitude[0];           // 端末の向いてる方向
+                        double elevation = rad2deg( fAttitude[1] ); // 端末の前後の傾き
+                        if( direction < 0 ) {
+                            // 0～360度の値にする
+                            direction = 360f + direction;
+                        }
+                        // レーダー更新
+//                        graphView.onDeviceDirectionChanged( direction );
+                        glView.invalidateRader( "Device Direction Changed", (float)direction );
+//                        glView.invalidateElevation( elevation );
+                    }
                 }
             }
             public void onAccuracyChanged (Sensor sensor, int accuracy) {}
@@ -155,19 +232,22 @@ public class MainActivity extends Activity {
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
+                Log.d("Location", "onStatusChanged");
             }
 
             @Override
             public void onProviderEnabled(String provider) {
+                Log.d("Location", "onProviderEnabled");
             }
 
             @Override
             public void onProviderDisabled(String provider) {
+                Log.d("Location", "onProviderDisabled");
             }
 
             @Override
             public void onLocationChanged(final Location location) {
-
+                Log.d("Location", "onLcationChanged");
                 lat = location.getLatitude();
                 lon = location.getLongitude();
 
@@ -177,101 +257,47 @@ public class MainActivity extends Activity {
                             @Override
                             public void postExecute(LocationData result) {
                                 getDistance( result );
+
+//                                glView.invalidateRader( "Location Changed", direction );
                             }
                         }
                 );
                 httpCommunication.setID( myID, reqID );
                 httpCommunication.setLocation( location.getLatitude(), location.getLongitude(), location.getAccuracy() );
                 httpCommunication.executeOnExecutor( AsyncTask.THREAD_POOL_EXECUTOR );
+
+                Log.d( "MyLocation", location.getLatitude() + ", " + location.getLongitude() + " ( " + location.getAccuracy() + " )" );
+
             }
         };
 
         // 位置情報を収集するために使うLocationProviderに、位置情報リスナー（locationListener）を指定してインスタンスを生成・取得
         this.locationProvider = getLocationProvider(this.locationListener);
+        Log.d("Location", "LocationProviderにリスナ指定");
 
         ////////////////////////////////////////////////////////////////////////////////////////////
     }
 
 
-    // [振動止める/つける]ボタン押下
-    public void onBottonClick( View v ) {
-        Log.d("onButtonClick", "onButtonClick");
-        if( flag_vibrator == true ) {
-            flag_vibrator = false;
-            button.setText("振動つける");
-        }
-        else {
-            flag_vibrator = true;
-            button.setText("振動止める");
-        }
+    protected void onStart() { // ⇔ onStop
+        super.onStart();
+
+        mSensorManager.registerListener(
+                mSensorEventListener,
+                mSensorManager.getDefaultSensor( Sensor.TYPE_ACCELEROMETER ),
+                SensorManager.SENSOR_DELAY_UI );
+        mSensorManager.registerListener(
+                mSensorEventListener,
+                mSensorManager.getDefaultSensor( Sensor.TYPE_MAGNETIC_FIELD ),
+                SensorManager.SENSOR_DELAY_UI );
     }
 
+    protected void onStop() { // ⇔ onStart
+        super.onStop();
 
-
-    /**
-     * ［アクティビティのライフサイクル］アクティビティがユーザー操作可能になる時に呼び出されます。
-     */
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-
-        // LocationProviderのライフサイクルメソッド「onResume」を呼び出す必要があります。通常、Resumeが通知されると位置情報の収集が再開され、ステータスバーのGPSインジケーターが点灯します。
-        if (this.locationProvider != null) {
-            this.locationProvider.onResume();
-        }
+        mSensorManager.unregisterListener( mSensorEventListener );
     }
 
-    void getDistance( LocationData data ) {
-        float[] results = new float[3];
-        // 距離を計算 ///////////////////////////
-        // results[0] : 距離（メートル）
-        //        [1] : 始点から終点までの方位角
-        //        [2] : 終点から始点までの方位角
-        Location.distanceBetween( lat, lon, data.lat, data.lon, results);
-
-
-        // 円グラフを回転
-        graphView.onLocationChanged( results[1] );
-
-      // 距離メッセージ変更
-        if( results[0] <= 20 ) textView_DistanceMessage.setText("近いよ");
-        else if( results[0] == 0 ) textView_DistanceMessage.setText("やばいよ");
-        else textView_DistanceMessage.setText("遠いよ");
-
-        Log.d("httpppppp", "acc"+ data.acc );
-        // 精度メッセージ変更
-        if( data.acc <= 3 ) textView_AccuracyMessage.setText("精度良好かも");
-        else if( data.acc > 3 && data.acc <= 10 ) textView_AccuracyMessage.setText("ふつうの精度");
-        else if ( data.acc >= 15 ) textView_AccuracyMessage.setText("精度ひどいよ");
-//        else if ( data.acc >= 15 ) textView_AccuracyMessage.setText("不安な精度");
-        else textView_AccuracyMessage.setText( "" );
-
-
-        if( results[0] <= 40 && flag_vibrator == true ) {
-            // ここでバイブレーション///////////////////////////////////////////
-            // 振動
-            viberation( results[0] );
-        }
-
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    double getDistance_kuno( double lat1, double lon1, double lat2, double lon2 ) {
-        double lat_average = deg2rad( lat1 + ((lat2 - lat1) / 2) );//２点の緯度の平均
-        double lat_difference = deg2rad( lat1 - lat2 );//２点の緯度差
-        double lon_difference = deg2rad( lon1 - lon2 );//２点の経度差
-        double curvature_radius_tmp = 1 - 0.00669438 * Math.pow(Math.sin(lat_average), 2);
-        double meridian_curvature_radius = 6335439.327 / Math.sqrt(Math.pow(curvature_radius_tmp, 3));//子午線曲率半径
-        double prime_vertical_circle_curvature_radius = 6378137 / Math.sqrt(curvature_radius_tmp);//卯酉線曲率半径
-
-        //２点間の距離
-        double distance = Math.pow(meridian_curvature_radius * lat_difference, 2) + Math.pow(prime_vertical_circle_curvature_radius * Math.cos(lat_average) * lon_difference, 2);
-        distance = Math.sqrt(distance);
-
-        return distance;
-    }
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
     private double rad2deg(double radian) {
         return radian * (180f / Math.PI);
     }
@@ -281,33 +307,15 @@ public class MainActivity extends Activity {
     }
 
 
-    /*
- * 2点間の距離を取得
- * 第五引数に設定するキー（unit）で単位別で取得できる
- */
-    private double getDistance_Qiita(double lat1, double lon1, double lat2, double lon2, char unit) {
-        double theta = lon1 - lon2;
-        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) +  Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
-        dist = Math.acos(dist);
-        dist = rad2deg(dist);
-        double miles = dist * 60 * 1.1515;
-        switch (unit) {
-            case 'K': // キロメートル
-                return (miles * 1.609344);
-            case 'N': // ノット
-                return (miles * 0.8684);
-            case 'M': // マイル
-            default:
-                return miles;
+    // アクティビティがユーザー操作可能になる時
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // LocationProviderのライフサイクルメソッド「onResume」を呼び出す必要があります。通常、Resumeが通知されると位置情報の収集が再開され、ステータスバーのGPSインジケーターが点灯します。
+        if (this.locationProvider != null) {
+            this.locationProvider.onResume();
         }
-    }
-
-
-    private double getDirection( double lat1, double lon1, double lat2, double lon2 ) {
-        double diff_x = lat2 - lat1;
-        double direction = 90 - Math.atan2( Math.sin( diff_x ), Math.cos( lon1 )*Math.tan( lon2 ) - Math.sin( lon1 )*Math.cos( diff_x ) );
-
-        return direction;
     }
 
 
@@ -315,9 +323,7 @@ public class MainActivity extends Activity {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // region 各センサーへのアクセス権限に関する処理
 
-    /**
-     * アプリの実行に必要な権限をチェックして、不足していればユーザーに要求します。
-     */
+    // アプリの実行に必要な権限をチェックして、不足していればユーザーに要求
     private void RequestPermission() {
 
         List<String> permissionList = new ArrayList<String>();
@@ -347,7 +353,7 @@ public class MainActivity extends Activity {
                 }
             }
 
-            // いったんアプリを終了します。
+            // いったんアプリを終了
             Toast.makeText(this, "権限設定後に、もう一度アプリを起動し直してください。", Toast.LENGTH_LONG).show();
             this.finish();
         }
@@ -366,35 +372,94 @@ public class MainActivity extends Activity {
     }
 
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // センサ関連
-    protected void onStart() { // ⇔ onStop
-        super.onStart();
+    void getDistance( LocationData data ) {
+        float[] results = new float[3];
+        // 距離を計算 ///////////////////////////
+        // results[0] : 距離（メートル）
+        //        [1] : 始点から終点までの方位角
+        //        [2] : 終点から始点までの方位角
+        Location.distanceBetween( lat, lon, data.lat, data.lon, results);
+//        Location.distanceBetween( lat, lon, 36.56815810607431, 140.6476289042621, results);
+        Log.d( "DISTANCE", "distance`getDistance = " + results[0] );
 
-        mSensorManager.registerListener(
-                mSensorEventListener,
-                mSensorManager.getDefaultSensor( Sensor.TYPE_ACCELEROMETER ),
-                SensorManager.SENSOR_DELAY_UI );
-        mSensorManager.registerListener(
-                mSensorEventListener,
-                mSensorManager.getDefaultSensor( Sensor.TYPE_MAGNETIC_FIELD ),
-                SensorManager.SENSOR_DELAY_UI );
+        if( results[1] < 0 ) {
+            // 0～360度の値にする
+            results[1] = 360f + results[1];
+        }
+
+        // 円グラフを回転
+        glView.invalidateRader( "Location Changed", results[1], results[0] );
+//        graphView.onLocationChanged( results[1] );
+
+        // 距離メッセージ変更
+        if( results[0] <= 20 ) textView_DistanceMessage.setText("近いよ");
+        else if( results[0] == 0 ) textView_DistanceMessage.setText("やばいよ");
+        else textView_DistanceMessage.setText("遠いよ");
+
+        Log.d("httpppppp", "acc"+ data.acc );
+        // 精度メッセージ変更
+        if( data.acc <= 3 ) textView_AccuracyMessage.setText("精度良好かも");
+        else if( data.acc > 3 && data.acc <= 10 ) textView_AccuracyMessage.setText("ふつうの精度");
+        else if ( data.acc >= 15 ) textView_AccuracyMessage.setText("精度ひどいよ");
+//        else if ( data.acc >= 15 ) textView_AccuracyMessage.setText("不安な精度");
+        else textView_AccuracyMessage.setText( "" );
+
+
+        if( results[0] <= 40 && flag_vibrator == true ) {
+            // ここでバイブレーション///////////////////////////////////////////
+            // 振動
+            viberation( results[0] );
+        }
+
     }
 
-    protected void onStop() { // ⇔ onStart
-        super.onStop();
+    // ARモードのon/off切り替えボタンがクリックされたとき
+    public void onARSwitchButtonClicked(View v) {
+        if( arSwitchButton.isChecked() == true ) { // OFF → ONのとき
+            // ARモード開始
+            glView.switchModeAR( true );
+            // カメラ起動
+//            if ( textureView == null ) textureView = (TextureView) findViewById( R.id.texture_view );
+            if ( textureView.isAvailable() == true ) {
+                mCamera = new Camera2(textureView, this);
+                mCamera.open();
+            }
 
-        mSensorManager.unregisterListener( mSensorEventListener );
+            // 背景差し替え（imageView非表示）
+            backgroundImageView.setVisibility( backgroundImageView.INVISIBLE );
+        }
+        else { // ON → OFFのとき
+            // ARモード終了
+            glView.switchModeAR( false );
+            // カメラ開放
+            mCamera.close();
+            mCamera = null;
+//            textureView = null;
 
+            // 背景差し替え(imageView表示)
+            backgroundImageView.setVisibility( backgroundImageView.VISIBLE );
+        }
     }
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////////////
+    // [振動止める/つける]ボタン押下
+    public void onBottonClick( View v ) {
+        Log.d("onButtonClick", "onButtonClick");
+        if( flag_vibrator == true ) {
+            flag_vibrator = false;
+            // 現在動作中の振動も止める
+            vibrator.cancel();
+            button_StopVibration.setText("振動つける");
+        }
+        else {
+            flag_vibrator = true;
+            button_StopVibration.setText("振動とめる");
+        }
+    }
 
     // 距離を受け取って、距離に応じて振動させるメソッド
     private void viberation( double distance ) {
 
-        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+//        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         // 振動パターンいくつか（数字が大きくなるにつれて間隔短めに）
         long[] pattern1 = { 0, 500, 2000, 500, 2000, 500 }; // OFF/ON/OFF/ON...
         long[] pattern2 = { 0, 500, 1000, 500, 1000, 500 }; // OFF/ON/OFF/ON...
@@ -404,7 +469,7 @@ public class MainActivity extends Activity {
         long[] pattern6 = { 0, 500, 100, 500, 100, 500 }; // OFF/ON/OFF/ON...
 
         // ここでバイブレーション///////////////////////////////////////////
-        // 振動
+        vibrator.cancel();      // 現在動作中の振動止める
         if( distance <= 3 ) {
             vibrator.vibrate(pattern6, -1);
             Log.d("viberation", "pattern6");
@@ -426,5 +491,4 @@ public class MainActivity extends Activity {
             Toast.makeText( this, "pattern1", Toast.LENGTH_SHORT ).show();
         }
     }
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
 }
