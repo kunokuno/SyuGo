@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
+import jp.enpitsu.paseri.syugo.Lookfor.LookActivity;
 import jp.enpitsu.paseri.syugo.MainActivity;
 import jp.enpitsu.paseri.syugo.R;
 import jp.enpitsu.paseri.syugo.Registor.RegActivity;
@@ -45,7 +46,7 @@ public class StartActivity extends Activity {
     //検索モードへボタンの処理
     private View.OnClickListener seaListener = new View.OnClickListener() {
         public void onClick(View v) {
-            Intent intent_sea = new Intent(StartActivity.this, MainActivity.class);
+            Intent intent_sea = new Intent(StartActivity.this, LookActivity.class);
             try {
                 startActivity(intent_sea);
             } catch (Exception e) {
