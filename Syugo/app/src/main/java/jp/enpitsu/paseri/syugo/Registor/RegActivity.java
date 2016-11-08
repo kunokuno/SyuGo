@@ -26,6 +26,7 @@ public class RegActivity extends Activity {
     private Button btn_findmode;   //検索モードに遷移するボタン
     private EditText id_box;        //ユーザ名を入力するbox
     private TextView text_idshow;   //サーバで発行されたIDを表示する領域
+    private String user_name,myID;
 
     private String mac_add;         //Android端末のMacアドレスを保存
 
@@ -48,13 +49,22 @@ public class RegActivity extends Activity {
     //ID発行ボタンの処理
     private View.OnClickListener issListener = new View.OnClickListener() {
         public void onClick(View v) {
-            //text_idshow.setText("r3uhr3");
+
+            user_name = id_box.getText().toString();
+            text_idshow.setText("r3uhr3");
             WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 
             mac_add = wifiInfo.getMacAddress();
             //mac address 確認用
-            text_idshow.setText(mac_add);
+            //text_idshow.setText(mac_add);
+
+
+            HttpComOnRegistor httpComReg = null;
+
+
+            httpComReg.setUserInfo(user_name,mac_add);
+            myID = httpComReg.setCODE();
 
         }
     };
@@ -63,12 +73,10 @@ public class RegActivity extends Activity {
     private View.OnClickListener shaListener = new View.OnClickListener() {
         public void onClick(View v) {
             try {
-                //tmp
-                text_idshow.setText("r3uhr3");
                 Intent intent_sha = new Intent();
                 intent_sha.setAction(Intent.ACTION_SEND);
                 intent_sha.setType("text/plain");
-                intent_sha.putExtra(Intent.EXTRA_TEXT,"集GO!しよう(*・・)ノ 私のIDは"+text_idshow.getText().toString()+"です．");
+                intent_sha.putExtra(Intent.EXTRA_TEXT,"集GO!しよう(*・・)ノ 私のIDは "+text_idshow.getText().toString()+" です．");
                 startActivity(intent_sha);
             } catch (Exception e){
                 Log.d("ActionSend","intent other app error");
