@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import jp.enpitsu.paseri.syugo.MainActivity;
 import jp.enpitsu.paseri.syugo.R;
+import jp.enpitsu.paseri.syugo.Rader.RaderActivity;
 
 public class LookActivity extends Activity {
 
@@ -51,7 +52,7 @@ public class LookActivity extends Activity {
     //検索ボタン押してマップ画面へ
     private View.OnClickListener findListener = new View.OnClickListener() {
         public void onClick(View v) {
-            Intent intent = new Intent(LookActivity.this, MainActivity.class);
+            Intent intent = new Intent(LookActivity.this, RaderActivity.class);
             try {
                 startActivity(intent);
             } catch (Exception e) {
