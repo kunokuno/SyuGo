@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import jp.enpitsu.paseri.syugo.MainActivity;
 import jp.enpitsu.paseri.syugo.R;
+import jp.enpitsu.paseri.syugo.Rader.RaderActivity;
 
 /**
  * Created by owner on 2016/09/25.
@@ -64,7 +65,7 @@ public class RegActivity extends Activity {
     private View.OnClickListener findListener = new View.OnClickListener() {
         public void onClick(View v) {
             //登録画面からAR画面への遷移
-            Intent intent_find = new Intent(RegActivity.this, MainActivity.class);
+            Intent intent_find = new Intent(RegActivity.this, RaderActivity.class);
             try {
                 startActivity(intent_find);
             } catch (Exception e) {
