@@ -67,13 +67,15 @@
 
 
     <!--ARでないときの背景-->
+    <!--rader_background2は暗め，無印は明るめ-->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/backgroundImageView"
         android:layout_gravity="center"
-        android:src="@drawable/enpitsu_white"
-        android:visibility="visible"/>
+        android:src="@drawable/rader_background2"
+        android:visibility="visible"
+        android:scaleType="centerCrop" />
 
     <!--コンパス-->
     <!--<jp.enpitsu.paseri.syugo.AR.ARObjects.Graph.GraphView-->
