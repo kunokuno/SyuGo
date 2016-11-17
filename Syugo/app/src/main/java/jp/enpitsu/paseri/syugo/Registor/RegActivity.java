@@ -50,10 +50,7 @@ public class RegActivity extends Activity {
     //ID発行ボタンの処理
     private View.OnClickListener issListener = new View.OnClickListener() {
         public void onClick(View v) {
-
             user_name = id_box.getText().toString();
-
-            text_idshow.setText("r3uhr3");
             WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 
@@ -95,8 +92,9 @@ public class RegActivity extends Activity {
     private View.OnClickListener findListener = new View.OnClickListener() {
         public void onClick(View v) {
             //登録画面からAR画面への遷移
-            Intent intent_find = new Intent(RegActivity.this, RaderActivity.class);
             try {
+                Intent intent_find = new Intent(RegActivity.this, RaderActivity.class);
+                intent_find.putExtra("myID",myID);
                 startActivity(intent_find);
             } catch (Exception e) {
                 Log.d("RegActivity", "intent error MainActivity");

@@ -28,14 +28,6 @@ public class HttpComOnRegistor extends AsyncTask<Integer, Integer, String>
 {
     String myName, mac_add, myID;
 
-    double lat, lon, acc;
-
-    boolean TorF = false;
-
-    MainActivity activity;
-
-    TextView tv_response, tv_distance;
-
     // Activiyへのコールバック用interface
     public interface AsyncTaskCallback {
         void postExecute(String result);
@@ -94,13 +86,15 @@ public class HttpComOnRegistor extends AsyncTask<Integer, Integer, String>
         }
 
         //if( HttpStatus.SC_OK == status ) {
-        if( !result.equals("") ) { // データを受け取れている場合
+        if( !result.equals("0") ) { // データを受け取れている場合
             try {
                 myID = result;
             } catch( Exception e ) {
                 Log.d("Http", e.toString());
             }
         }
+        else
+            myID = "error";
 
         return myID;
     }
