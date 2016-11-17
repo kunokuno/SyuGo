@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -51,7 +52,6 @@ public class RegActivity extends Activity {
         public void onClick(View v) {
 
             user_name = id_box.getText().toString();
-            text_idshow.setText("r3uhr3");
             WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 
@@ -59,12 +59,18 @@ public class RegActivity extends Activity {
             //mac address 確認用
             //text_idshow.setText(mac_add);
 
-
-            HttpComOnRegistor httpComReg = null;
-
-
+            HttpComOnRegistor httpComReg = new HttpComOnRegistor(
+                    new HttpComOnRegistor.AsyncTaskCallback() {
+                        @Override
+                        public void postExecute(String result) {
+                            myID = result;
+                        }
+                    }
+            );
             httpComReg.setUserInfo(user_name,mac_add);
-            myID = httpComReg.setCODE();
+            httpComReg.executeOnExecutor( AsyncTask.THREAD_POOL_EXECUTOR );
+
+            text_idshow.setText(myID);
 
         }
     };
