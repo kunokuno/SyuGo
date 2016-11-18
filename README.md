@@ -40,14 +40,17 @@ APPをダウンロードするだけにする予定...
 
 
 
-###開発メンバー
+##開発
+###チーム名
+![image1](images/enpitsu.png?raw=true)
 
+###メンバー
 
-+ 青木　海
-+ 伊與部　美咲
-+ 鏑木　かおり
-+ 北村　拓也
-+ 久野　和敏
-+ 高井　基己
-+ 諸星　智也
++ [kuguma](https://github.com/kuguma)
++ [Misaki.i](https://github.com/paselow-I)
++ [Cathy-toyama](https://github.com/Cathy-toyama)
++ [yakutasito](https://github.com/yakutasito)
++ [kunokuno](https://github.com/kunokuno)
++ [takaimotoki](https://github.com/takaimotoki)
++ [tom0730](https://github.com/tom0730)
 
