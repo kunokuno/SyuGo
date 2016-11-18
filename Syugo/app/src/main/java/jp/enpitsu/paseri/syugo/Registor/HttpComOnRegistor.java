@@ -2,7 +2,6 @@ package jp.enpitsu.paseri.syugo.Registor;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,8 +11,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import jp.enpitsu.paseri.syugo.LocationData;
-import jp.enpitsu.paseri.syugo.MainActivity;
 
 
 // HttpUrlConnection

@@ -13,9 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import jp.enpitsu.paseri.syugo.MainActivity;
+import jp.enpitsu.paseri.syugo.Lookfor.LookActivity;
 import jp.enpitsu.paseri.syugo.R;
-import jp.enpitsu.paseri.syugo.Rader.RaderActivity;
 
 /**
  * Created by owner on 2016/09/25.
@@ -63,13 +62,14 @@ public class RegActivity extends Activity {
                         @Override
                         public void postExecute(String result) {
                             myID = result;
+                            text_idshow.setText(myID);
                         }
                     }
             );
             httpComReg.setUserInfo(user_name,mac_add);
             httpComReg.executeOnExecutor( AsyncTask.THREAD_POOL_EXECUTOR );
 
-            text_idshow.setText(myID);
+
         }
     };
 
@@ -93,7 +93,7 @@ public class RegActivity extends Activity {
         public void onClick(View v) {
             //登録画面からAR画面への遷移
             try {
-                Intent intent_find = new Intent(RegActivity.this, RaderActivity.class);
+                Intent intent_find = new Intent(RegActivity.this, LookActivity.class);
                 intent_find.putExtra("myID",myID);
                 startActivity(intent_find);
             } catch (Exception e) {
