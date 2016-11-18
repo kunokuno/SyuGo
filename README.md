@@ -52,5 +52,5 @@ APPをダウンロードするだけにする予定...
 + [yakutasito](https://github.com/yakutasito)
 + [kunokuno](https://github.com/kunokuno)
 + [takaimotoki](https://github.com/takaimotoki)
-+ [tom0730](https://github.com/tom0730)
++ [thom0730](https://github.com/thom0730)
 
