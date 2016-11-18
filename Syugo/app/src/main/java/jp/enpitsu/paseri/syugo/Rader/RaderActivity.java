@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
+import android.graphics.Typeface;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -51,6 +52,9 @@ public class RaderActivity extends Activity {
     TextView textView_AccuracyMessage;
     TextView textView_Message;
     Button button_StopVibration;
+    ToggleButton button_AROn;
+    ToggleButton button_AROff;
+    ToggleButton button_WifiFirect;
 
     ////////////////////////////////////////////////////////////
     // コンパス用のセンサ関連
@@ -105,13 +109,31 @@ public class RaderActivity extends Activity {
 
 //        graphView = (GraphView)findViewById( R.id.AR_graph_view );
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        arSwitchButton = (ToggleButton)findViewById( R.id.ARSwitchButton );
+//        arSwitchButton = (ToggleButton)findViewById( R.id.ARSwitchButton );
         backgroundImageView = (ImageView)findViewById( R.id.backgroundImageView );
 
-        textView_Message = (TextView)findViewById( R.id.textView_Message );
+//        textView_Message = (TextView)findViewById( R.id.textView_Message );
         textView_DistanceMessage = (TextView)findViewById( R.id.textView_DistanceMessage );
         textView_AccuracyMessage = (TextView)findViewById( R.id.textView_AccuracyMessage );
-        button_StopVibration = (Button)findViewById(R.id.button_vibration);
+//        button_StopVibration = (Button)findViewById(R.id.button_vibration);
+        button_AROff = (ToggleButton)findViewById( R.id.button_AROff );
+        button_AROn  = (ToggleButton)findViewById( R.id.button_AROn );
+        button_WifiFirect  = (ToggleButton)findViewById( R.id.button_wifiDirect );
+
+        // フォント設定
+//        textView_Message.setTypeface( Typeface.createFromAsset( getAssets(), "DecoNeue-Light.ttf" ), Typeface.NORMAL );
+//        textView_AccuracyMessage.setTypeface( Typeface.createFromAsset( getAssets(), "DecoNeue-Light.ttf" ), Typeface.NORMAL );
+//        textView_DistanceMessage.setTypeface( Typeface.createFromAsset( getAssets(), "DecoNeue-Light.ttf" ), Typeface.BOLD );
+        textView_AccuracyMessage.setTypeface( Typeface.createFromAsset( getAssets(), "Canter Bold 3D.otf" ), Typeface.NORMAL );
+        textView_DistanceMessage.setTypeface( Typeface.createFromAsset( getAssets(), "Canter Bold.otf" ), Typeface.BOLD );
+        TextView textView = (TextView)findViewById( R.id.textView_DistanceMessageShadow );
+        textView.setTypeface( Typeface.createFromAsset( getAssets(), "Canter Bold Strips.otf" ), Typeface.BOLD );
+
+        button_AROff.setTypeface( Typeface.createFromAsset( getAssets(), "Canter Bold.otf" ), Typeface.BOLD );
+        button_AROn.setTypeface( Typeface.createFromAsset( getAssets(), "Canter Bold.otf" ), Typeface.BOLD );
+        button_WifiFirect.setTypeface( Typeface.createFromAsset( getAssets(), "Canter Bold.otf" ), Typeface.BOLD );
+
+
 
         textureView = (TextureView) findViewById( R.id.texture_view );
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
@@ -392,9 +414,12 @@ public class RaderActivity extends Activity {
 //        graphView.onLocationChanged( results[1] );
 
         // 距離メッセージ変更
-        if( results[0] <= 20 ) textView_DistanceMessage.setText("近いよ");
-        else if( results[0] == 0 ) textView_DistanceMessage.setText("やばいよ");
-        else textView_DistanceMessage.setText("遠いよ");
+        if( results[0] <= 20 ) textView_DistanceMessage.setText("NEAR");
+        else if( results[0] == 0 ) textView_DistanceMessage.setText("AMAZING");
+        else textView_DistanceMessage.setText("FAR");
+//        if( results[0] <= 20 ) textView_DistanceMessage.setText("近いよ");
+//        else if( results[0] == 0 ) textView_DistanceMessage.setText("やばいよ");
+//        else textView_DistanceMessage.setText("遠いよ");
 
         Log.d("httpppppp", "acc"+ data.acc );
         // 精度メッセージ変更
