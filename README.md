@@ -4,7 +4,7 @@
 アプリ集GO!は地図上に待ち合わせ相手を表示させるような既存の待ち合わせアプリとは違い、待ち合わせ場所での「待ち合わせ場所はここのはずだけど、あの子が見つからない！」を解決するアプリです
 
 #画面イメージ
-![image2](SyuGo/image/10.22.23.png)
+![image2](https://github.com/kunokuno/SyuGo/blob/feature_readme_kuno/image/10.22.23.png?raw=true)
 
 
 ##ダウンロード方法
@@ -21,4 +21,4 @@
 + 高井　基己
 + 諸星　智也
 
-![image1](SyuGo/image/enpitsu_1.png)
+![image1](https://github.com/kunokuno/SyuGo/blob/feature_readme_kuno/image/enpitsu_1.png?raw=true)
