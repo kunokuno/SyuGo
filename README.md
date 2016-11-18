@@ -33,8 +33,6 @@
 ##画面イメージ
 ![image2](images/10.22.23.png?raw=true)
 
-#画面イメージ
-![image2](https://github.com/kunokuno/SyuGo/blob/feature_readme_kuno/image/10.22.23.png?raw=true)
 
 
 ##ダウンロード方法
@@ -51,4 +49,3 @@
 + 高井　基己
 + 諸星　智也
 
-![image1](https://github.com/kunokuno/SyuGo/blob/feature_readme_kuno/image/enpitsu_1.png?raw=true)
