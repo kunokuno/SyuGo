@@ -92,6 +92,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                 });
             }
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
+            Log.d("wd_notice","BroadCaster : P2P Connection Changed");
 
             if (manager == null) {
                 return;
@@ -116,8 +117,10 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             }
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
             Log.d("wd_notice","BroadCaster : DeviceList Catched");
-            updateThisDevice((WifiP2pDevice) intent.getParcelableExtra(
-                    WifiP2pManager.EXTRA_WIFI_P2P_DEVICE));
+            WifiP2pDevice device = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
+            updateThisDevice(device);
+            String thisDeviceName = device.deviceName;
+            Log.d("wd_notice",thisDeviceName);
         }
     }
 

@@ -42,7 +42,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import jp.enpitsu.paseri.syugo.R;
+
+import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
 
 /**
@@ -211,9 +216,51 @@ public class WiFiDirectActivity extends Activity {
         @Override
         public void onClick(View v) {
             Toast.makeText(WiFiDirectActivity.this, "null",Toast.LENGTH_SHORT).show();
+            setDeviceName("hogehoge");
         }
     };
 
+    public void setDeviceName(String devName) {
+        try {
+            Class[] paramTypes = new Class[3];
+            paramTypes[0] = Channel.class;
+            paramTypes[1] = String.class;
+            paramTypes[2] = ActionListener.class;
+            Method setDeviceName = manager.getClass().getMethod(
+                    "setDeviceName", paramTypes);
+            setDeviceName.setAccessible(true);
+
+            Object arglist[] = new Object[3];
+            arglist[0] = channel;
+            arglist[1] = devName;
+            arglist[2] = new ActionListener() {
+
+                @Override
+                public void onSuccess() {
+                    Log.d("wd_notice","setDeviceName succeeded");
+                }
+
+                @Override
+                public void onFailure(int reason) {
+                    Log.d("wd_notice","setDeviceName failed");
+                }
+            };
+
+            setDeviceName.invoke(manager, arglist);
+
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+
+
+    }
 
 
     /*
