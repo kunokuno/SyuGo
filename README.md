@@ -69,7 +69,7 @@ APPをダウンロードするだけにする予定...
 
 
 ##開発
-###チーム名
+###チーム名-enpitsu-
 ![image1](images/enpitsu.png?raw=true)
 
 ###メンバー
