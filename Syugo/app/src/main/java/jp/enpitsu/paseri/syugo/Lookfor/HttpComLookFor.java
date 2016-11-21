@@ -21,7 +21,7 @@ import java.net.URL;
 // [3] onPostExecuteメソッドの引数の型(doInBackgroundメソッドの戻り値)
 
 public class HttpComLookFor extends AsyncTask<Integer, Integer, String> {
-    String oppID, mac_add, reqID;
+    String oppID, reqID;
 
 
 
@@ -39,8 +39,7 @@ public class HttpComLookFor extends AsyncTask<Integer, Integer, String> {
     protected String doInBackground(Integer... id) {
 
         StringBuilder uri = new StringBuilder(
-                "http://ubermensch.noor.jp/enPiT/search_user.php?" + "opponentcode=" + oppID
-                        + "&mac=" + mac_add);
+                "http://ubermensch.noor.jp/enPiT/search_user.php?" + "opponentcode=" + oppID);
 
         Log.d("HttpURL", uri.toString());
 
@@ -65,7 +64,7 @@ public class HttpComLookFor extends AsyncTask<Integer, Integer, String> {
             // レスポンスコードを受け取る
             final int responseCode = urlConnection.getResponseCode();
             if (responseCode != HttpURLConnection.HTTP_OK) {
-                throw new RuntimeException("invalid responce code : " + responseCode);
+                throw new RuntimeException("invalid responcecode : " + responseCode);
             }
 
             // 受信データ処理
@@ -119,9 +118,8 @@ public class HttpComLookFor extends AsyncTask<Integer, Integer, String> {
 
         return out;
     }
-    void setUserInfo(String user_name, String mac_add) {
+    void setUserInfo(String user_name) {
         this.oppID = user_name;
-        this.mac_add = this.mac_add;
     }
 }
 
