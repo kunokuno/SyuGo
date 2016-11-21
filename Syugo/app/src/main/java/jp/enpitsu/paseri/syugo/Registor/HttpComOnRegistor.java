@@ -1,8 +1,7 @@
-package jp.enpitsu.paseri.syugo;
+package jp.enpitsu.paseri.syugo.Registor;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,6 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 
+
 // HttpUrlConnection
 // http://yukimura1227.blog.fc2.com/blog-entry-36.html
 
@@ -21,38 +21,30 @@ import java.net.URL;
 // [2] onProgressUpdateメソッドの引数の型
 // [3] onPostExecuteメソッドの引数の型(doInBackgroundメソッドの戻り値)
 
-public class HttpCommunication extends AsyncTask<Integer, Integer, LocationData>
+public class HttpComOnRegistor extends AsyncTask<Integer, Integer, String>
 {
-    String myID, reqID;
-
-    double lat, lon, acc;
-
-    boolean TorF = false;
-
-    MainActivity activity;
-
-    TextView tv_response, tv_distance;
+    String myName, mac_add, myID;
 
     // Activiyへのコールバック用interface
     public interface AsyncTaskCallback {
-        void postExecute(LocationData result);
+        void postExecute(String result);
     }
 
     private AsyncTaskCallback callback = null;
 
-    HttpCommunication( AsyncTaskCallback callback ) {
+    HttpComOnRegistor( AsyncTaskCallback callback ) {
         this.callback = callback;
     }
 
 
     // 自分のid(コード)<id>
     @Override
-    protected LocationData doInBackground(Integer... id) {
+    protected String doInBackground(Integer... id) {
 
         StringBuilder uri = new StringBuilder(
-                "http://ubermensch.noor.jp/enPiT/get_gps.php?" +
-                        "code=" + myID + "&opponentcode=" + reqID + "&alt=30" +
-                        "&lat=" + lat + "&lan=" + lon + "&accuracy=" + acc + "&etime=20" );
+                "http://ubermensch.noor.jp/enPiT/regist_user.php?" +
+                        "name=" + myName + "&alt=20&lat=29&lan=99&accuracy=10&etime=10"+
+                        "&mac="+ mac_add);
 
         Log.d("HttpURL", uri.toString());
 
@@ -90,30 +82,22 @@ public class HttpCommunication extends AsyncTask<Integer, Integer, LocationData>
             urlConnection.disconnect();
         }
 
-
-
-        LocationData data = new LocationData( 30, 30, 30 );
         //if( HttpStatus.SC_OK == status ) {
-        if( !result.equals("") ) { // データを受け取れている場合
+        if( !result.equals("0") ) { // データを受け取れている場合
             try {
-                Log.d("Httpfhasuiogb", result);
-                // ","で分割
-                // items [0]名前, [1]高度, [2]緯度, [3]経度, [4]精度
-                String[] items = result.split(",");
-
-                // 結果をdataに格納
-                data = new LocationData( Double.parseDouble(items[2]), Double.parseDouble(items[3]), Double.parseDouble(items[4]) );
-
+                myID = result;
             } catch( Exception e ) {
                 Log.d("Http", e.toString());
             }
         }
+        else
+            myID = "error";
 
-        return data;
+        return myID;
     }
 
     @Override
-    protected void onPostExecute( LocationData result ) {
+    protected void onPostExecute( String result ) {
         callback.postExecute( result );
 
         Log.d( "Http", "onPostExecute" );
@@ -147,15 +131,9 @@ public class HttpCommunication extends AsyncTask<Integer, Integer, LocationData>
         return out;
     }
 
-    void setID( String myID, String reqID ) {
-        this.myID = myID;
-        this.reqID = reqID;
-    }
-
-    void setLocation( double lat, double lon, double acc ) {
-        this.lon = lon;
-        this.lat = lat;
-        this.acc = acc;
+    void setUserInfo( String user_name, String mac_add ) {
+        this.myName = user_name;
+        this.mac_add = mac_add;
     }
 
 }
