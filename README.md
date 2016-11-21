@@ -1,7 +1,7 @@
 
 #集GO!
 ##集GOってなに？
-集合場所来たのに<a>**待ち合わせ相手が見つからない!**</a><br>
+集合場所来たのに<font color="RoyalBlue">**待ち合わせ相手が見つからない!**</font><br>
 なんてことはありませんか？<br>
 <blockquote>
 花火大会<br>
@@ -11,23 +11,25 @@
 旅行先での別行動した後の集合...<br>
 </blockquote>
 などなど<br>
-本アプリ集GO!ならこれらの場所でも<br>
-待ち合わせ相手をすぐに見つけることができます！<br>
+<font color="Chocolate">**本アプリ集GO!ならこれらの場所でも<br>
+待ち合わせ相手をすぐに見つけることができます！**<br>
+</font>
 <br><br>
 集GO!は待ち合わせ相手を探す手段として
 
 + AR機能による視覚的な方法
 + コンパスによる簡単な相手の位置の把握
 + バイブレーションの振動による感覚的な距離感
-<br>
+
 また、補助として
+
 + WiFiダイレクト機能を用いた<br>インターネット通信を必要としない待ち合わせ<br>
 
 があります<br>
 
 アプリ集GO!は地図上に待ち合わせ相手を表示させるような既存の待ち合わせアプリとは違い<br>
 待ち合わせ場所での<br>
-<a>**「待ち合わせ場所はここのはずだけど、あの子が見つからない！」**</a><br>
+<font color="RoyalBlue">**「待ち合わせ場所はここのはずだけど、あの子が見つからない！」**</font><br>
 を解決するアプリです
 
 ##画面イメージ
@@ -75,7 +77,7 @@ APPをダウンロードするだけにする予定...
 ###メンバー
 
 + [kuguma](https://github.com/kuguma)
-+ [Misaki.i](https://github.com/paselow-I)
++ [Misaki.i](https://github.com/paselow-I) 
 + [Cathy-toyama](https://github.com/Cathy-toyama)
 + [yakutasito](https://github.com/yakutasito)
 + [kunokuno](https://github.com/kunokuno)
