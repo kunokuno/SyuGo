@@ -78,13 +78,16 @@ public class HttpComLookFor extends AsyncTask<Integer, Integer, String> {
 
         if (!result.equals("")) { // データを受け取れている場合
             try {
-                if( result.equals("0") ) result = "error"; // 検索失敗
-                reqID = result;
+                reqID = result; // resultが0の場合は検索結果が0ってことで
             } catch (Exception e) {
                 Log.d("Http", e.toString());
             }
         } else
             reqID = "error";
+
+        // 返値について
+        // 【成功】           0(reqIDと一致する件数が0) or reqIDに対応するユーザ名
+        // 【DB接続等に失敗】"error"
         return reqID;
     }
 

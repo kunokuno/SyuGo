@@ -42,8 +42,18 @@ public class LookActivity extends Activity {
                     new HttpComLookFor.AsyncTaskCallback() {
                         @Override
                         public void postExecute(String result) {
-                            if( result.equals( "error" ) ) { // 検索に失敗した場合"error"が入ってる
-                                name.setText( "検索失敗。入力したIDが正しいか確認してください。" ); // 例外処理？
+
+//                            // 検索結果として"0"が返ってきた場合，ふつうに出力すると"0"だけどbyteとかlengthとか見ると別のものもくっついてるっぽい
+//                            // のでID検索一致0の場合の判定で妙なことしてます
+//                            Log.d("result byte  ", result.getBytes() + ", " + "0".getBytes() );
+//                            Log.d("result length", "" + result.length() );
+//                            Log.d("result char  ", (int)result.charAt(0) + ", " + (int)result.charAt(1) + " : " + (int)'0' );
+
+                            if( "error".equals( result ) ) { // サーバ側の不具合で検索に失敗した場合"error"が入ってる
+                                name.setText( "接続エラー" );
+                            }
+                            else if( '0' == result.charAt(1) ) { // reqIDに一致するIDのユーザ名が見つからなかった場合
+                                name.setText( "検索失敗。入力したIDが正しいか確認してください。" );
                             }
                             else {
                                 // resultは「相手のユーザ名,MACアドレス」の形で返ってくる
