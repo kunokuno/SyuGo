@@ -3,6 +3,7 @@ package jp.enpitsu.paseri.syugo.Rader;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
 import android.hardware.Sensor;
@@ -69,7 +70,9 @@ public class RaderActivity extends Activity {
     //    String myID = "r3uhr3";
 //    String reqID = "4hfeu";
     String myID = "4hfeu";
-    String reqID = "r3uhr3";
+//    String reqID = "r3uhr3";
+    String reqID; // TODO: 自分のIDは外部ファイルから読んでくる
+    String macAdr, oppName; // 相手のMACアドレスとユーザ名
 
     private double lat = 30;
     private double lon = 30;
@@ -86,6 +89,13 @@ public class RaderActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // intent取得
+        Intent intent = getIntent();
+        // intentから文字列取得
+        reqID  = intent.getStringExtra( "reqID" );      // 相手ID
+//        macAdr = intent.getStringExtra( "macAdr" );     // 相手のMACアドレス
+//        oppName= intent.getStringExtra( "oppName" );    // 相手のユーザ名
 
         glView = new MyGLSurfaceView( this );
         glView.setZOrderOnTop(true);
