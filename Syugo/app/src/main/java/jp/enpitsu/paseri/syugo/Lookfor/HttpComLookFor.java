@@ -70,16 +70,15 @@ public class HttpComLookFor extends AsyncTask<Integer, Integer, String> {
             // 受信データ処理
             result = recieveResult(urlConnection.getInputStream());
 
-
         } catch (IOException e) {
             Log.d("HttpRes", e.toString());
         } finally {
             urlConnection.disconnect();
         }
 
-        //if( HttpStatus.SC_OK == status ) {
-        if (!result.equals("0")) { // データを受け取れている場合
+        if (!result.equals("")) { // データを受け取れている場合
             try {
+                if( result.equals("0") ) result = "error"; // 検索失敗
                 reqID = result;
             } catch (Exception e) {
                 Log.d("Http", e.toString());

@@ -83,8 +83,9 @@ public class HttpComOnRegistor extends AsyncTask<Integer, Integer, String>
         }
 
         //if( HttpStatus.SC_OK == status ) {
-        if( !result.equals("0") ) { // データを受け取れている場合
+        if( !result.equals("") ) { // データを受け取れている場合
             try {
+                if( result.equals("0") ) result = "error"; // 登録失敗
                 myID = result;
             } catch( Exception e ) {
                 Log.d("Http", e.toString());

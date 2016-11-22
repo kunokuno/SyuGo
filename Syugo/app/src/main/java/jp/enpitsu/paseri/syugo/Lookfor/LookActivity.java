@@ -42,12 +42,17 @@ public class LookActivity extends Activity {
                     new HttpComLookFor.AsyncTaskCallback() {
                         @Override
                         public void postExecute(String result) {
-                            // resultは「相手のユーザ名,MACアドレス」の形で返ってくる
-                            oppName  = result.substring( 1, result.indexOf(",")+0 );
+                            if( result.equals( "error" ) ) { // 検索に失敗した場合"error"が入ってる
+                                name.setText( "検索失敗。入力したIDが正しいか確認してください。" ); // 例外処理？
+                            }
+                            else {
+                                // resultは「相手のユーザ名,MACアドレス」の形で返ってくる
+                                oppName = result.substring(1, result.indexOf(",") + 0);
                                 // 最初から","が現れるまでの部分文字列(なんか先頭文字に改行が入ってるっぽいのでインデックス1～を指定)
-                            macAdr   = result.substring( result.indexOf(",")+1, result.length() );
+                                macAdr = result.substring(result.indexOf(",") + 1, result.length());
                                 // ","の次の文字から最後までの部分文字列
-                            name.setText( oppName ); // [検索結果]相手のユーザ名を表示
+                                name.setText(oppName); // [検索結果]相手のユーザ名を表示
+                            }
                         }
                     }
             );
