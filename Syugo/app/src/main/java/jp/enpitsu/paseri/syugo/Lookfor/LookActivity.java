@@ -18,7 +18,7 @@ public class LookActivity extends Activity {
     private Button find,search;
     private TextView name,id2;
     private EditText id;
-    private String your_id,str,reqID;
+    private String your_id, str, oppName, macAdr, reqID;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,20 +35,23 @@ public class LookActivity extends Activity {
     // コードでユーザー検索"name,mac"
     private View.OnClickListener searchListener = new View.OnClickListener() {
         public void onClick(View v) {
-            str = id.getText().toString();
-            id2.setText(str);
-            your_id = id.getText().toString();
+            reqID = id.getText().toString(); // 相手ID入力テキストボックスから相手のID取得
+            id2.setText( reqID ); // 入力された相手IDをメッセージ部分に表示
 
             HttpComLookFor httpComLookFor = new HttpComLookFor(
                     new HttpComLookFor.AsyncTaskCallback() {
                         @Override
                         public void postExecute(String result) {
-                            reqID = result;
-                            name.setText(reqID.substring(0, reqID.indexOf(",")+0));
+                            // resultは「相手のユーザ名,MACアドレス」の形で返ってくる
+                            oppName  = result.substring( 1, result.indexOf(",")+0 );
+                                // 最初から","が現れるまでの部分文字列(なんか先頭文字に改行が入ってるっぽいのでインデックス1～を指定)
+                            macAdr   = result.substring( result.indexOf(",")+1, result.length() );
+                                // ","の次の文字から最後までの部分文字列
+                            name.setText( oppName ); // [検索結果]相手のユーザ名を表示
                         }
                     }
             );
-            httpComLookFor.setUserInfo(your_id);
+            httpComLookFor.setUserInfo( reqID );
             httpComLookFor.executeOnExecutor( AsyncTask.THREAD_POOL_EXECUTOR );
         }
     };
@@ -58,7 +61,9 @@ public class LookActivity extends Activity {
         public void onClick(View v) {
             try {
                 Intent intent_find = new Intent(LookActivity.this, RaderActivity.class);
-                intent_find.putExtra("reqID",reqID);
+                intent_find.putExtra( "reqID", reqID );         // 相手ID
+                intent_find.putExtra( "macAdr", macAdr );       // MACアドレス
+                intent_find.putExtra( "oppName", oppName );     // 相手のユーザ名
                 startActivity(intent_find);
             } catch (Exception e) {
                 Log.d("LookActivity", "intent error RaderActivity");
