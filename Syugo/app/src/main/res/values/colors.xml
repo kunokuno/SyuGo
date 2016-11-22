@@ -7,4 +7,6 @@
     <color name="colorLightBackground">#b3b3b3</color>
     <color name="colorGreen">#32ffdb</color>
     <color name="colorWhite">#ffffff</color>
+    <color name="colorButtonBackground">#d1000000</color>
+    <color name="colorButtonPressedBackground">#6b000000</color>
 </resources>

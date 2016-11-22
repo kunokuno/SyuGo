@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/custom_button_green">
+            android:background="@drawable/custom_button_green_state">
 
             <ImageButton
                 android:layout_width="180dp"
@@ -56,7 +56,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/custom_button_green">
+            android:background="@drawable/custom_button_green_state">
 
             <ImageButton
                 android:layout_width="180dp"
