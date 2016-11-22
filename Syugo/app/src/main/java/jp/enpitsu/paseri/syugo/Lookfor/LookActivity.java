@@ -56,12 +56,17 @@ public class LookActivity extends Activity {
                                 name.setText( "検索失敗。入力したIDが正しいか確認してください。" );
                             }
                             else {
-                                // resultは「相手のユーザ名,MACアドレス」の形で返ってくる
-                                oppName = result.substring(1, result.indexOf(",") + 0);
-                                // 最初から","が現れるまでの部分文字列(なんか先頭文字に改行が入ってるっぽいのでインデックス1～を指定)
-                                macAdr = result.substring(result.indexOf(",") + 1, result.length());
-                                // ","の次の文字から最後までの部分文字列
-                                name.setText(oppName); // [検索結果]相手のユーザ名を表示
+                                try {
+                                    // resultは「相手のユーザ名,MACアドレス」の形で返ってくる
+                                    oppName = result.substring(1, result.indexOf(",") + 0);
+                                    // 最初から","が現れるまでの部分文字列(なんか先頭文字に改行が入ってるっぽいのでインデックス1～を指定)
+                                    macAdr = result.substring(result.indexOf(",") + 1, result.length());
+                                    // ","の次の文字から最後までの部分文字列
+                                    name.setText(oppName); // [検索結果]相手のユーザ名を表示
+                                } catch ( Exception e ) {
+                                    name.setText( result );
+                                    Log.d("@LookActivity", "postExecute -> error:" + e.toString() );
+                                }
                             }
                         }
                     }
