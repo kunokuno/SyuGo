@@ -49,7 +49,6 @@
         <activity android:name=".Rader.RaderActivity" />
         <activity android:name=".Lookfor.LookActivity"/>
         <activity android:name=".Registor.RegActivity"/>
-        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>
