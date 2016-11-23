@@ -70,22 +70,24 @@ public class HttpComLookFor extends AsyncTask<Integer, Integer, String> {
             // 受信データ処理
             result = recieveResult(urlConnection.getInputStream());
 
-
         } catch (IOException e) {
             Log.d("HttpRes", e.toString());
         } finally {
             urlConnection.disconnect();
         }
 
-        //if( HttpStatus.SC_OK == status ) {
-        if (!result.equals("0")) { // データを受け取れている場合
+        if (!result.equals("")) { // データを受け取れている場合
             try {
-                reqID = result;
+                reqID = result; // resultが0の場合は検索結果が0ってことで
             } catch (Exception e) {
                 Log.d("Http", e.toString());
             }
         } else
             reqID = "error";
+
+        // 返値について
+        // 【成功】           0(reqIDと一致する件数が0) or reqIDに対応するユーザ名
+        // 【DB接続等に失敗】"error"
         return reqID;
     }
 
