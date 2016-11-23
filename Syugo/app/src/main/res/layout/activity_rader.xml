@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Rader.RaderActivity">
+
+    <!--重ねるViewを、下のもの（カメラ）から順に記述-->
+
+    <!--カメラプレビュー-->
+    <TextureView
+        android:id="@+id/texture_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!--位置情報のメッセージ-->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal|top">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="相手との距離"
+            android:id="@+id/textView_Message"
+            android:textColor="@color/colorWhite"
+            android:layout_gravity="center_horizontal"
+            android:textSize="17dp"
+            android:shadowColor="#de000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="2.0"
+            android:singleLine="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="距離測定中..."
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/colorWhite"
+            android:id="@+id/textView_DistanceMessage"
+            android:layout_gravity="center_horizontal"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:shadowColor="#de000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="2.0" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="@color/colorWhite"
+            android:id="@+id/textView_AccuracyMessage"
+            android:layout_gravity="center_horizontal"
+            android:textSize="15dp"
+            android:shadowColor="#de000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="2.0" />
+
+    </LinearLayout>
+
+
+    <!--ARでないときの背景-->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/backgroundImageView"
+        android:layout_gravity="center"
+        android:src="@drawable/enpitsu_white"
+        android:visibility="visible"/>
+
+    <!--コンパス-->
+    <!--<jp.enpitsu.paseri.syugo.AR.ARObjects.Graph.GraphView-->
+    <!--android:id="@+id/AR_graph_view"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="center"-->
+    <!--android:layout_marginTop="10dp"-->
+    <!--android:layout_marginBottom="20dp" />-->
+
+    <ToggleButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AR"
+        android:id="@+id/ARSwitchButton"
+        android:layout_gravity="right|top"
+        android:onClick="onARSwitchButtonClicked" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="振動とめる"
+        android:id="@+id/button_vibration"
+        android:layout_gravity="center_horizontal|bottom"
+        android:onClick="onBottonClick"
+        android:textColor="@color/colorWhite"
+        android:allowUndo="false"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:paddingRight="40dp"
+        android:paddingLeft="40dp"
+        android:background="@drawable/custom_button_state"
+        android:textStyle="bold" />
+
+</FrameLayout>
