@@ -12,11 +12,15 @@
 	 if($flag){
 	while($result = $stmt_select->fetch(PDO::FETCH_ASSOC)){
         print($result['name'].',');
-           print($result['mac']);
-    }
+        print($result['mac']);
+        exit();
+        }
+        //検索がヒットしなかった場合
+        print("0");
     exit();
-    		}else{
-    			print("0");
+         }else{
+                 //データベースに接続失敗した場合
+    			print("error");
     			exit();
     		}	
     	exit();

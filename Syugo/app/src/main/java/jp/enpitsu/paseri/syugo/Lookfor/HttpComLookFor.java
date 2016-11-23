@@ -21,7 +21,7 @@ import java.net.URL;
 // [3] onPostExecuteメソッドの引数の型(doInBackgroundメソッドの戻り値)
 
 public class HttpComLookFor extends AsyncTask<Integer, Integer, String> {
-    String oppID, mac_add, reqID;
+    String oppID, reqID;
 
 
 
@@ -39,8 +39,7 @@ public class HttpComLookFor extends AsyncTask<Integer, Integer, String> {
     protected String doInBackground(Integer... id) {
 
         StringBuilder uri = new StringBuilder(
-                "http://ubermensch.noor.jp/enPiT/search_user.php?" + "opponentcode=" + oppID
-                        + "&mac=" + mac_add);
+                "http://ubermensch.noor.jp/enPiT/search_user.php?" + "opponentcode=" + oppID);
 
         Log.d("HttpURL", uri.toString());
 
@@ -65,12 +64,11 @@ public class HttpComLookFor extends AsyncTask<Integer, Integer, String> {
             // レスポンスコードを受け取る
             final int responseCode = urlConnection.getResponseCode();
             if (responseCode != HttpURLConnection.HTTP_OK) {
-                throw new RuntimeException("invalid responce code : " + responseCode);
+                throw new RuntimeException("invalid responcecode : " + responseCode);
             }
 
             // 受信データ処理
             result = recieveResult(urlConnection.getInputStream());
-
 
         } catch (IOException e) {
             Log.d("HttpRes", e.toString());
@@ -78,15 +76,18 @@ public class HttpComLookFor extends AsyncTask<Integer, Integer, String> {
             urlConnection.disconnect();
         }
 
-        //if( HttpStatus.SC_OK == status ) {
-        if (!result.equals("0")) { // データを受け取れている場合
+        if (!result.equals("")) { // データを受け取れている場合
             try {
-                reqID = result;
+                reqID = result; // resultが0の場合は検索結果が0ってことで
             } catch (Exception e) {
                 Log.d("Http", e.toString());
             }
         } else
             reqID = "error";
+
+        // 返値について
+        // 【成功】           0(reqIDと一致する件数が0) or reqIDに対応するユーザ名
+        // 【DB接続等に失敗】"error"
         return reqID;
     }
 
@@ -119,9 +120,8 @@ public class HttpComLookFor extends AsyncTask<Integer, Integer, String> {
 
         return out;
     }
-    void setUserInfo(String user_name, String mac_add) {
+    void setUserInfo(String user_name) {
         this.oppID = user_name;
-        this.mac_add = this.mac_add;
     }
 }
 
