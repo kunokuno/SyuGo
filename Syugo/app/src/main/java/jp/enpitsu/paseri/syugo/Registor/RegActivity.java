@@ -59,7 +59,7 @@ public class RegActivity extends Activity {
                     new HttpComOnRegistor.AsyncTaskCallback() {
                         @Override
                         public void postExecute(String result) {
-                            myID = result;
+                            myID = result.replaceAll("\n","");
                             text_idshow.setText(myID);
                         }
                     }
