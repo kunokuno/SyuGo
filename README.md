@@ -64,9 +64,8 @@ ARとレーダーが示す方向に待ち合わせ相手が！！！<br>
 ![image4](images/function3.png?raw=true)
 ![image5](images/function4.png?raw=true)
 ##ダウンロード方法
-工事中<br>
-~~Cloneしてコンパイルしてappファイルを実行~~
-APPをダウンロードするだけにする予定...
+GitHub内の[release](https://github.com/kunokuno/SyuGo/releases)からAPKファイルをダウンロードしてください<br>
+@携帯から開いた場合はPC版の画面にしてからダウンロードしてください<br>
 
 
 
