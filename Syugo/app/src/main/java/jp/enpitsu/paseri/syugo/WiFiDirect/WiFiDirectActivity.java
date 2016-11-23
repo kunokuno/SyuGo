@@ -69,6 +69,7 @@ public class WiFiDirectActivity extends Activity {
     private boolean isWifiP2pEnabled = false;
     private String connectionStatus = "unknown";
     public boolean onConnecting = false;
+    public String selfDeviceName;
 
     // Intent Filter
     private final IntentFilter intentFilter = new IntentFilter();
@@ -94,7 +95,7 @@ public class WiFiDirectActivity extends Activity {
 
         // Initialize UI Objects
         sw_p2p_enable.setChecked(false);
-        txt_self_device_name.setText( getSelfDeviceAddress() );
+        txt_self_device_name.setText( "unknown" );
         txt_opponent_device_name.setText("Opponent Device Name is unknown");
         txt_device_status.setText("Not Connected");
         btn_connect.setOnClickListener(connectClickListner);
@@ -146,7 +147,7 @@ public class WiFiDirectActivity extends Activity {
 
     public void setStatus(String status){
         connectionStatus = status;
-        txt_device_status.setText("Status : "+status);
+        txt_device_status.setText("Status : "+connectionStatus);
     }
 
     public String getStatus(){
@@ -158,14 +159,17 @@ public class WiFiDirectActivity extends Activity {
     }
 
     public void updateThisDevice(WifiP2pDevice device) {
-        String status = getDeviceStatus(device.status);
-        setStatus(status);
+
+        // status
+        setStatus(getDeviceStatus(device.status));
+
+        // Device ID
+        txt_self_device_name.setText(device.toString());
     }
 
     public void toast(String str){
         Toast.makeText(WiFiDirectActivity.this, str, Toast.LENGTH_SHORT).show();
     }
-
 
 
 
@@ -207,13 +211,6 @@ public class WiFiDirectActivity extends Activity {
     Methods for Management Device Information
 
     -------------------------------------------------------------- */
-
-    private String getSelfDeviceAddress(){
-        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        String macAddress = wifiInfo.getMacAddress();
-        return macAddress;
-    }
 
     public void setDeviceName(String devName) {
         try {
