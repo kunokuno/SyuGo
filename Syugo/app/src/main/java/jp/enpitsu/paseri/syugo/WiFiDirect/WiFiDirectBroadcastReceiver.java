@@ -98,17 +98,24 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                     peers.addAll(peerList.getDeviceList());
                     Log.d(TAG,peers.toString());
 
+                    // if Device on Inviting or Connected, terminate.
+                    if (activity.onConnecting || activity.getStatus().equals("Invited") || activity.getStatus().equals("Connected")){
+                        return;
+                    }
+
                     // Search Opponent Device in Peer List
                     for(int i=0; i<peers.size(); ++i){
-                        if (peers.get(i).deviceName.equals("enpitsu02") && !activity.getStatus().equals("Connected") ){
-                            Log.d(TAG,"Opponent Device Found");
+                        if (peers.get(i).deviceName.equals("enpitsu02")){
+                            activity.toast("Opponent Device Found !");
 
                             WifiP2pDevice device = peers.get(i);
                             WifiP2pConfig config = new WifiP2pConfig();
                             config.deviceAddress = device.deviceAddress;
                             config.wps.setup = WpsInfo.PBC;
 
+                            Log.d(TAG,"connect challenge");
                             activity.connect(config);
+                            activity.onConnecting = true;
                             return;
                         }
                     }

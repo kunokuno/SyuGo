@@ -68,6 +68,7 @@ public class WiFiDirectActivity extends Activity {
     // Status
     private boolean isWifiP2pEnabled = false;
     private String connectionStatus = "unknown";
+    public boolean onConnecting = false;
 
     // Intent Filter
     private final IntentFilter intentFilter = new IntentFilter();
@@ -184,12 +185,14 @@ public class WiFiDirectActivity extends Activity {
             @Override
             public void onSuccess() {
                 // WiFiDirectBroadcastReceiver will notify us. Ignore for now.
+                onConnecting = false;
             }
 
             @Override
             public void onFailure(int reason) {
                 Toast.makeText(WiFiDirectActivity.this, "Connect failed. Retry.",
                         Toast.LENGTH_SHORT).show();
+                onConnecting = false;
             }
         });
     }
@@ -295,19 +298,20 @@ public class WiFiDirectActivity extends Activity {
                 return;
             }
 
+            onConnecting = false;
+
             manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
                 @Override
                 public void onSuccess() {
                     Toast.makeText(WiFiDirectActivity.this, "Discovery Initiated",
                             Toast.LENGTH_SHORT).show();
-                    setStatus("Finding...");
+                    setStatus("Searching...");
                 }
 
                 @Override
                 public void onFailure(int reasonCode) {
-                    Toast.makeText(WiFiDirectActivity.this, "Discovery Failed : " + reasonCode,
+                    Toast.makeText(WiFiDirectActivity.this, "Discovery End : " + reasonCode,
                             Toast.LENGTH_SHORT).show();
-                    setStatus("Fai");
                 }
             });
         }
