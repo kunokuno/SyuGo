@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import jp.enpitsu.paseri.syugo.Lookfor.LookActivity;
-import jp.enpitsu.paseri.syugo.MainActivity;
 import jp.enpitsu.paseri.syugo.R;
 import jp.enpitsu.paseri.syugo.Registor.RegActivity;
 
