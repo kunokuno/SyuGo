@@ -113,15 +113,10 @@
                     android:layout_weight="6"
                     android:background="@drawable/share"
                     android:scaleType="fitCenter"
-                android:layout_marginLeft="25dp"
-                android:layout_marginTop="25dp"
-                android:layout_marginRight="25dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginRight="20dp"
                 android:layout_marginBottom="10dp" />
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.1"/>
 
                 <ImageButton
                     android:layout_width="wrap_content"
@@ -130,9 +125,9 @@
                     android:layout_weight="6"
                     android:background="@drawable/search"
                     android:scaleType="fitCenter"
-                    android:layout_marginLeft="25dp"
-                    android:layout_marginTop="25dp"
-                    android:layout_marginRight="25dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginRight="15dp"
                     android:layout_marginBottom="10dp" />
             </LinearLayout>
 
