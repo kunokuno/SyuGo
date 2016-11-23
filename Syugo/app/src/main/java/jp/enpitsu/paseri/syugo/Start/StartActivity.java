@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 
 import jp.enpitsu.paseri.syugo.Lookfor.LookActivity;
 import jp.enpitsu.paseri.syugo.R;
@@ -17,18 +16,18 @@ import jp.enpitsu.paseri.syugo.Registor.RegActivity;
  */
 public class StartActivity extends Activity {
 
-    LinearLayout btn_registmode;
-    LinearLayout btn_searchmode;
+    ImageButton imbtn_registmode;
+    ImageButton imbtn_searchmode;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        btn_registmode = (LinearLayout) findViewById(R.id.button_regist);
-        btn_searchmode = (LinearLayout) findViewById(R.id.button_search);
+        imbtn_registmode = (ImageButton)findViewById(R.id.imageButton_regist);
+        imbtn_searchmode = (ImageButton)findViewById(R.id.imageButton_search);
 
-        btn_registmode.setOnClickListener(regListener);
-        btn_searchmode.setOnClickListener(seaListener);
+        imbtn_registmode.setOnClickListener(regListener);
+        imbtn_searchmode.setOnClickListener(seaListener);
     }
 
     //ユーザ登録ボタンの処理
@@ -36,7 +35,7 @@ public class StartActivity extends Activity {
         public void onClick(View v) {
             Intent intent_reg = new Intent(StartActivity.this, RegActivity.class);
             try {
-                    startActivity(intent_reg);
+                startActivity(intent_reg);
             } catch (Exception e){
                 Log.d("StartActivity","intent error to RegActivity");
             }
