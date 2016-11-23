@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import jp.enpitsu.paseri.syugo.Lookfor.LookActivity;
 import jp.enpitsu.paseri.syugo.R;
 import jp.enpitsu.paseri.syugo.Registor.RegActivity;
+import jp.enpitsu.paseri.syugo.WiFiDirect.WiFiDirectActivity;
 
 /**
  * Created by owner on 2016/10/25.
@@ -20,7 +21,6 @@ public class StartActivity extends Activity {
     Button btn_hide;
     ImageButton imbtn_registmode;
     ImageButton imbtn_searchmode;
-
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +38,7 @@ public class StartActivity extends Activity {
     //隠しボタン
     private View.OnClickListener hideListener =new View.OnClickListener() {
         public void onClick(View v) {
-            Intent intent_hide = new Intent(StartActivity.this, RegActivity.class);//WiFIのActivity名に変えてね
+            Intent intent_hide = new Intent(StartActivity.this, WiFiDirectActivity.class);//WiFIのActivity名に変えてね
             try {
                 startActivity(intent_hide);
             } catch (Exception e){

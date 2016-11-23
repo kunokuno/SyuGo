@@ -12,6 +12,10 @@
 
     <uses-feature android:name="android.hardware.location" android:required="true" />
 
+    <!-- WifiDirect用 -->
+    <uses-feature android:name="android.hardware.wifi.direct" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+
     <!--振動-->
     <uses-permission android:name="android.permission.VIBRATE"/>
 
@@ -49,6 +53,7 @@
         <activity android:name=".Rader.RaderActivity" />
         <activity android:name=".Lookfor.LookActivity"/>
         <activity android:name=".Registor.RegActivity"/>
+        <activity android:name=".WiFiDirect.WiFiDirectActivity"/>
     </application>
 
 </manifest>
