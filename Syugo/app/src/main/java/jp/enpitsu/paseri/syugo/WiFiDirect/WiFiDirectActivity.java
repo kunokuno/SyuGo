@@ -175,7 +175,7 @@ public class WiFiDirectActivity extends Activity {
                 // not going to send us a result. We will be notified by
                 // WiFiDeviceBroadcastReceiver instead.
 
-                startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
             } else {
                 Log.e("wd_notice", "Activity : channel or manager is null");
             }
@@ -281,22 +281,21 @@ public class WiFiDirectActivity extends Activity {
 //
 //    }
 //
-//    @Override
-//    public void connect(WifiP2pConfig config) {
-//        manager.connect(channel, config, new ActionListener() {
-//
-//            @Override
-//            public void onSuccess() {
-//                // WiFiDirectBroadcastReceiver will notify us. Ignore for now.
-//            }
-//
-//            @Override
-//            public void onFailure(int reason) {
-//                Toast.makeText(WiFiDirectActivity.this, "Connect failed. Retry.",
-//                        Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
+    public void connect(WifiP2pConfig config) {
+        manager.connect(channel, config, new ActionListener() {
+
+            @Override
+            public void onSuccess() {
+                // WiFiDirectBroadcastReceiver will notify us. Ignore for now.
+            }
+
+            @Override
+            public void onFailure(int reason) {
+                Toast.makeText(WiFiDirectActivity.this, "Connect failed. Retry.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 //
 //    @Override
 //    public void disconnect() {
