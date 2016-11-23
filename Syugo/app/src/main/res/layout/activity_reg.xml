@@ -79,13 +79,13 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
             android:id="@+id/id_show"
-            android:text=""
+            android:text=" "
             android:textColor="@color/colorWhite"
-            android:textSize="80dp"
-            android:layout_gravity="center_horizontal"
-            android:gravity="fill_horizontal|center_vertical"
+            android:textSize="60dp"
+            android:layout_gravity="center"
+            android:gravity="top|center_horizontal"
             android:background="#50ffffff"
             android:layout_weight="1"
             android:layout_marginTop="20dp"
