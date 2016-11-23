@@ -12,7 +12,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        >
 
         <TextView
             android:layout_width="wrap_content"
@@ -28,12 +29,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/custom_button_green">
+            android:background="@drawable/custom_button_green_state"
+            android:id="@+id/button_regist"
+            >
 
-            <ImageButton
+            <ImageView
                 android:layout_width="180dp"
                 android:layout_height="180dp"
-                android:id="@+id/imageButton_regist"
                 android:background="@drawable/registor_icon" />
 
             <TextView
@@ -41,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorWhite"
                 android:layout_weight="1"
-                android:text="ユーザー登録をして，相手にIDを知らせます"
+                android:text="ユーザー登録をして\n相手にIDを知らせます"
                 android:layout_gravity="center" />
 
         </LinearLayout>
@@ -56,12 +58,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/custom_button_green">
+            android:background="@drawable/custom_button_green_state"
+            android:id="@+id/button_search"
+            >
 
-            <ImageButton
+            <ImageView
                 android:layout_width="180dp"
                 android:layout_height="180dp"
-                android:id="@+id/imageButton_search"
                 android:background="@drawable/search_icon"
                 android:layout_gravity="center" />
 

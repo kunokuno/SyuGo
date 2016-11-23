@@ -6,9 +6,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import jp.enpitsu.paseri.syugo.Lookfor.LookActivity;
-import jp.enpitsu.paseri.syugo.MainActivity;
 import jp.enpitsu.paseri.syugo.R;
 import jp.enpitsu.paseri.syugo.Registor.RegActivity;
 
@@ -17,18 +17,18 @@ import jp.enpitsu.paseri.syugo.Registor.RegActivity;
  */
 public class StartActivity extends Activity {
 
-    ImageButton imbtn_registmode;
-    ImageButton imbtn_searchmode;
+    LinearLayout btn_registmode;
+    LinearLayout btn_searchmode;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        imbtn_registmode = (ImageButton)findViewById(R.id.imageButton_regist);
-        imbtn_searchmode = (ImageButton)findViewById(R.id.imageButton_search);
+        btn_registmode = (LinearLayout) findViewById(R.id.button_regist);
+        btn_searchmode = (LinearLayout) findViewById(R.id.button_search);
 
-        imbtn_registmode.setOnClickListener(regListener);
-        imbtn_searchmode.setOnClickListener(seaListener);
+        btn_registmode.setOnClickListener(regListener);
+        btn_searchmode.setOnClickListener(seaListener);
     }
 
     //ユーザ登録ボタンの処理
