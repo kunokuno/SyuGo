@@ -34,10 +34,15 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.attr.action;
+
 /**
  * A BroadcastReceiver that notifies of important wifi p2p events.
  */
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
+
+    // for debug
+    public static final String TAG = "wifi_direct_broadcaster";
 
     private WifiP2pManager manager;
     private Channel channel;
@@ -56,15 +61,11 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         this.activity = activity;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see android.content.BroadcastReceiver#onReceive(android.content.Context,
-     * android.content.Intent)
-     */
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
+
+        if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) { // Called if WIFI On/Off changed.
 
             // UI update to indicate wifi p2p status.
             int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
@@ -75,41 +76,51 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                 activity.setIsWifiP2pEnabled(false);
                 activity.resetData();
             }
-            Log.d("wd_notice", "BroadCaster : P2P state changed - " + state);
-        } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
-            Log.d("wd_notice", "BroadCaster : P2P peers changed");
+
+            Log.d(TAG, "onReceive : P2P state changed - " + state);
+
+        } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) { // Called if this device found something other device.
+
             // request available peers from the wifi p2p manager. This is an
             // asynchronous call and the calling activity is notified with a
             // callback on PeerListListener.onPeersAvailable()
-            if (manager != null) {
 
-                manager.requestPeers(channel, new PeerListListener() {
-                    private List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
+            if (manager == null) {
+                return;
+            }
 
-                    @Override
-                    public void onPeersAvailable(WifiP2pDeviceList peerList) {
-                        peers.clear();
-                        peers.addAll(peerList.getDeviceList());
-                        Log.d("wd_notice",peers.toString());
+            manager.requestPeers(channel, new PeerListListener() {
+                private List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
 
-                        for(int i=0; i<peers.size(); ++i){
-                            if (peers.get(i).deviceName.equals("enpitsu02") ){
-                                Log.d("wd_notice","Opponent Device Found");
+                @Override
+                public void onPeersAvailable(WifiP2pDeviceList peerList) {
+                    peers.clear();
+                    peers.addAll(peerList.getDeviceList());
+                    Log.d(TAG,peers.toString());
 
-                                WifiP2pDevice device = peers.get(i);
-                                WifiP2pConfig config = new WifiP2pConfig();
-                                config.deviceAddress = device.deviceAddress;
-                                config.wps.setup = WpsInfo.PBC;
+                    // Search Opponent Device in Peer List
+                    for(int i=0; i<peers.size(); ++i){
+                        if (peers.get(i).deviceName.equals("enpitsu02") && !activity.getStatus().equals("Connected") ){
+                            Log.d(TAG,"Opponent Device Found");
 
-                                activity.connect(config);
-                            }
+                            WifiP2pDevice device = peers.get(i);
+                            WifiP2pConfig config = new WifiP2pConfig();
+                            config.deviceAddress = device.deviceAddress;
+                            config.wps.setup = WpsInfo.PBC;
 
+                            activity.connect(config);
+                            return;
                         }
                     }
-                });
-            }
-        } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
-            Log.d("wd_notice","BroadCaster : P2P Connection Changed");
+
+                    // Can't Found Opponent Device
+                    activity.toast("Can't found device");
+                }
+            });
+
+            Log.d(TAG, "onReceive : P2P peers changed");
+
+        } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) { // Called if this device connect/disconnect opponent device.
 
             if (manager == null) {
                 return;
@@ -123,14 +134,10 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                 // we are connected with the other device, request connection
                 // info to find group owner IP
 
-                /*
-                DeviceDetailFragment fragment = (DeviceDetailFragment) activity
-                        .getFragmentManager().findFragmentById(R.id.frag_detail);
-                        */
                 manager.requestConnectionInfo(channel, new WifiP2pManager.ConnectionInfoListener() {
                     @Override
                     public void onConnectionInfoAvailable(WifiP2pInfo info) {
-                        Log.d("wd_notice",info.toString());
+                        activity.setOpponentDeviceInformation(info.toString());
                     }
                 });
 
@@ -138,35 +145,15 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                 // It's a disconnect
                 activity.resetData();
             }
-        } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
-            Log.d("wd_notice","BroadCaster : DeviceList catched");
+
+            Log.d(TAG,"BroadCaster : P2P Connection Changed");
+
+        } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) { // Called if changed this device status
+
             WifiP2pDevice device = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
-            updateThisDevice(device);
-            String thisDeviceName = device.deviceName;
-            Log.d("wd_notice",thisDeviceName);
-        }
-    }
+            activity.updateThisDevice(device);
 
-    public void updateThisDevice(WifiP2pDevice device) {
-        Log.d("wd_notice","This Device : "+getDeviceStatus(device.status));
-    }
-
-    private static String getDeviceStatus(int deviceStatus) {
-        Log.d("wd_notice", "Peer status :" + deviceStatus);
-        switch (deviceStatus) {
-            case WifiP2pDevice.AVAILABLE:
-                return "Available";
-            case WifiP2pDevice.INVITED:
-                return "Invited";
-            case WifiP2pDevice.CONNECTED:
-                return "Connected";
-            case WifiP2pDevice.FAILED:
-                return "Failed";
-            case WifiP2pDevice.UNAVAILABLE:
-                return "Unavailable";
-            default:
-                return "Unknown";
-
+            Log.d(TAG,"onReceive : This Device Status is Changed");
         }
     }
 }
