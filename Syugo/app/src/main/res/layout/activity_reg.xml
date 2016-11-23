@@ -37,10 +37,10 @@
             android:textSize="30dp"
             android:maxLength="20"
             android:inputType="text"
-            android:hint="type your name"
+            android:hint="type here"
             android:background="#96ffffff"
             android:colorControlNormal="@color/colorLightBackground"
-            android:colorControlActivated="@color/colorBackground"
+            android:colorControlActivated="@color/colorGreen"
             android:textCursorDrawable="@color/colorBackground"
             android:paddingLeft="10dp"
             android:paddingRight="20dp"
@@ -64,7 +64,7 @@
             android:textSize="25dp"
             android:layout_gravity="center_horizontal"
             android:gravity="center_vertical|center_horizontal"
-            android:background="#00BFFF"
+            android:background="#00AFFF"
             android:layout_weight="2"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
@@ -83,7 +83,7 @@
             android:id="@+id/id_show"
             android:text=""
             android:textColor="@color/colorWhite"
-            android:textSize="60dp"
+            android:textSize="80dp"
             android:layout_gravity="center_horizontal"
             android:gravity="fill_horizontal|center_vertical"
             android:background="#50ffffff"
@@ -103,9 +103,9 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_weight="300"
-            android:paddingLeft="30dp"
+            android:paddingLeft="40dp"
             android:paddingTop="10dp"
-            android:paddingRight="30dp">
+            android:paddingRight="40dp">
             <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -113,7 +113,10 @@
                     android:layout_weight="6"
                     android:background="@drawable/share"
                     android:scaleType="fitCenter"
-                    android:layout_margin="20dp" />
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="10dp" />
 
                 <Space
                     android:layout_width="wrap_content"
@@ -127,7 +130,10 @@
                     android:layout_weight="6"
                     android:background="@drawable/search"
                     android:scaleType="fitCenter"
-                    android:layout_margin="20dp" />
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginBottom="10dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -138,7 +144,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Share"
+                    android:text=" Share"
                     android:textSize="30dp"
                     android:textColor="#96ffffff"
                     android:layout_weight="1"
@@ -146,7 +152,7 @@
                 <Space
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.4"/>
+                    android:layout_weight="1"/>
 
                 <TextView
                     android:layout_width="wrap_content"
