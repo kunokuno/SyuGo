@@ -25,6 +25,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
@@ -41,6 +42,8 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import jp.enpitsu.paseri.syugo.R;
@@ -202,7 +205,18 @@ public class WiFiDirectActivity extends Activity {
     }
 
     public void disconnect(){
+        manager.removeGroup(channel, new ActionListener() {
 
+            public void onFailure(int reasonCode) {
+                Log.d(TAG, "Disconnect failed. Reason :" + reasonCode);
+
+            }
+
+            public void onSuccess() {
+                onConnecting = false;
+            }
+
+        });
     }
 
 
@@ -320,14 +334,6 @@ public class WiFiDirectActivity extends Activity {
             Toast.makeText(WiFiDirectActivity.this, "null",Toast.LENGTH_SHORT).show();
         }
     };
-
-
-
-
-
-
-
-
 
 
 
