@@ -47,6 +47,8 @@ import android.widget.ToggleButton;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import jp.enpitsu.paseri.syugo.Global.SyugoApp;
 import jp.enpitsu.paseri.syugo.R;
 
 import static android.webkit.ConsoleMessage.MessageLevel.LOG;
@@ -63,6 +65,9 @@ public class WiFiDirectActivity extends Activity {
 
     // For Debug
     public static final String TAG = "wifi_direct";
+
+    // app
+    SyugoApp app;
 
     // Instances
     private WifiP2pManager manager;
@@ -88,6 +93,9 @@ public class WiFiDirectActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wifidirect);
+
+        // app
+        app = (SyugoApp) getApplication();
 
         // Find UI Objects
         sw_p2p_enable = (Switch) findViewById(R.id.wd_p2p_enable);
@@ -118,6 +126,10 @@ public class WiFiDirectActivity extends Activity {
         channel = manager.initialize(this, getMainLooper(), null);
 
         Log.d(TAG,"hello");
+
+        //app.setOpponentUserInfo("enpitsublue","n8y6");
+        //app.setSelfUserInfo("enpitsugreen","bh96");
+        //app.saveUserInfo();
     }
 
     @Override
