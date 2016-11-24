@@ -78,7 +78,7 @@ public class WiFiDirectActivity extends Activity {
     private boolean isWifiP2pEnabled = false;
     private String connectionStatus = "unknown";
     public boolean onConnecting = false;
-    public String selfDeviceName;
+    public String selfDeviceName, opponentDeviceName;
 
     // Intent Filter
     private final IntentFilter intentFilter = new IntentFilter();
@@ -125,6 +125,10 @@ public class WiFiDirectActivity extends Activity {
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(this, getMainLooper(), null);
 
+        // Initialize IDs
+        updateIDs();
+
+
         Log.d(TAG,"hello");
 
         //app.setOpponentUserInfo("enpitsublue","n8y6");
@@ -157,11 +161,6 @@ public class WiFiDirectActivity extends Activity {
         sw_p2p_enable.setChecked(isWifiP2pEnabled);
     }
 
-    public void setSelfDeviceName(String name){
-        setDeviceName(name);
-        txt_self_device_name.setText("This Device Name : "+name);
-    }
-
     public void setStatus(String status){
         connectionStatus = status;
         txt_device_status.setText("Status : "+connectionStatus);
@@ -172,7 +171,12 @@ public class WiFiDirectActivity extends Activity {
     }
 
     public void setOpponentDeviceInformation(String information_str){
-        txt_opponent_device_name.setText("Opponent Device Status : \n"+information_str);
+        txt_opponent_device_name.setText(
+                "Opponent Device Name : \n"
+                + opponentDeviceName +"\n"
+                + "Status : \n"
+                + information_str
+        );
     }
 
     public void updateThisDevice(WifiP2pDevice device) {
@@ -193,7 +197,7 @@ public class WiFiDirectActivity extends Activity {
     }
 
     public String getOpponentID(){
-        return "enpitsu01";
+        return opponentDeviceName;
     }
 
     public void toast(String str){
@@ -270,7 +274,13 @@ public class WiFiDirectActivity extends Activity {
 
     -------------------------------------------------------------- */
 
-    public void setDeviceName(String devName) {
+    private void updateIDs(){
+        opponentDeviceName = app.getOpponentUserName() + "_" + app.getOpponentUserId();
+        selfDeviceName = app.getSelfUserName() + "_" + app.getSelfUserId();
+        setDeviceNameP2P(selfDeviceName);
+    }
+
+    public void setDeviceNameP2P(String devName) {
         try {
             Class[] paramTypes = new Class[3];
             paramTypes[0] = Channel.class;
