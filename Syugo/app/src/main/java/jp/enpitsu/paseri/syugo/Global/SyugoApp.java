@@ -24,8 +24,8 @@ class UserInfo {
 public class SyugoApp extends android.app.Application {
     private final String TAG = "SyuGoApp";
 
-    private UserInfo self = new UserInfo("self","init",new LocationData(0,0,0));
-    private UserInfo opponent = new UserInfo("opp","init",new LocationData(0,0,0));
+    private UserInfo self = new UserInfo("self","",new LocationData(0,0,0));
+    private UserInfo opponent = new UserInfo("opp","",new LocationData(0,0,0));
 
     /* -----------------------------------------------------
 
@@ -62,15 +62,17 @@ public class SyugoApp extends android.app.Application {
         editor.putString("opp_id",opponent.id);
         editor.apply();
         Log.d(TAG,"data save");
+        dump();
     }
 
     private void loadUserInfo(){
         SharedPreferences data = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
-        self.name = data.getString("self_name","null");
-        self.id = data.getString("self_id","null");
-        self.name = data.getString("opp_name","null");
-        self.id = data.getString("opp_id","null");
+        self.name = data.getString("self_name","");
+        self.id = data.getString("self_id","");
+        opponent.name = data.getString("opp_name","");
+        opponent.id = data.getString("opp_id","");
         Log.d(TAG,"data load");
+        dump();
     }
 
 
