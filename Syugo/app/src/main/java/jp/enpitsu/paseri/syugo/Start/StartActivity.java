@@ -27,8 +27,6 @@ public class StartActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
-        SyugoApp app = (SyugoApp) this.getApplication();
-        app.dump();
 
         btn_hide = (Button)findViewById(R.id.button);
         imbtn_registmode = (ImageButton)findViewById(R.id.imageButton_regist);
