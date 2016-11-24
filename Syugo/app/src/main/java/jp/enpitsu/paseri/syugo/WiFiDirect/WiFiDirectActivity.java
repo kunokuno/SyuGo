@@ -262,7 +262,6 @@ public class WiFiDirectActivity extends Activity {
             }
 
             public void onSuccess() {
-                connector.onConnecting = false;
             }
 
         });
