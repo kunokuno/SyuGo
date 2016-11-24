@@ -166,14 +166,22 @@ public class WiFiDirectActivity extends Activity {
     public void updateThisDevice(WifiP2pDevice device) {
 
         // status
-        setStatus(getDeviceStatus(device.status));
+        String status = getDeviceStatus(device.status);
+        setStatus(status);
 
         // Device ID
         txt_self_device_name.setText(device.toString());
+
+        // change UI
+        if(status.equals("Connected")){
+            btn_connect.setChecked(true);
+        }else{
+            btn_connect.setChecked(false);
+        }
     }
 
     public String getOpponentID(){
-        return "enpitsu02";
+        return "enpitsu01";
     }
 
     public void toast(String str){

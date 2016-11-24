@@ -105,7 +105,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
                     // Search Opponent Device in Peer List
                     for(int i=0; i<peers.size(); ++i){
-                        if (peers.get(i).deviceName.equals("enpitsu02")){
+                        if (peers.get(i).deviceName.equals(activity.getOpponentID())){
                             activity.toast("Opponent Device Found !");
 
                             WifiP2pDevice device = peers.get(i);
