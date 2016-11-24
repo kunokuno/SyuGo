@@ -77,7 +77,7 @@ public class WiFiDirectActivity extends Activity {
     // UI Objects
     Switch sw_p2p_enable;
     TextView txt_self_device_name,txt_opponent_device_name,txt_device_status;
-    Button btn_connect, btn_device_discover, btn_open_settings;
+    Button btn_connect, btn_ping, btn_open_settings;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,7 +90,7 @@ public class WiFiDirectActivity extends Activity {
         txt_opponent_device_name = (TextView) findViewById(R.id.wd_opponent_device_name);
         txt_device_status = (TextView) findViewById(R.id.wd_device_status);
         btn_connect = (Button) findViewById(R.id.wd_connect);
-        btn_device_discover = (Button) findViewById(R.id.wd_discover);
+        btn_ping = (Button) findViewById(R.id.wd_ping);
         btn_open_settings = (Button) findViewById(R.id.wd_wdsetting);
 
         // Initialize UI Objects
@@ -99,7 +99,7 @@ public class WiFiDirectActivity extends Activity {
         txt_opponent_device_name.setText("Opponent Device Name is unknown");
         txt_device_status.setText("Not Connected");
         btn_connect.setOnClickListener(connectClickListner);
-        btn_device_discover.setOnClickListener(discoverClickListner);
+        btn_ping.setOnClickListener(pingClickListner);
         btn_open_settings.setOnClickListener(opensettingsClickListner);
 
         // Register the Intent Filter
@@ -180,7 +180,7 @@ public class WiFiDirectActivity extends Activity {
     -------------------------------------------------------------- */
 
     public void resetData() {
-
+        setOpponentDeviceInformation("unknown");
     }
 
     public void connect(WifiP2pConfig config) {
@@ -286,7 +286,7 @@ public class WiFiDirectActivity extends Activity {
         }
     };
 
-    View.OnClickListener discoverClickListner = new View.OnClickListener() {
+    View.OnClickListener connectClickListner = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (!isWifiP2pEnabled) {
@@ -314,12 +314,13 @@ public class WiFiDirectActivity extends Activity {
         }
     };
 
-    View.OnClickListener connectClickListner = new View.OnClickListener() {
+    View.OnClickListener pingClickListner = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Toast.makeText(WiFiDirectActivity.this, "null",Toast.LENGTH_SHORT).show();
         }
     };
+
 
 
 
