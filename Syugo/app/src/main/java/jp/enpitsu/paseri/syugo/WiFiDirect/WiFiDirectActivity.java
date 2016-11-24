@@ -42,6 +42,7 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -80,7 +81,8 @@ public class WiFiDirectActivity extends Activity {
     // UI Objects
     Switch sw_p2p_enable;
     TextView txt_self_device_name,txt_opponent_device_name,txt_device_status;
-    Button btn_connect, btn_ping, btn_open_settings;
+    Button btn_ping, btn_open_settings;
+    ToggleButton btn_connect;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,7 +94,7 @@ public class WiFiDirectActivity extends Activity {
         txt_self_device_name = (TextView) findViewById(R.id.wd_self_device_name);
         txt_opponent_device_name = (TextView) findViewById(R.id.wd_opponent_device_name);
         txt_device_status = (TextView) findViewById(R.id.wd_device_status);
-        btn_connect = (Button) findViewById(R.id.wd_connect);
+        btn_connect = (ToggleButton) findViewById(R.id.wd_connect);
         btn_ping = (Button) findViewById(R.id.wd_ping);
         btn_open_settings = (Button) findViewById(R.id.wd_wdsetting);
 
@@ -101,7 +103,7 @@ public class WiFiDirectActivity extends Activity {
         txt_self_device_name.setText( "unknown" );
         txt_opponent_device_name.setText("Opponent Device Name is unknown");
         txt_device_status.setText("Not Connected");
-        btn_connect.setOnClickListener(connectClickListner);
+        btn_connect.setOnCheckedChangeListener(connectClickListner);
         btn_ping.setOnClickListener(pingClickListner);
         btn_open_settings.setOnClickListener(opensettingsClickListner);
 
@@ -170,6 +172,10 @@ public class WiFiDirectActivity extends Activity {
         txt_self_device_name.setText(device.toString());
     }
 
+    public String getOpponentID(){
+        return "enpitsu02";
+    }
+
     public void toast(String str){
         Toast.makeText(WiFiDirectActivity.this, str, Toast.LENGTH_SHORT).show();
     }
@@ -184,6 +190,24 @@ public class WiFiDirectActivity extends Activity {
 
     public void resetData() {
         setOpponentDeviceInformation("unknown");
+    }
+
+    private void discover(){
+        // discover
+        manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(WiFiDirectActivity.this, "Discovery Initiated",
+                        Toast.LENGTH_SHORT).show();
+                setStatus("Searching...");
+            }
+
+            @Override
+            public void onFailure(int reasonCode) {
+                Toast.makeText(WiFiDirectActivity.this, "Discovery End : " + reasonCode,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void connect(WifiP2pConfig config) {
@@ -300,31 +324,24 @@ public class WiFiDirectActivity extends Activity {
         }
     };
 
-    View.OnClickListener connectClickListner = new View.OnClickListener() {
+    CompoundButton.OnCheckedChangeListener connectClickListner = new CompoundButton.OnCheckedChangeListener() {
         @Override
-        public void onClick(View v) {
-            if (!isWifiP2pEnabled) {
-                Toast.makeText(WiFiDirectActivity.this, "Warning : P2P is OFF",
-                        Toast.LENGTH_SHORT).show();
-                return;
+        public void onCheckedChanged(CompoundButton view, boolean isChecked) {
+            if (isChecked){
+                // discover & connect
+                if (!isWifiP2pEnabled) {
+                    Toast.makeText(WiFiDirectActivity.this, "Warning : P2P is OFF",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                onConnecting = false;
+                discover();
+            }else{
+                // disconnect
+                disconnect();
             }
 
-            onConnecting = false;
 
-            manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
-                @Override
-                public void onSuccess() {
-                    Toast.makeText(WiFiDirectActivity.this, "Discovery Initiated",
-                            Toast.LENGTH_SHORT).show();
-                    setStatus("Searching...");
-                }
-
-                @Override
-                public void onFailure(int reasonCode) {
-                    Toast.makeText(WiFiDirectActivity.this, "Discovery End : " + reasonCode,
-                            Toast.LENGTH_SHORT).show();
-                }
-            });
         }
     };
 
