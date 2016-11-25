@@ -48,6 +48,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private Channel channel;
     private WiFiDirectActivity activity;
     private WiFiDirectConnector connector;
+    private WiFiDirectCommunicator communicator;
 
     /**
      * @param manager WifiP2pManager system service
@@ -61,6 +62,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         this.channel = channel;
         this.activity = activity;
         connector = activity.connector;
+        communicator = activity.communicator;
     }
 
     @Override
@@ -109,13 +111,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                 // we are connected with the other device, request connection
                 // info to find group owner IP
 
-                manager.requestConnectionInfo(channel, new WifiP2pManager.ConnectionInfoListener() {
-                    @Override
-                    public void onConnectionInfoAvailable(WifiP2pInfo info) {
-                        activity.setOpponentDeviceInformation(info.toString());
-                    }
-                });
-                //manager.requestConnectionInfo(channel, fragment);
+                manager.requestConnectionInfo(channel, communicator);
 
             } else {
                 // It's a disconnect

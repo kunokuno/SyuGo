@@ -74,6 +74,7 @@ public class WiFiDirectActivity extends Activity {
     private Channel channel;
     private BroadcastReceiver receiver = null;
     public WiFiDirectConnector connector;
+    public WiFiDirectCommunicator communicator;
 
     // Status
     private boolean isWifiP2pEnabled = false;

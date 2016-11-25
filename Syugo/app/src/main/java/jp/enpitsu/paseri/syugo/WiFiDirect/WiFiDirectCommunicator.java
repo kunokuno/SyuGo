@@ -44,6 +44,8 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
 
     @Override
     public void onConnectionInfoAvailable(WifiP2pInfo p2pInfo) {
+        activity.setOpponentDeviceInformation(p2pInfo.toString());
+
         Thread handler = null;
         /*
          * The group owner accepts connections using a server socket and then spawns a
