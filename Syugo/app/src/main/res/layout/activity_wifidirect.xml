@@ -26,13 +26,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/wd_opponent_device_name"
-        android:layout_weight="0.49" />
+        android:layout_weight="0.22" />
 
     <TextView
         android:text="Device Status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.12"
+        android:layout_weight="0.09"
         android:id="@+id/wd_device_status" />
 
     <Switch
@@ -53,17 +53,24 @@
         android:textOn="Disconnect" />
 
     <Button
-        android:text="Ping"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/wd_ping"
-        android:layout_weight="0.05" />
-
-    <Button
         android:text="Open Settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/wd_wdsetting"
+        android:layout_weight="0.05" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/wd_txt_chat"
+        android:layout_weight="0.14" />
+
+    <Button
+        android:text="Ping"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/wd_ping"
         android:layout_weight="0.05" />
 
 

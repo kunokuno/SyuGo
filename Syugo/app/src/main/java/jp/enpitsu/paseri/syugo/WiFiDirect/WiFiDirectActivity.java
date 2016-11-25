@@ -98,6 +98,14 @@ public class WiFiDirectActivity extends Activity {
         // app
         app = (SyugoApp) getApplication();
 
+        // Instantiate
+        connector = new WiFiDirectConnector(this);
+        communicator = new WiFiDirectCommunicator(this);
+
+        // for chat
+        communicator.chatLine = (TextView) findViewById(R.id.wd_txt_chat);
+        btn_ping.setOnClickListener(communicator.chatsendClickListner);
+
         // Find UI Objects
         sw_p2p_enable = (Switch) findViewById(R.id.wd_p2p_enable);
         txt_self_device_name = (TextView) findViewById(R.id.wd_self_device_name);
@@ -113,7 +121,6 @@ public class WiFiDirectActivity extends Activity {
         txt_opponent_device_name.setText("Opponent Device Name is unknown");
         txt_device_status.setText("Not Connected");
         btn_connect.setOnCheckedChangeListener(connectClickListner);
-        btn_ping.setOnClickListener(pingClickListner);
         btn_open_settings.setOnClickListener(opensettingsClickListner);
 
         // Register the Intent Filter
@@ -128,10 +135,6 @@ public class WiFiDirectActivity extends Activity {
 
         // Initialize IDs
         updateIDs();
-
-        // Instantiate
-        connector = new WiFiDirectConnector(this);
-
 
         Log.d(TAG,"hello");
 
