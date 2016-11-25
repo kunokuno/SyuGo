@@ -4,6 +4,9 @@ package jp.enpitsu.paseri.syugo.WiFiDirect;
 
 import android.os.Handler;
 import android.util.Log;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStream;

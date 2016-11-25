@@ -8,6 +8,8 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -27,7 +29,7 @@ import java.net.Socket;
  * Created by Prily on 2016/11/24.
  */
 
-public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoListener {
+public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoListener, Handler.Callback {
 
     public static final String TAG = "wifi_direct_comnktor";
 
@@ -37,6 +39,8 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
     public static final int MY_HANDLE = 0x400 + 2;
 
     WiFiDirectActivity activity;
+    ChatManager chatManager;
+    TextView chatLine;
 
     WiFiDirectCommunicator(WiFiDirectActivity activity){
         this.activity = activity;
@@ -71,4 +75,39 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
             handler.start();
         }
     }
+
+
+    // receive message
+    @Override
+    public boolean handleMessage(Message msg) {
+        switch (msg.what) {
+            case MESSAGE_READ:
+                byte[] readBuf = (byte[]) msg.obj;
+                // construct a string from the valid bytes in the buffer
+                String readMessage = new String(readBuf, 0, msg.arg1);
+                Log.d(TAG, readMessage);
+                //activity.pushMessage("Buddy: " + readMessage);
+                break;
+
+            case MY_HANDLE:
+                Object obj = msg.obj;
+                chatManager = (ChatManager) obj;
+
+        }
+        return true;
+    }
+
+    // send message
+    View.OnClickListener chatsendClickListner = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (chatManager != null) {
+                chatManager.write(chatLine.getText().toString().getBytes());
+                //pushMessage("Me: " + chatLine.getText().toString());
+                chatLine.setText("");
+                chatLine.clearFocus();
+            }
+        }
+    };
+
 }
