@@ -68,7 +68,8 @@ GitHub内の[release](https://github.com/kunokuno/SyuGo/releases)からAPKファ
 @携帯から開いた場合はPC版の画面にしてからダウンロードしてください<br>
 
 ##対応バージョン
-Android5.0から導入されたカメラAPIを使用しているので、**5.0以上(APIレベル21以上)の端末**じゃないと正常に動作しない可能性があります。
+Android5.0から導入されたカメラAPIを使用しているので、**5.0以上(APIレベル21以上)の端末**じゃないと正常に動作しない可能性があります。<br>
+>起動しない等の問題があれば機種とバージョンを[ここ](https://github.com/kunokuno/SyuGo/issues)に書いてくれると嬉しいです...
 
 
 
