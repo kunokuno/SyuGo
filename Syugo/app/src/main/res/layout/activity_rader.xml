@@ -53,20 +53,6 @@
                 android:shadowDx="0"
                 android:shadowDy="0"
                 android:shadowRadius="2.0" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="measuring..."
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/colorWhite"
-                android:id="@+id/textView_DistanceMessageShadow"
-                android:layout_gravity="center"
-                android:textSize="70dp"
-                android:textStyle="bold"
-                android:shadowColor="#de000000"
-                android:shadowDx="0"
-                android:shadowDy="0"
-                android:shadowRadius="2.0" />
         </FrameLayout>
         <TextView
             android:layout_width="wrap_content"
@@ -88,7 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="15dp"
         android:gravity="center"
         android:id="@+id/linearLayout_bottomButtons"
         android:layout_marginLeft="30dp"
@@ -106,7 +92,10 @@
             android:textOff="AR OFF\n"
             android:checked="false"
             android:clickable="true"
-            android:layout_gravity="top" />
+            android:gravity="center"
+            android:layout_gravity="top"
+            android:paddingTop="15dp"
+            android:paddingBottom="10dp" />
 
         <ToggleButton
             android:layout_width="wrap_content"
@@ -120,7 +109,10 @@
             android:textOff="Vibe OFF\n"
             android:checked="true"
             android:clickable="true"
-            android:layout_gravity="top" />
+            android:layout_gravity="top"
+            android:gravity="center"
+            android:paddingTop="15dp"
+            android:paddingBottom="10dp" />
 
         <ToggleButton
             android:layout_width="wrap_content"
@@ -133,7 +125,10 @@
             android:textOff="Wifi\nDirect"
             android:textOn="Wifi\nDirect"
             android:checked="false"
-            android:clickable="true" />
+            android:clickable="true"
+            android:gravity="center"
+            android:paddingTop="15dp"
+            android:paddingBottom="10dp" />
     </LinearLayout>
 
 </FrameLayout>
