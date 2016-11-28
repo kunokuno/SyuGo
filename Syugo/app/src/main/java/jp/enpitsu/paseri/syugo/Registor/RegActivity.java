@@ -3,6 +3,7 @@ package jp.enpitsu.paseri.syugo.Registor;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -11,24 +12,26 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import jp.enpitsu.paseri.syugo.Lookfor.LookActivity;
 import jp.enpitsu.paseri.syugo.R;
 
-/**
+/*
  * Created by owner on 2016/09/25.
  */
+
 public class RegActivity extends Activity {
 
     private Button btn_issue;       //ID発行ボタン
-    private Button btn_share;       //ID共有ボタン
-    private Button btn_findmode;   //検索モードに遷移するボタン
+    private ImageButton btn_share;       //ID共有ボタン
+    private ImageButton btn_findmode;   //検索モードに遷移するボタン
     private EditText id_box;        //ユーザ名を入力するbox
     private TextView text_idshow;   //サーバで発行されたIDを表示する領域
     private String user_name,myID;
 
-    private String mac_add;         //Android端末のMacアドレスを保存
+    private String wifi_key = "paselow_cathy";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,8 +39,8 @@ public class RegActivity extends Activity {
 
         //xmlファイルとの紐づけ
         btn_issue = (Button)findViewById(R.id.button_issue);
-        btn_share = (Button)findViewById(R.id.button_share);
-        btn_findmode = (Button)findViewById(R.id.button_findmode);
+        btn_share = (ImageButton)findViewById(R.id.button_share);
+        btn_findmode = (ImageButton)findViewById(R.id.button_findmode);
         id_box = (EditText)findViewById(R.id.text_id);
         text_idshow = (TextView)findViewById(R.id.id_show);
 
@@ -46,27 +49,22 @@ public class RegActivity extends Activity {
         btn_share.setOnClickListener(shaListener);
         btn_findmode.setOnClickListener(findListener);
     }
+
     //ID発行ボタンの処理
     private View.OnClickListener issListener = new View.OnClickListener() {
         public void onClick(View v) {
             user_name = id_box.getText().toString();
-            WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-
-            mac_add = wifiInfo.getMacAddress();
-            //mac address 確認用
-            //text_idshow.setText(mac_add);
 
             HttpComOnRegistor httpComReg = new HttpComOnRegistor(
                     new HttpComOnRegistor.AsyncTaskCallback() {
                         @Override
                         public void postExecute(String result) {
-                            myID = result;
+                            myID = result.replaceAll("\n","");
                             text_idshow.setText(myID);
                         }
                     }
             );
-            httpComReg.setUserInfo(user_name,mac_add);
+            httpComReg.setUserInfo(user_name,wifi_key);
             httpComReg.executeOnExecutor( AsyncTask.THREAD_POOL_EXECUTOR );
 
 

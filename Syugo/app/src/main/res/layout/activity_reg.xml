@@ -1,134 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:paddingBottom="16dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="16dp"
-    android:background="@color/colorBackground">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ユーザ名を入力してください．"
-        android:id="@+id/textView"
-        android:textColor="@color/colorWhite"
-        android:textSize="20dp"
-        android:layout_gravity="center_horizontal"
-        android:accessibilityLiveRegion="none"
-        android:layout_weight="1"
-        android:gravity="center_vertical|center_horizontal" />
-
-    <EditText
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/text_id"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1"
-        android:textSize="20dp"
-        android:maxLength="20"
-        android:inputType="text"
-        android:hint="k"
-        android:background="@color/colorLightBackground"
-        android:colorControlNormal="@color/colorLightBackground"
-        android:colorControlActivated="@color/colorBackground"
-        android:textCursorDrawable="@color/colorBackground"
-        />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1" />
-
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ID発行"
-            android:id="@+id/button_issue"
-            android:textColor="@color/colorWhite"
-            android:textSize="20dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:background="@drawable/custom_button_green_state"
-            android:paddingLeft="40dp"
-            android:paddingRight="40dp"
-            />
-
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="あなたのIDは"
-        android:id="@+id/textView4"
-        android:textColor="@color/colorWhite"
-        android:textSize="20dp"
-        android:layout_gravity="left|center"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:paddingLeft="20dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/id_show"
-        android:text=""
-        android:textColor="@color/colorGreen"
-        android:textSize="30dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1"
-        android:gravity="fill_horizontal|center_vertical" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="です．"
-        android:id="@+id/textView5"
-        android:textColor="@color/colorWhite"
-        android:textSize="20dp"
-        android:layout_gravity="center_vertical|right"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:paddingRight="20dp" />
+        android:layout_height="match_parent"
+        android:src="@drawable/menu_bg2"
+        android:scaleType="fitXY"/>
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="25dp">
 
-        <Button
-            android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ID共有"
-            android:id="@+id/button_share"
-            android:textColor="@color/colorWhite"
-            android:textSize="20dp"
-            android:layout_weight="1"
-            android:background="@drawable/custom_button_green_state"/>
+            android:textColor="#96ffffff"
+            android:text="Your Name"
+            android:textSize="40dp"
+            android:gravity="bottom"
+            android:paddingTop="15dp"
+            android:paddingBottom="5dp"
+            android:layout_weight="0.2"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_id"
+            android:layout_gravity="left|center_horizontal"
+            android:textSize="30dp"
+            android:maxLength="20"
+            android:inputType="text"
+            android:hint="type here"
+            android:background="#96ffffff"
+            android:colorControlNormal="@color/colorLightBackground"
+            android:colorControlActivated="@color/colorGreen"
+            android:textCursorDrawable="@color/colorBackground"
+            android:paddingLeft="10dp"
+            android:paddingRight="20dp"
+            android:layout_weight="0.2"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="0dp" />
 
         <Space
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1" />
 
         <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="REGISTOR"
+            android:id="@+id/button_issue"
+            android:textColor="@color/colorWhite"
+            android:textSize="25dp"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical|center_horizontal"
+            android:background="#00AFFF"
+            android:layout_weight="2"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp" />
+
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:id="@+id/id_show"
+            android:text=" "
+            android:textColor="@color/colorWhite"
+            android:textSize="60dp"
+            android:layout_gravity="center"
+            android:gravity="top|center_horizontal"
+            android:background="#50ffffff"
+            android:layout_weight="1"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="3"/>
+
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="検索モード"
-            android:id="@+id/button_findmode"
-            android:textColor="@color/colorWhite"
-            android:textSize="20dp"
-            android:layout_weight="1"
-            android:background="@drawable/custom_button_green_state"/>
-    </LinearLayout>
+            android:orientation="horizontal"
+            android:layout_weight="300"
+            android:paddingLeft="40dp"
+            android:paddingTop="10dp"
+            android:paddingRight="40dp">
+            <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/button_share"
+                    android:layout_weight="6"
+                    android:background="@drawable/share"
+                    android:scaleType="fitCenter"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="10dp" />
 
-</LinearLayout>
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/button_findmode"
+                    android:layout_weight="6"
+                    android:background="@drawable/search"
+                    android:scaleType="fitCenter"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginBottom="10dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="0.1">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" Share"
+                    android:textSize="30dp"
+                    android:textColor="#96ffffff"
+                    android:layout_weight="1"
+                    android:gravity="right"/>
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Search"
+                    android:textSize="30dp"
+                    android:textColor="#96ffffff"
+                    android:layout_weight="1"
+                    android:gravity="left"/>
+            </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
