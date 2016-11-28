@@ -115,13 +115,13 @@ public class RaderActivity extends Activity {
 
 //        graphView = (GraphView)findViewById( R.id.AR_graph_view );
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        arSwitchButton = (ToggleButton)findViewById( R.id.ARSwitchButton );
+        arSwitchButton = (ToggleButton)findViewById( R.id.button_AR );
         backgroundImageView = (ImageView)findViewById( R.id.backgroundImageView );
 
-        textView_Message = (TextView)findViewById( R.id.textView_Message );
+//        textView_Message = (TextView)findViewById( R.id.textView_Message );
         textView_DistanceMessage = (TextView)findViewById( R.id.textView_DistanceMessage );
         textView_AccuracyMessage = (TextView)findViewById( R.id.textView_AccuracyMessage );
-        button_StopVibration = (Button)findViewById(R.id.button_vibration);
+        button_StopVibration = (ToggleButton)findViewById(R.id.button_Vibe);
 
         textureView = (TextureView) findViewById( R.id.texture_view );
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {

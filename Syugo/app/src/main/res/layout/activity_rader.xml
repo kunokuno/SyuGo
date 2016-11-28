@@ -15,41 +15,59 @@
         android:layout_height="match_parent" />
 
     <!--位置情報のメッセージ-->
+
+
+    <!--ARでないときの背景-->
+    <!--rader_background2は暗め，無印は明るめ-->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/backgroundImageView"
+        android:layout_gravity="center"
+        android:src="@drawable/rader_background2"
+        android:visibility="visible"
+        android:scaleType="centerCrop" />
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal|top">
+        android:layout_gravity="center">
 
-        <TextView
+        <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="相手との距離"
-            android:id="@+id/textView_Message"
-            android:textColor="@color/colorWhite"
-            android:layout_gravity="center_horizontal"
-            android:textSize="17dp"
-            android:shadowColor="#de000000"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="2.0"
-            android:singleLine="false" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="距離測定中..."
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/colorWhite"
-            android:id="@+id/textView_DistanceMessage"
-            android:layout_gravity="center_horizontal"
-            android:textSize="30dp"
-            android:textStyle="bold"
-            android:shadowColor="#de000000"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="2.0" />
-
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="measuring..."
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/colorWhite"
+                android:id="@+id/textView_DistanceMessage"
+                android:layout_gravity="center"
+                android:textSize="70dp"
+                android:textStyle="bold"
+                android:shadowColor="#de000000"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="2.0" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="measuring..."
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/colorWhite"
+                android:id="@+id/textView_DistanceMessageShadow"
+                android:layout_gravity="center"
+                android:textSize="70dp"
+                android:textStyle="bold"
+                android:shadowColor="#de000000"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="2.0" />
+        </FrameLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -65,49 +83,57 @@
 
     </LinearLayout>
 
-
-    <!--ARでないときの背景-->
-    <!--rader_background2は暗め，無印は明るめ-->
-    <ImageView
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/backgroundImageView"
-        android:layout_gravity="center"
-        android:src="@drawable/rader_background2"
-        android:visibility="visible"
-        android:scaleType="centerCrop" />
-
-    <!--コンパス-->
-    <!--<jp.enpitsu.paseri.syugo.AR.ARObjects.Graph.GraphView-->
-    <!--android:id="@+id/AR_graph_view"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="center"-->
-    <!--android:layout_marginTop="10dp"-->
-    <!--android:layout_marginBottom="20dp" />-->
-
-    <ToggleButton
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="AR"
-        android:id="@+id/ARSwitchButton"
-        android:layout_gravity="right|top"
-        android:onClick="onARSwitchButtonClicked" />
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="30dp"
+        android:gravity="center"
+        android:id="@+id/linearLayout_bottomButtons"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="振動とめる"
-        android:id="@+id/button_vibration"
-        android:layout_gravity="center_horizontal|bottom"
-        android:onClick="onBottonClick"
-        android:textColor="@color/colorWhite"
-        android:allowUndo="false"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp"
-        android:paddingRight="40dp"
-        android:paddingLeft="40dp"
-        android:background="@drawable/custom_button_state"
-        android:textStyle="bold" />
+        <ToggleButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_AR"
+            android:background="@drawable/custom_rader_button_state"
+            android:textColor="@color/colorWhite"
+            android:textSize="30dp"
+            android:layout_weight="1"
+            android:textOn="AR ON\n"
+            android:textOff="AR OFF\n"
+            android:checked="false"
+            android:clickable="true"
+            android:layout_gravity="top" />
+
+        <ToggleButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_Vibe"
+            android:background="@drawable/custom_rader_button_state"
+            android:textColor="@color/colorWhite"
+            android:textSize="30dp"
+            android:layout_weight="1"
+            android:textOn="Vibe ON\n"
+            android:textOff="Vibe OFF\n"
+            android:checked="true"
+            android:clickable="true"
+            android:layout_gravity="top" />
+
+        <ToggleButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button_wifiDirect"
+            android:background="@drawable/custom_rader_button_state"
+            android:textColor="@color/colorWhite"
+            android:textSize="30dp"
+            android:layout_weight="1"
+            android:textOff="Wifi\nDirect"
+            android:textOn="Wifi\nDirect"
+            android:checked="false"
+            android:clickable="true" />
+    </LinearLayout>
 
 </FrameLayout>
