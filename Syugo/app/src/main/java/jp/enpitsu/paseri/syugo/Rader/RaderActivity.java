@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
+import android.graphics.Typeface;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -44,7 +45,7 @@ public class RaderActivity extends Activity {
 
     private MyGLSurfaceView glView;
 
-    private ToggleButton arSwitchButton;
+    private ToggleButton button_AR, button_Vibration, button_WifiDirect;
     private ImageView backgroundImageView;
     TextureView textureView;
 
@@ -112,16 +113,26 @@ public class RaderActivity extends Activity {
         this.addContentView( view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT ));
 
-
-//        graphView = (GraphView)findViewById( R.id.AR_graph_view );
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        arSwitchButton = (ToggleButton)findViewById( R.id.ARSwitchButton );
+
         backgroundImageView = (ImageView)findViewById( R.id.backgroundImageView );
 
-        textView_Message = (TextView)findViewById( R.id.textView_Message );
+        button_AR          = (ToggleButton)findViewById( R.id.button_AR );
+        button_Vibration  = (ToggleButton)findViewById( R.id.button_Vibe );
+        button_WifiDirect = (ToggleButton)findViewById( R.id.button_wifiDirect );
+
+//        textView_Message = (TextView)findViewById( R.id.textView_Message );
         textView_DistanceMessage = (TextView)findViewById( R.id.textView_DistanceMessage );
         textView_AccuracyMessage = (TextView)findViewById( R.id.textView_AccuracyMessage );
-        button_StopVibration = (Button)findViewById(R.id.button_vibration);
+
+
+        // フォント設定
+        button_AR.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        button_WifiDirect.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        button_Vibration.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        textView_DistanceMessage.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        textView_AccuracyMessage.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+
 
         textureView = (TextureView) findViewById( R.id.texture_view );
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
@@ -425,7 +436,7 @@ public class RaderActivity extends Activity {
 
     // ARモードのon/off切り替えボタンがクリックされたとき
     public void onARSwitchButtonClicked(View v) {
-        if( arSwitchButton.isChecked() == true ) { // OFF → ONのとき
+        if( button_AR.isChecked() == true ) { // OFF → ONのとき
             // ARモード開始
             glView.switchModeAR( true );
             // カメラ起動
