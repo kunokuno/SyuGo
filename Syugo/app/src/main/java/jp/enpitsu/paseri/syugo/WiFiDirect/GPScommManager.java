@@ -17,24 +17,23 @@ import java.net.Socket;
  * Handles reading and writing of messages with socket buffers. Uses a Handler
  * to post messages to UI thread for UI updates.
  */
-public class ChatManager implements Runnable {
+public class GPSCommManager implements Runnable {
 
     private Socket socket = null;
     private Handler handler;
 
-    public ChatManager(Socket socket, Handler handler) {
+    public GPSCommManager(Socket socket, Handler handler) {
         this.socket = socket;
         this.handler = handler;
     }
 
     private InputStream iStream;
     private OutputStream oStream;
-    private static final String TAG = "ChatHandler";
+    private static final String TAG = "GPScommManager";
 
     @Override
     public void run() {
         try {
-
             iStream = socket.getInputStream();
             oStream = socket.getOutputStream();
             byte[] buffer = new byte[1024];

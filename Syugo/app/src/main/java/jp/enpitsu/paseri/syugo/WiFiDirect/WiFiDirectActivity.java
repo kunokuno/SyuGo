@@ -39,6 +39,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -102,9 +103,9 @@ public class WiFiDirectActivity extends Activity {
         connector = new WiFiDirectConnector(this);
         communicator = new WiFiDirectCommunicator(this);
 
-        // for chat
-        communicator.chatLine = (TextView) findViewById(R.id.wd_txt_chat);
-        btn_ping.setOnClickListener(communicator.chatsendClickListner);
+        // for communication
+        btn_ping = (Button) findViewById(R.id.wd_ping);
+        btn_ping.setOnClickListener(communicator.pingClickListner);
 
         // Find UI Objects
         sw_p2p_enable = (Switch) findViewById(R.id.wd_p2p_enable);
@@ -112,7 +113,6 @@ public class WiFiDirectActivity extends Activity {
         txt_opponent_device_name = (TextView) findViewById(R.id.wd_opponent_device_name);
         txt_device_status = (TextView) findViewById(R.id.wd_device_status);
         btn_connect = (ToggleButton) findViewById(R.id.wd_connect);
-        btn_ping = (Button) findViewById(R.id.wd_ping);
         btn_open_settings = (Button) findViewById(R.id.wd_wdsetting);
 
         // Initialize UI Objects

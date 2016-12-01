@@ -45,9 +45,9 @@ public class GroupOwnerSocketHandler extends Thread {
     public void run() {
         while (true) {
             try {
-                // A blocking operation. Initiate a ChatManager instance when
+                // A blocking operation. Initiate a GPSCommManager instance when
                 // there is a new connection
-                pool.execute(new ChatManager(socket.accept(), handler));
+                pool.execute(new GPSCommManager(socket.accept(), handler));
                 Log.d(TAG, "Launching the I/O handler");
 
             } catch (IOException e) {

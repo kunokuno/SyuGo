@@ -13,7 +13,7 @@ public class ClientSocketHandler extends Thread {
 
     private static final String TAG = "ClientSocketHandler";
     private Handler handler;
-    private ChatManager chat;
+    private GPSCommManager manager;
     private InetAddress mAddress;
 
     public ClientSocketHandler(Handler handler, InetAddress groupOwnerAddress) {
@@ -28,8 +28,8 @@ public class ClientSocketHandler extends Thread {
             socket.bind(null);
             socket.connect(new InetSocketAddress(mAddress.getHostAddress(),WiFiDirectCommunicator.PORT), WiFiDirectCommunicator.TIMEOUT);
             Log.d(TAG, "Launching the I/O handler");
-            chat = new ChatManager(socket, handler);
-            new Thread(chat).start();
+            manager = new GPSCommManager(socket, handler);
+            new Thread(manager).start();
         } catch (IOException e) {
             e.printStackTrace();
             try {
@@ -40,9 +40,4 @@ public class ClientSocketHandler extends Thread {
             return;
         }
     }
-
-    public ChatManager getChat() {
-        return chat;
-    }
-
 }

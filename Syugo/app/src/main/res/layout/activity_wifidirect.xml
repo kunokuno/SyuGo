@@ -59,13 +59,6 @@
         android:id="@+id/wd_wdsetting"
         android:layout_weight="0.05" />
 
-    <TextView
-        android:text="TextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/wd_txt_chat"
-        android:layout_weight="0.14" />
-
     <Button
         android:text="Ping"
         android:layout_width="match_parent"
