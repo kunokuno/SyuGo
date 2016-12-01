@@ -23,7 +23,7 @@ import java.net.URL;
 
 public class HttpComOnRegistor extends AsyncTask<Integer, Integer, String>
 {
-    String myName, mac_add, myID;
+    String myName, wifi_key, myID;
 
     // Activiyへのコールバック用interface
     public interface AsyncTaskCallback {
@@ -43,8 +43,7 @@ public class HttpComOnRegistor extends AsyncTask<Integer, Integer, String>
 
         StringBuilder uri = new StringBuilder(
                 "http://ubermensch.noor.jp/enPiT/regist_user.php?" +
-                        "name=" + myName + "&alt=20&lat=29&lan=99&accuracy=10&etime=10"+
-                        "&mac="+ mac_add);
+                        "name=" + myName + "&mac="+ wifi_key);
 
         Log.d("HttpURL", uri.toString());
 
@@ -132,9 +131,9 @@ public class HttpComOnRegistor extends AsyncTask<Integer, Integer, String>
         return out;
     }
 
-    void setUserInfo( String user_name, String mac_add ) {
+    void setUserInfo( String user_name, String wifi_key ) {
         this.myName = user_name;
-        this.mac_add = mac_add;
+        this.wifi_key = wifi_key;
     }
 
 }

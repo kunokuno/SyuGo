@@ -7,4 +7,7 @@
     <dimen name="borderPadding">1dp</dimen>
     <dimen name="borderWidthPressed">0dp</dimen>
     <dimen name="borderPaddingPressed">1dp</dimen>
+
+    <dimen name="rader_button_negative_offset">-5dp</dimen>
+    <dimen name="rader_button_line_width">2dp</dimen>
 </resources>
