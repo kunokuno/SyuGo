@@ -29,7 +29,7 @@ public class GPSCommManager implements Runnable {
 
     private InputStream iStream;
     private OutputStream oStream;
-    private static final String TAG = "GPScommManager";
+    private static final String TAG = "GPSCommManager";
 
     @Override
     public void run() {
