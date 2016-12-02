@@ -7,9 +7,12 @@ import android.media.Image;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -48,7 +51,47 @@ public class RegActivity extends Activity {
         btn_issue.setOnClickListener(issListener);
         btn_share.setOnClickListener(shaListener);
         btn_findmode.setOnClickListener(findListener);
+
+        // ボタンの幅，高さが決定してから幅=高さに揃える
+        // ViewTreeObserverを利用
+        // 参考 : http://tech.admax.ninja/2014/09/17/how-to-get-the-height-and-width-of-the-view/
+        //        https://anz-note.tumblr.com/post/96096731156/androidで動的に縦幅あるいは横幅に合わせて正方形のviewを作成したい
+        final ViewTreeObserver observer = btn_share.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        // ボタンの幅=高さにする
+//                        Log.d("btn", btn_share.getWidth() + ", " + btn_share.getHeight());
+                        ViewGroup.LayoutParams params = btn_share.getLayoutParams();
+                        // 短辺の長さに長辺を揃える
+                        if (btn_share.getWidth() < btn_share.getHeight())
+                            params.height = btn_share.getWidth();
+                        else params.width = btn_share.getHeight();
+
+                        btn_share.setLayoutParams( params );
+                        btn_findmode.setLayoutParams( params );
+
+                        removeOnGlobalLayoutListener(btn_share.getViewTreeObserver(), this);
+                    }
+                });
     }
+
+    // onGlobalLayout()が1回目以降呼ばれないようにリス名を外す
+    private static void removeOnGlobalLayoutListener(ViewTreeObserver observer, ViewTreeObserver.OnGlobalLayoutListener listener) {
+        if (observer == null) {
+            return ;
+        }
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            observer.removeGlobalOnLayoutListener(listener);
+        } else {
+            observer.removeOnGlobalLayoutListener(listener);
+        }
+    }
+
+
+
 
     //ID発行ボタンの処理
     private View.OnClickListener issListener = new View.OnClickListener() {
