@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import jp.enpitsu.paseri.syugo.Global.SyugoApp;
 import jp.enpitsu.paseri.syugo.Lookfor.LookActivity;
 import jp.enpitsu.paseri.syugo.R;
 
@@ -39,6 +40,8 @@ public class RegActivity extends Activity {
     private TextView message,btnmsg_sh,btnmsg_se,error_message;
 
     private String wifi_key = "paselow_cathy";
+    private SyugoApp app;
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +57,7 @@ public class RegActivity extends Activity {
         btnmsg_sh = (TextView)findViewById(R.id.text_share);
         btnmsg_se = (TextView)findViewById(R.id.text_search);
         error_message = (TextView)findViewById(R.id.error_msg);
-
+        app = (SyugoApp)this.getApplication();
 
         //フォント設定
         btn_issue.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
@@ -118,24 +121,36 @@ public class RegActivity extends Activity {
     private View.OnClickListener issListener = new View.OnClickListener() {
         public void onClick(View v) {
             user_name = id_box.getText().toString();
-            if(TextUtils.isEmpty(user_name) == false) {
+            if(TextUtils.isEmpty(user_name) == false && myID == null) {
                 HttpComOnRegistor httpComReg = new HttpComOnRegistor(
                         new HttpComOnRegistor.AsyncTaskCallback() {
                             @Override
                             public void postExecute(String result) {
                                 myID = result.replaceAll("\n", "");
                                 text_idshow.setText(myID);
+                                app.setSelfUserInfo(user_name,myID);
+                                Log.d("PrilyClass_name",app.getSelfUserName());
+                                Log.d("PrilyClass_id",app.getSelfUserId());
+
                             }
                         }
                 );
                 httpComReg.setUserInfo(user_name, wifi_key);
                 httpComReg.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
-            else{
-                error_message.setText("YourNameが入力されていません．");
-                Log.d("RegActivity","UserName is null.");
+            else {
+                if (TextUtils.isEmpty(user_name) == true) {
+                    error_message.setText("YourNameが入力されていません．");
+                    Log.d("RegActivity", "UserName is null.");
+                }
+                else if(myID != null) {
+                    error_message.setText("IDはすでに発行されています．");
+                    Log.d("RegActivity", "UserID is showed already.");
+                }
+                else {
+                    Log.d("RegActivity", "mystery error.");
+                }
             }
-
         }
     };
 
