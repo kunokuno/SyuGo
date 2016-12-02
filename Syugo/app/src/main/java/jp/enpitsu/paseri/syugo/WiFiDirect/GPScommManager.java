@@ -29,7 +29,7 @@ public class GPSCommManager implements Runnable {
 
     private InputStream iStream;
     private OutputStream oStream;
-    private static final String TAG = "GPSCommManager";
+    private static final String TAG = "wifi_direct_commanager";
 
     @Override
     public void run() {
@@ -40,6 +40,7 @@ public class GPSCommManager implements Runnable {
             int bytes;
             handler.obtainMessage(WiFiDirectCommunicator.MY_HANDLE, this)
                     .sendToTarget();
+            Log.d(TAG,"send manager");
 
             while (true) {
                 try {
@@ -71,6 +72,7 @@ public class GPSCommManager implements Runnable {
     public void write(byte[] buffer) {
         try {
             oStream.write(buffer);
+            Log.d(TAG,"output" + String.valueOf(buffer));
         } catch (IOException e) {
             Log.e(TAG, "Exception during write", e);
         }

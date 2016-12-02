@@ -11,7 +11,7 @@ import java.net.Socket;
 
 public class ClientSocketHandler extends Thread {
 
-    private static final String TAG = "ClientSocketHandler";
+    private static final String TAG = "wifi_direct_c_handler";
     private Handler handler;
     private GPSCommManager manager;
     private InetAddress mAddress;

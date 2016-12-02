@@ -97,6 +97,7 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
             case MY_HANDLE:
                 Object obj = msg.obj;
                 manager = (GPSCommManager) obj;
+                Log.d(TAG, "manager obj received");
         }
         return true;
     }
@@ -107,6 +108,8 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
         public void onClick(View v) {
             if (manager != null) {
                 manager.write("hogehoge".getBytes());
+            }else{
+                Log.d(TAG,"manager is null");
             }
         }
     };

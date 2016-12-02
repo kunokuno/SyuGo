@@ -19,7 +19,7 @@ public class GroupOwnerSocketHandler extends Thread {
     ServerSocket socket = null;
     private final int THREAD_COUNT = 10;
     private Handler handler;
-    private static final String TAG = "GroupOwnerSocketHandler";
+    private static final String TAG = "wifi_direct_s_handler";
 
     public GroupOwnerSocketHandler(Handler handler) throws IOException {
         try {
