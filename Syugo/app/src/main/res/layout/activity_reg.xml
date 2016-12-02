@@ -18,12 +18,12 @@
         android:paddingRight="16dp"
         android:paddingBottom="25dp">
 
-        <TextView
+        <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#96ffffff"
-            android:text="Your Name"
-            android:id="@+id/front_msg"
+            android:background="#00000000"
+            android:id="@+id/hide_button"
             android:textSize="40dp"
             android:gravity="bottom"
             android:paddingTop="15dp"

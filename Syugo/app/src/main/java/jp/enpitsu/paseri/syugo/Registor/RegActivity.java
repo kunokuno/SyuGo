@@ -32,12 +32,13 @@ import jp.enpitsu.paseri.syugo.R;
 public class RegActivity extends Activity {
 
     private Button btn_issue;       //ID発行ボタン
+    private Button hidebtn_reset;
     private ImageButton btn_share;       //ID共有ボタン
     private ImageButton btn_findmode;   //検索モードに遷移するボタン
     private EditText id_box;        //ユーザ名を入力するbox
     private TextView text_idshow;   //サーバで発行されたIDを表示する領域
     private String user_name,myID;
-    private TextView message,btnmsg_sh,btnmsg_se,error_message;
+    private TextView btnmsg_sh,btnmsg_se,error_message;
 
     private String wifi_key = "paselow_cathy";
     private SyugoApp app;
@@ -49,11 +50,11 @@ public class RegActivity extends Activity {
 
         //xmlファイルとの紐づけ
         btn_issue = (Button)findViewById(R.id.button_issue);
+        hidebtn_reset = (Button)findViewById(R.id.hide_button);
         btn_share = (ImageButton)findViewById(R.id.button_share);
         btn_findmode = (ImageButton)findViewById(R.id.button_findmode);
         id_box = (EditText)findViewById(R.id.text_id);
         text_idshow = (TextView)findViewById(R.id.id_show);
-        message = (TextView)findViewById(R.id.front_msg);
         btnmsg_sh = (TextView)findViewById(R.id.text_share);
         btnmsg_se = (TextView)findViewById(R.id.text_search);
         error_message = (TextView)findViewById(R.id.error_msg);
@@ -69,18 +70,22 @@ public class RegActivity extends Activity {
         btn_issue.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
         id_box.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
         text_idshow.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
-        message.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        hidebtn_reset.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
         btnmsg_sh.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
         btnmsg_se.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
         error_message.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
 
+        hidebtn_reset.setAllCaps(false);
+        hidebtn_reset.setText("Your Name");
         error_message.setGravity(Gravity.CENTER);
 
 
         //各ボタンのClickListenerの宣言
         btn_issue.setOnClickListener(issListener);
+        hidebtn_reset.setOnClickListener(hideListener);
         btn_share.setOnClickListener(shaListener);
         btn_findmode.setOnClickListener(findListener);
+
 
         // ボタンの幅，高さが決定してから幅=高さに揃える
         // ViewTreeObserverを利用
@@ -120,14 +125,34 @@ public class RegActivity extends Activity {
         }
     }
 
+    //隠しボタンの処理
+    private View.OnClickListener hideListener= new View.OnClickListener() {
+        public void onClick(View v) {
+            app.resetUserInfo();
+            user_name = "";
+            myID = "";
+            id_box.setText("", TextView.BufferType.NORMAL);
+            text_idshow.setText("");
+            error_message.setText("");
 
+            /*
+            app.loadUserInfo();
+            user_name = app.getSelfUserName();
+            myID = app.getSelfUserId();
+            id_box.setText(user_name, TextView.BufferType.NORMAL);
+            text_idshow.setText(myID);
+            error_message.setText("");
+            */
+
+        }
+    };
 
 
     //ID発行ボタンの処理
     private View.OnClickListener issListener = new View.OnClickListener() {
         public void onClick(View v) {
-            user_name = id_box.getText().toString();
-            if(TextUtils.isEmpty(user_name) == false && myID == null) {
+            user_name = id_box.getText().toString().replaceAll(" |\n|\r|\t", "");
+            if(TextUtils.isEmpty(user_name) == false && TextUtils.isEmpty(myID) == true) {
                 HttpComOnRegistor httpComReg = new HttpComOnRegistor(
                         new HttpComOnRegistor.AsyncTaskCallback() {
                             @Override
@@ -138,6 +163,7 @@ public class RegActivity extends Activity {
                                 app.saveUserInfo();
                                 Log.d("PrilyClass_name",app.getSelfUserName());
                                 Log.d("PrilyClass_id",app.getSelfUserId());
+                                error_message.setText("");
                             }
                         }
                 );
@@ -149,7 +175,7 @@ public class RegActivity extends Activity {
                     error_message.setText("YourNameが入力されていません．");
                     Log.d("RegActivity", "UserName is null.");
                 }
-                else if(myID != null) {
+                else if(TextUtils.isEmpty(myID) == false) {
                     error_message.setText("IDはすでに発行されています．");
                     Log.d("RegActivity", "UserID is showed already.");
                 }
@@ -163,7 +189,7 @@ public class RegActivity extends Activity {
     //ID共有ボタンの処理
     private View.OnClickListener shaListener = new View.OnClickListener() {
         public void onClick(View v) {
-            if(myID!=null) {
+            if(TextUtils.isEmpty(myID) == false) {
                 try {
                     Intent intent_sha = new Intent();
                     intent_sha.setAction(Intent.ACTION_SEND);
@@ -185,7 +211,7 @@ public class RegActivity extends Activity {
     private View.OnClickListener findListener = new View.OnClickListener() {
         public void onClick(View v) {
             //登録画面からAR画面への遷移
-            if(myID != null) {
+            if(TextUtils.isEmpty(myID) == false) {
                 try {
                     Intent intent_find = new Intent(RegActivity.this, LookActivity.class);
                     intent_find.putExtra("myID", myID);
