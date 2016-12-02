@@ -9,6 +9,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import jp.enpitsu.paseri.syugo.Develop.SecretActivity;
 import jp.enpitsu.paseri.syugo.Global.SyugoApp;
@@ -25,6 +28,7 @@ public class StartActivity extends Activity {
     Button btn_hide;
     ImageButton imbtn_registmode;
     ImageButton imbtn_searchmode;
+    TextView first_msg,text_get,text_lets;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +37,14 @@ public class StartActivity extends Activity {
         btn_hide = (Button)findViewById(R.id.button);
         imbtn_registmode = (ImageButton)findViewById(R.id.imageButton_regist);
         imbtn_searchmode = (ImageButton)findViewById(R.id.imageButton_search);
+        first_msg = (TextView)findViewById(R.id.first_msg);
+        text_get = (TextView)findViewById(R.id.text_getid);
+        text_lets = (TextView)findViewById(R.id.text_lets);
+
+        //フォント適用
+        first_msg.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        text_get.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        text_lets.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
 
         btn_hide.setOnClickListener(hideListener);
         imbtn_registmode.setOnClickListener(regListener);

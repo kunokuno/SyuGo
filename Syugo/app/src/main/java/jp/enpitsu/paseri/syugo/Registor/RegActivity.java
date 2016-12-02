@@ -3,6 +3,7 @@ package jp.enpitsu.paseri.syugo.Registor;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.media.Image;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -33,6 +34,7 @@ public class RegActivity extends Activity {
     private EditText id_box;        //ユーザ名を入力するbox
     private TextView text_idshow;   //サーバで発行されたIDを表示する領域
     private String user_name,myID;
+    private TextView message,btnmsg_sh,btnmsg_se;
 
     private String wifi_key = "paselow_cathy";
 
@@ -46,6 +48,18 @@ public class RegActivity extends Activity {
         btn_findmode = (ImageButton)findViewById(R.id.button_findmode);
         id_box = (EditText)findViewById(R.id.text_id);
         text_idshow = (TextView)findViewById(R.id.id_show);
+        message = (TextView)findViewById(R.id.front_msg);
+        btnmsg_sh = (TextView)findViewById(R.id.text_share);
+        btnmsg_se = (TextView)findViewById(R.id.text_search);
+
+
+        //フォント設定
+        btn_issue.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        id_box.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        text_idshow.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        message.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        btnmsg_sh.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        btnmsg_se.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
 
         //各ボタンのClickListenerの宣言
         btn_issue.setOnClickListener(issListener);
