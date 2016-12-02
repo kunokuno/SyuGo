@@ -65,7 +65,7 @@ public class SyugoApp extends android.app.Application {
         dump();
     }
 
-    private void loadUserInfo(){
+    public void loadUserInfo(){
         SharedPreferences data = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         self.name = data.getString("self_name","");
         self.id = data.getString("self_id","");

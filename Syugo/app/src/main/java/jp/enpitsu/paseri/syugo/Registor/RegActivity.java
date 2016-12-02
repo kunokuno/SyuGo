@@ -36,7 +36,7 @@ public class RegActivity extends Activity {
     private ImageButton btn_findmode;   //検索モードに遷移するボタン
     private EditText id_box;        //ユーザ名を入力するbox
     private TextView text_idshow;   //サーバで発行されたIDを表示する領域
-    private String user_name=null,myID=null;
+    private String user_name,myID;
     private TextView message,btnmsg_sh,btnmsg_se,error_message;
 
     private String wifi_key = "paselow_cathy";
@@ -58,6 +58,12 @@ public class RegActivity extends Activity {
         btnmsg_se = (TextView)findViewById(R.id.text_search);
         error_message = (TextView)findViewById(R.id.error_msg);
         app = (SyugoApp)this.getApplication();
+
+        app.loadUserInfo();
+        user_name = app.getSelfUserName();
+        myID = app.getSelfUserId();
+        id_box.setText(user_name, TextView.BufferType.NORMAL);
+        text_idshow.setText(myID);
 
         //フォント設定
         btn_issue.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
@@ -129,9 +135,9 @@ public class RegActivity extends Activity {
                                 myID = result.replaceAll("\n", "");
                                 text_idshow.setText(myID);
                                 app.setSelfUserInfo(user_name,myID);
+                                app.saveUserInfo();
                                 Log.d("PrilyClass_name",app.getSelfUserName());
                                 Log.d("PrilyClass_id",app.getSelfUserId());
-
                             }
                         }
                 );
@@ -162,7 +168,7 @@ public class RegActivity extends Activity {
                     Intent intent_sha = new Intent();
                     intent_sha.setAction(Intent.ACTION_SEND);
                     intent_sha.setType("text/plain");
-                    intent_sha.putExtra(Intent.EXTRA_TEXT, "集GO!しよう(*・・)ノ 私のIDは " + text_idshow.getText().toString() + " です．");
+                    intent_sha.putExtra(Intent.EXTRA_TEXT, "集GO!しよう(*・・)ノ\n 私( "+ user_name +" )のIDは \n" + text_idshow.getText().toString() + " \nです．");
                     startActivity(intent_sha);
                 } catch (Exception e) {
                     Log.d("ActionSend", "intent other app error");
