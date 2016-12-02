@@ -138,8 +138,8 @@ public class WiFiDirectActivity extends Activity {
 
         Log.d(TAG,"hello");
 
-        //app.setOpponentUserInfo("enpitsublue","n8y6");
-        //app.setSelfUserInfo("enpitsugreen","bh96");
+        //app.setSelfUserInfo("enpitsublue","n8y6");
+        //app.setOpponentUserInfo("enpitsugreen","bh96");
         //app.saveUserInfo();
     }
 

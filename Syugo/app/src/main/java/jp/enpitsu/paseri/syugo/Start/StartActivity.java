@@ -3,6 +3,7 @@ package jp.enpitsu.paseri.syugo.Start;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -45,7 +46,7 @@ public class StartActivity extends Activity {
             try {
                 startActivity(intent_hide);
             } catch (Exception e){
-                Log.d("StartActivity","intent error to WiFiActivity");
+                Log.d("StartActivity","intent error to SecretActivity");
             }
         }
     };
