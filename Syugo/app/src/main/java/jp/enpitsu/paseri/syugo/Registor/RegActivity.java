@@ -10,7 +10,9 @@ import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -33,8 +35,8 @@ public class RegActivity extends Activity {
     private ImageButton btn_findmode;   //検索モードに遷移するボタン
     private EditText id_box;        //ユーザ名を入力するbox
     private TextView text_idshow;   //サーバで発行されたIDを表示する領域
-    private String user_name,myID;
-    private TextView message,btnmsg_sh,btnmsg_se;
+    private String user_name=null,myID=null;
+    private TextView message,btnmsg_sh,btnmsg_se,error_message;
 
     private String wifi_key = "paselow_cathy";
 
@@ -51,6 +53,7 @@ public class RegActivity extends Activity {
         message = (TextView)findViewById(R.id.front_msg);
         btnmsg_sh = (TextView)findViewById(R.id.text_share);
         btnmsg_se = (TextView)findViewById(R.id.text_search);
+        error_message = (TextView)findViewById(R.id.error_msg);
 
 
         //フォント設定
@@ -60,6 +63,10 @@ public class RegActivity extends Activity {
         message.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
         btnmsg_sh.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
         btnmsg_se.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        error_message.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+
+        error_message.setGravity(Gravity.CENTER);
+
 
         //各ボタンのClickListenerの宣言
         btn_issue.setOnClickListener(issListener);
@@ -111,19 +118,23 @@ public class RegActivity extends Activity {
     private View.OnClickListener issListener = new View.OnClickListener() {
         public void onClick(View v) {
             user_name = id_box.getText().toString();
-
-            HttpComOnRegistor httpComReg = new HttpComOnRegistor(
-                    new HttpComOnRegistor.AsyncTaskCallback() {
-                        @Override
-                        public void postExecute(String result) {
-                            myID = result.replaceAll("\n","");
-                            text_idshow.setText(myID);
+            if(TextUtils.isEmpty(user_name) == false) {
+                HttpComOnRegistor httpComReg = new HttpComOnRegistor(
+                        new HttpComOnRegistor.AsyncTaskCallback() {
+                            @Override
+                            public void postExecute(String result) {
+                                myID = result.replaceAll("\n", "");
+                                text_idshow.setText(myID);
+                            }
                         }
-                    }
-            );
-            httpComReg.setUserInfo(user_name,wifi_key);
-            httpComReg.executeOnExecutor( AsyncTask.THREAD_POOL_EXECUTOR );
-
+                );
+                httpComReg.setUserInfo(user_name, wifi_key);
+                httpComReg.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+            else{
+                error_message.setText("YourNameが入力されていません．");
+                Log.d("RegActivity","UserName is null.");
+            }
 
         }
     };
@@ -131,14 +142,20 @@ public class RegActivity extends Activity {
     //ID共有ボタンの処理
     private View.OnClickListener shaListener = new View.OnClickListener() {
         public void onClick(View v) {
-            try {
-                Intent intent_sha = new Intent();
-                intent_sha.setAction(Intent.ACTION_SEND);
-                intent_sha.setType("text/plain");
-                intent_sha.putExtra(Intent.EXTRA_TEXT,"集GO!しよう(*・・)ノ 私のIDは "+text_idshow.getText().toString()+" です．");
-                startActivity(intent_sha);
-            } catch (Exception e){
-                Log.d("ActionSend","intent other app error");
+            if(myID!=null) {
+                try {
+                    Intent intent_sha = new Intent();
+                    intent_sha.setAction(Intent.ACTION_SEND);
+                    intent_sha.setType("text/plain");
+                    intent_sha.putExtra(Intent.EXTRA_TEXT, "集GO!しよう(*・・)ノ 私のIDは " + text_idshow.getText().toString() + " です．");
+                    startActivity(intent_sha);
+                } catch (Exception e) {
+                    Log.d("ActionSend", "intent other app error");
+                }
+            }
+            else {
+                error_message.setText("あなたのIDを発行してください．");
+                Log.d("RegActivity", "UserID is null.");
             }
         }
     };
@@ -147,12 +164,18 @@ public class RegActivity extends Activity {
     private View.OnClickListener findListener = new View.OnClickListener() {
         public void onClick(View v) {
             //登録画面からAR画面への遷移
-            try {
-                Intent intent_find = new Intent(RegActivity.this, LookActivity.class);
-                intent_find.putExtra("myID",myID);
-                startActivity(intent_find);
-            } catch (Exception e) {
-                Log.d("RegActivity", "intent error MainActivity");
+            if(myID != null) {
+                try {
+                    Intent intent_find = new Intent(RegActivity.this, LookActivity.class);
+                    intent_find.putExtra("myID", myID);
+                    startActivity(intent_find);
+                } catch (Exception e) {
+                    Log.d("RegActivity", "intent error MainActivity");
+                }
+            }
+            else{
+                error_message.setText("あなたのIDを発行してください．");
+                Log.d("RegActivity","UserID is null.");
             }
         }
     };
