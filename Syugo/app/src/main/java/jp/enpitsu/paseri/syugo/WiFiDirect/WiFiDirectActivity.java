@@ -105,7 +105,7 @@ public class WiFiDirectActivity extends Activity {
 
         // for communication
         btn_ping = (Button) findViewById(R.id.wd_ping);
-        btn_ping.setOnClickListener(communicator.pingClickListner);
+        btn_ping.setOnClickListener(communicator.pingClickListener);
 
         // Find UI Objects
         sw_p2p_enable = (Switch) findViewById(R.id.wd_p2p_enable);
@@ -121,8 +121,8 @@ public class WiFiDirectActivity extends Activity {
         txt_self_device_name.setText( "unknown" );
         txt_opponent_device_name.setText("Opponent Device Name is unknown");
         txt_device_status.setText("Not Connected");
-        btn_connect.setOnCheckedChangeListener(connectClickListner);
-        btn_open_settings.setOnClickListener(opensettingsClickListner);
+        btn_connect.setOnCheckedChangeListener(connectClickListener);
+        btn_open_settings.setOnClickListener(opensettingsClickListener);
 
         // Register the Intent Filter
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
@@ -353,7 +353,7 @@ public class WiFiDirectActivity extends Activity {
 
     -------------------------------------------------------------- */
 
-    View.OnClickListener opensettingsClickListner = new View.OnClickListener() {
+    View.OnClickListener opensettingsClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (manager != null && channel != null) {
@@ -364,7 +364,7 @@ public class WiFiDirectActivity extends Activity {
         }
     };
 
-    CompoundButton.OnCheckedChangeListener connectClickListner = new CompoundButton.OnCheckedChangeListener() {
+    CompoundButton.OnCheckedChangeListener connectClickListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton view, boolean isChecked) {
             if (isChecked){

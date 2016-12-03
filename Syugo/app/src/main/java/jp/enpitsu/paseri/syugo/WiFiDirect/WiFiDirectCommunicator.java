@@ -107,7 +107,7 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
     }
 
     // send message
-    View.OnClickListener pingClickListner = new View.OnClickListener() {
+    View.OnClickListener pingClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (manager != null) {
