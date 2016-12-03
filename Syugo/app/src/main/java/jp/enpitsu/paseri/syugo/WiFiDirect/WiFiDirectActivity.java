@@ -87,7 +87,7 @@ public class WiFiDirectActivity extends Activity {
 
     // UI Objects
     Switch sw_p2p_enable;
-    TextView txt_self_device_name,txt_opponent_device_name,txt_device_status;
+    TextView txt_self_device_name,txt_opponent_device_name,txt_device_status,txt_connection;
     Button btn_ping, btn_open_settings;
     ToggleButton btn_connect;
 
@@ -113,6 +113,7 @@ public class WiFiDirectActivity extends Activity {
         txt_opponent_device_name = (TextView) findViewById(R.id.wd_opponent_device_name);
         txt_device_status = (TextView) findViewById(R.id.wd_device_status);
         btn_connect = (ToggleButton) findViewById(R.id.wd_connect);
+        txt_connection = (TextView) findViewById(R.id.wd_connection);
         btn_open_settings = (Button) findViewById(R.id.wd_wdsetting);
 
         // Initialize UI Objects
@@ -171,6 +172,10 @@ public class WiFiDirectActivity extends Activity {
     public void setStatus(String status){
         connectionStatus = status;
         txt_device_status.setText("Status : "+connectionStatus);
+    }
+
+    public void setConnection(String connection){
+        txt_connection.setText(connection);
     }
 
     public String getStatus(){
@@ -266,6 +271,7 @@ public class WiFiDirectActivity extends Activity {
             }
 
             public void onSuccess() {
+                Log.d(TAG, "Disconnected");
             }
 
         });

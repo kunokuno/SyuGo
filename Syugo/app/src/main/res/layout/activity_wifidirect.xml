@@ -35,6 +35,13 @@
         android:layout_weight="0.09"
         android:id="@+id/wd_device_status" />
 
+    <TextView
+        android:text="TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/wd_connection"
+        android:layout_weight="0.16" />
+
     <Switch
         android:text="P2P Enable"
         android:layout_width="match_parent"

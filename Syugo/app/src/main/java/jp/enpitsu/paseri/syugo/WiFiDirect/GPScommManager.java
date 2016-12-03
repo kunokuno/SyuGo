@@ -21,18 +21,21 @@ public class GPSCommManager implements Runnable {
 
     private Socket socket = null;
     private Handler handler;
-
-    public GPSCommManager(Socket socket, Handler handler) {
-        this.socket = socket;
-        this.handler = handler;
-    }
-
     private InputStream iStream;
     private OutputStream oStream;
     private static final String TAG = "wifi_direct_commanager";
 
+    public GPSCommManager(Socket socket, Handler handler) {
+        this.socket = socket;
+        this.handler = handler;
+        Log.d(TAG,"instantiate");
+    }
+
+
+
     @Override
     public void run() {
+        Log.d(TAG,"run");
         try {
             iStream = socket.getInputStream();
             oStream = socket.getOutputStream();
@@ -72,7 +75,7 @@ public class GPSCommManager implements Runnable {
     public void write(byte[] buffer) {
         try {
             oStream.write(buffer);
-            Log.d(TAG,"output" + String.valueOf(buffer));
+            Log.d(TAG,"write to buffer" + String.valueOf(buffer));
         } catch (IOException e) {
             Log.e(TAG, "Exception during write", e);
         }

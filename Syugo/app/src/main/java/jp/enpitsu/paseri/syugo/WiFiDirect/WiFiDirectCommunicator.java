@@ -65,8 +65,9 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
 
         if (p2pInfo.isGroupOwner) {
             Log.d(TAG, "Connected as group owner");
+            activity.setConnection("server");
             try {
-                handler = new GroupOwnerSocketHandler(new Handler());
+                handler = new GroupOwnerSocketHandler(new Handler(this));
                 handler.start();
             } catch (IOException e) {
                 Log.d(TAG,
@@ -74,9 +75,10 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
                 return;
             }
         } else {
+            activity.setConnection("client");
             Log.d(TAG, "Connected as peer");
             handler = new ClientSocketHandler(
-                    new Handler(),
+                    new Handler(this),
                     p2pInfo.groupOwnerAddress);
             handler.start();
         }
@@ -98,6 +100,7 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
                 Object obj = msg.obj;
                 manager = (GPSCommManager) obj;
                 Log.d(TAG, "manager obj received");
+                activity.setConnection("socket connected");
         }
         return true;
     }
@@ -107,7 +110,7 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
         @Override
         public void onClick(View v) {
             if (manager != null) {
-                manager.write("hogehoge".getBytes());
+                manager.write("hogehoge\n".getBytes());
             }else{
                 Log.d(TAG,"manager is null");
             }
