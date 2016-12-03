@@ -94,6 +94,7 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
                 // construct a string from the valid bytes in the buffer
                 String readMessage = new String(readBuf, 0, msg.arg1);
                 Log.d(TAG, readMessage);
+                activity.toast(readMessage);
                 break;
 
             case MY_HANDLE:
