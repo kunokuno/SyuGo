@@ -16,11 +16,11 @@ import java.util.List;
 
 public class WiFiDirectConnector implements WifiP2pManager.PeerListListener {
     static final String TAG = "wifi_direct_cnctr";
-    WiFiDirectActivity activity;
+    WiFiDirect wfd;
     static boolean onConnecting = false;
 
-    WiFiDirectConnector(WiFiDirectActivity activity){
-        this.activity = activity;
+    WiFiDirectConnector(WiFiDirect wfd){
+        this.wfd = wfd;
     }
 
     private List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
@@ -32,14 +32,13 @@ public class WiFiDirectConnector implements WifiP2pManager.PeerListListener {
         //Log.d(TAG,peers.toString());
 
         // if Device on Inviting or Connected, terminate.
-        if (onConnecting || activity.getStatus().equals("Invited") || activity.getStatus().equals("Connected")){
+        if (onConnecting){
             return;
         }
 
         // Search Opponent Device in Peer List
         for(int i=0; i<peers.size(); ++i){
-            if (peers.get(i).deviceName.equals(activity.getOpponentID())){
-                activity.toast("Opponent Device Found !");
+            if (peers.get(i).deviceName.equals(wfd.getOpponentID())){
                 onConnecting = true;
 
                 WifiP2pDevice device = peers.get(i);
@@ -48,13 +47,13 @@ public class WiFiDirectConnector implements WifiP2pManager.PeerListListener {
                 config.wps.setup = WpsInfo.PBC;
 
                 Log.d(TAG,"connect challenge");
-                activity.connect(config);
+                wfd.connect(config);
                 return;
             }
         }
 
         // Can't Found Opponent Device
-        activity.toast("Can't found device");
+        Log.d(TAG,"can't found device");
     }
 
 }

@@ -37,6 +37,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.CycleInterpolator;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -52,6 +55,7 @@ import java.lang.reflect.Method;
 import jp.enpitsu.paseri.syugo.Global.SyugoApp;
 import jp.enpitsu.paseri.syugo.R;
 
+import static android.os.Looper.getMainLooper;
 import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
 
@@ -62,13 +66,38 @@ import static android.webkit.ConsoleMessage.MessageLevel.LOG;
  * The application should also register a BroadcastReceiver for notification of
  * WiFi state related events.
  */
+
+/*
+note :
+unknown -> available -> discovering -> found -> socket connecting -> connected
+
+Wifi P2p
+    enable or disable. check it myself
+
+P2p Status
+    available/unavailable -> invited -> connected/failed. be notified by updateThisDevice()
+
+Socket Status
+    connected or unconnected. Communicator notifies us.
+
+ */
 public class WiFiDirect {
+
+    private class WiFiDirectStatus {
+        public boolean isWifiP2pEnabled = false;
+        public String selfDeviceName="unknown", opponentDeviceName = "unknown";
+        public String selfDeviceStatus="unknown",opponentDeviceStatus="unknown";
+        public String p2p_status; //available, connected, other
+        public String socket_status; //not connected, connected
+        public String socket_side; //server , client
+    }
 
     // For Debug
     public static final String TAG = "wifi_direct";
 
-    // app
+    // app, parent activity
     SyugoApp app;
+    Activity activity;
 
     // Instances
     private WifiP2pManager manager;
@@ -78,51 +107,26 @@ public class WiFiDirect {
     public WiFiDirectCommunicator communicator;
 
     // Status
-    private boolean isWifiP2pEnabled = false;
-    private String connectionStatus = "unknown";
-    public String selfDeviceName, opponentDeviceName;
+    WiFiDirectStatus status = new WiFiDirectStatus();
+
+    // Button
+    CompoundButton wfd_button; // Manipulated by parent Activity
+    static AlphaAnimation alphaAnim;
 
     // Intent Filter
     private final IntentFilter intentFilter = new IntentFilter();
 
-    // UI Objects
-    Switch sw_p2p_enable;
-    TextView txt_self_device_name,txt_opponent_device_name,txt_device_status,txt_connection;
-    Button btn_ping, btn_open_settings;
-    ToggleButton btn_connect;
+    // Toast
+    Toast wfd_toast;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wifidirect);
-
-        // app
-        app = (SyugoApp) getApplication();
+    public WiFiDirect(Activity activity) {
+        // app, activity
+        this.activity = activity;
+        app = (SyugoApp) activity.getApplication();
 
         // Instantiate
         connector = new WiFiDirectConnector(this);
         communicator = new WiFiDirectCommunicator(this);
-
-        // for communication
-        btn_ping = (Button) findViewById(R.id.wd_ping);
-        btn_ping.setOnClickListener(communicator.pingClickListener);
-
-        // Find UI Objects
-        sw_p2p_enable = (Switch) findViewById(R.id.wd_p2p_enable);
-        txt_self_device_name = (TextView) findViewById(R.id.wd_self_device_name);
-        txt_opponent_device_name = (TextView) findViewById(R.id.wd_opponent_device_name);
-        txt_device_status = (TextView) findViewById(R.id.wd_device_status);
-        btn_connect = (ToggleButton) findViewById(R.id.wd_connect);
-        txt_connection = (TextView) findViewById(R.id.wd_connection);
-        btn_open_settings = (Button) findViewById(R.id.wd_wdsetting);
-
-        // Initialize UI Objects
-        sw_p2p_enable.setChecked(false);
-        txt_self_device_name.setText( "unknown" );
-        txt_opponent_device_name.setText("Opponent Device Name is unknown");
-        txt_device_status.setText("Not Connected");
-        btn_connect.setOnCheckedChangeListener(connectClickListener);
-        btn_open_settings.setOnClickListener(opensettingsClickListener);
 
         // Register the Intent Filter
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
@@ -131,8 +135,8 @@ public class WiFiDirect {
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
         // Get manager & channel Instance
-        manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        channel = manager.initialize(this, getMainLooper(), null);
+        manager = (WifiP2pManager) activity.getSystemService(Context.WIFI_P2P_SERVICE);
+        channel = manager.initialize(activity, getMainLooper(), null);
 
         // Initialize IDs
         updateIDs();
@@ -144,78 +148,70 @@ public class WiFiDirect {
         //app.saveUserInfo();
     }
 
-    @Override
     public void onResume() {
-        super.onResume();
         receiver = new WiFiDirectBroadcastReceiver(manager, channel, this);
-        registerReceiver(receiver, intentFilter);
+        activity.registerReceiver(receiver, intentFilter);
     }
 
-    @Override
     public void onPause() {
-        super.onPause();
-        unregisterReceiver(receiver);
+        activity.unregisterReceiver(receiver);
     }
-
 
     /* -----------------------------------------------------------
-
-    Getter & Setter of Status
-
+    Catch status by BroadcastReceiver : notify us wifip2p & device status
     -------------------------------------------------------------- */
 
-    public void setIsWifiP2pEnabled(boolean isWifiP2pEnabled) {
-        this.isWifiP2pEnabled = isWifiP2pEnabled;
-        sw_p2p_enable.setChecked(isWifiP2pEnabled);
+    protected void setIsWifiP2pEnabled(boolean isWifiP2pEnabled) {
+        status.isWifiP2pEnabled = isWifiP2pEnabled;
     }
 
-    public void setStatus(String status){
-        connectionStatus = status;
-        txt_device_status.setText("Status : "+connectionStatus);
-    }
-
-    public void setConnection(String connection){
-        txt_connection.setText(connection);
-    }
-
-    public String getStatus(){
-        return connectionStatus;
-    }
-
-    public void setOpponentDeviceInformation(String information_str){
-        txt_opponent_device_name.setText(
-                "Opponent Device Name : \n"
-                + opponentDeviceName +"\n"
-                + "Status : \n"
-                + information_str
-        );
-    }
-
-    public void updateThisDevice(WifiP2pDevice device) {
-
+    protected void updateThisDevice(WifiP2pDevice device) {
         // status
-        String status = getDeviceStatus(device.status);
-        setStatus(status);
+        String s = getP2pDeviceStatus(device.status);
+        status.selfDeviceStatus = s;
 
-        // Device ID
-        txt_self_device_name.setText(device.toString());
-
-        // change UI
-        if(status.equals("Connected")){
-            btn_connect.setChecked(true);
+        // notify
+        if(s.equals("Connected")){
+            toast("P2P接続完了…");
         }else{
-            btn_connect.setChecked(false);
+            // Turn off the light
+            controlWfdButton(ButtonCmd.OFF);
         }
     }
 
-    public String getOpponentID(){
-        return opponentDeviceName;
+    /* -----------------------------------------------------------
+    Status for Connector : search opponent device, call connect()
+    -------------------------------------------------------------- */
+
+    protected String getOpponentID(){
+        return status.opponentDeviceName;
     }
 
-    public void toast(String str){
-        Toast.makeText(WiFiDirectActivity.this, str, Toast.LENGTH_SHORT).show();
+    /* -----------------------------------------------------------
+    Catch status by Communicator : socket communication
+    -------------------------------------------------------------- */
+
+    protected void setOpponentDeviceInformation(String information_str){
+        status.opponentDeviceStatus = information_str;
     }
 
+    protected void setSocketDeviceSide(String str){
+        status.socket_side = str;
+        toast(str+"として接続したよ");
+    }
+
+    protected void setSocketConnection(String str){
+        status.socket_status = str;
+        if(str.equals("connected")){
+            toast("Socket接続完了！");
+            // Turn on the light
+            controlWfdButton(ButtonCmd.ON);
+        }else{
+            toast("Socket切断");
+            // Turn off the light
+            controlWfdButton(ButtonCmd.OFF);
+        }
+    }
 
 
     /* -----------------------------------------------------------
@@ -224,73 +220,71 @@ public class WiFiDirect {
 
     -------------------------------------------------------------- */
 
-    public void resetData() {
-        setOpponentDeviceInformation("unknown");
+    protected void resetData() {
+
     }
 
     private void discover(){
+        controlWfdButton(ButtonCmd.FLASH);
         // discover
         manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
-                Toast.makeText(WiFiDirectActivity.this, "Discovery Initiated",
-                        Toast.LENGTH_SHORT).show();
-                setStatus("Searching...");
+                Log.i(TAG,"p2p discover(try) success");
             }
 
             @Override
             public void onFailure(int reasonCode) {
-                Toast.makeText(WiFiDirectActivity.this, "Discovery End : " + reasonCode,
-                        Toast.LENGTH_SHORT).show();
+                Log.i(TAG,"p2p discover(try) failure" + reasonCode);
             }
         });
     }
 
-    public void connect(WifiP2pConfig config) {
+    protected void connect(WifiP2pConfig config) {
+        toast("みつけた！");
         manager.connect(channel, config, new ActionListener() {
 
             @Override
             public void onSuccess() {
                 // WiFiDirectBroadcastReceiver will notify us. Ignore for now.
+                Log.i(TAG,"p2p connect(try) success");
             }
 
             @Override
-            public void onFailure(int reason) {
-                Toast.makeText(WiFiDirectActivity.this, "Connect failed. Retry.",
-                        Toast.LENGTH_SHORT).show();
+            public void onFailure(int reasonCode) {
+                Log.i(TAG,"p2p connect(try) failure" + reasonCode);
             }
         });
     }
 
-    public void disconnect(){
+    private void disconnect(){
+        controlWfdButton(ButtonCmd.OFF);
         manager.removeGroup(channel, new ActionListener() {
 
+            @Override
             public void onFailure(int reasonCode) {
-                Log.d(TAG, "Disconnect failed. Reason :" + reasonCode);
-
+                Log.i(TAG,"p2p disconnect failure" + reasonCode);
             }
 
+            @Override
             public void onSuccess() {
-                Log.d(TAG, "Disconnected");
+                Log.i(TAG,"p2p disconnect success");
             }
-
         });
     }
 
 
     /* -----------------------------------------------------------
-
     Methods for Management Device Information
-
     -------------------------------------------------------------- */
 
     private void updateIDs(){
-        opponentDeviceName = app.getOpponentUserName() + "_" + app.getOpponentUserId();
-        selfDeviceName = app.getSelfUserName() + "_" + app.getSelfUserId();
-        setDeviceNameP2P(selfDeviceName);
+        status.opponentDeviceName = app.getOpponentUserName() + "_" + app.getOpponentUserId();
+        status.selfDeviceName = app.getSelfUserName() + "_" + app.getSelfUserId();
+        setP2pDeviceName(status.selfDeviceName);
     }
 
-    public void setDeviceNameP2P(String devName) {
+    private void setP2pDeviceName(String devName) {
         try {
             Class[] paramTypes = new Class[3];
             paramTypes[0] = Channel.class;
@@ -329,7 +323,7 @@ public class WiFiDirect {
         }
     }
 
-    private static String getDeviceStatus(int deviceStatus) {
+    private static String getP2pDeviceStatus(int deviceStatus) {
         Log.d(TAG, "Peer status :" + deviceStatus);
         switch (deviceStatus) {
             case WifiP2pDevice.AVAILABLE:
@@ -348,143 +342,97 @@ public class WiFiDirect {
     }
 
     /* -----------------------------------------------------------
-
-    Functions for UI Objects
-
+    Action
     -------------------------------------------------------------- */
 
-    View.OnClickListener opensettingsClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (manager != null && channel != null) {
-                startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-            } else {
-                Log.e(TAG, "Activity : channel or manager is null");
-            }
+    public void openWiFiSettings(){
+        if (manager != null && channel != null) {
+            activity.startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+        } else {
+            Log.e(TAG, "Activity : channel or manager is null");
         }
-    };
+    }
 
-    CompoundButton.OnCheckedChangeListener connectClickListener = new CompoundButton.OnCheckedChangeListener() {
+    public void startConnection(){
+        if (!status.isWifiP2pEnabled) {
+            toast("端末のWifiDirect機能がオフになっています．設定してください！");
+            openWiFiSettings();
+            controlWfdButton(ButtonCmd.OFF);
+            return;
+        }
+        connector.onConnecting = false;
+        toast("相手の端末を検索中…");
+        // Flashing the light
+        discover();
+    }
+
+    public void endConnection() {
+        disconnect();
+        resetData();
+    }
+
+    /* -----------------------------------------------------------
+    Notify
+    -------------------------------------------------------------- */
+
+    protected void toast(String str){
+        if(wfd_toast!=null) {
+            wfd_toast.cancel();
+        }
+        wfd_toast = Toast.makeText(activity, str, Toast.LENGTH_SHORT);
+        wfd_toast.show();
+    }
+
+    /* -----------------------------------------------------------
+    Button
+    -------------------------------------------------------------- */
+
+    public void setCompoundButton(CompoundButton button){
+        wfd_button = button;
+        wfd_button.setOnCheckedChangeListener(wfd_button_listener);
+    }
+
+    CompoundButton.OnCheckedChangeListener wfd_button_listener = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton view, boolean isChecked) {
             if (isChecked){
-                // discover & connect
-                if (!isWifiP2pEnabled) {
-                    Toast.makeText(WiFiDirectActivity.this, "Warning : P2P is OFF",
-                            Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                connector.onConnecting = false;
-                discover();
-            }else{
-                // disconnect
-                disconnect();
+                startConnection();
+            }else {
+                endConnection();
             }
-
-
         }
     };
 
-    View.OnClickListener pingClickListner = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Toast.makeText(WiFiDirectActivity.this, "null",Toast.LENGTH_SHORT).show();
-        }
-    };
-
-
-
-
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.action_items, menu);
-        return true;
+    private enum ButtonCmd {
+        ON,
+        OFF,
+        FLASH;
     }
-    */
 
-
-//    @Override
-//    public void showDetails(WifiP2pDevice device) {
-//        DeviceDetailFragment fragment = (DeviceDetailFragment) getFragmentManager()
-//                .findFragmentById(R.id.frag_detail);
-//        fragment.showDetails(device);
-//
-//    }
-//
-
-//
-//    @Override
-//    public void disconnect() {
-//        final DeviceDetailFragment fragment = (DeviceDetailFragment) getFragmentManager()
-//                .findFragmentById(R.id.frag_detail);
-//        fragment.resetViews();
-//        manager.removeGroup(channel, new ActionListener() {
-//
-//            @Override
-//            public void onFailure(int reasonCode) {
-//                Log.d(TAG, "Disconnect failed. Reason :" + reasonCode);
-//
-//            }
-//
-//            @Override
-//            public void onSuccess() {
-//                fragment.getView().setVisibility(View.GONE);
-//            }
-//
-//        });
-//    }
-//
-//    @Override
-//    public void onChannelDisconnected() {
-//        // we will try once more
-//        if (manager != null && !retryChannel) {
-//            Toast.makeText(this, "Channel lost. Trying again", Toast.LENGTH_LONG).show();
-//            resetData();
-//            retryChannel = true;
-//            manager.initialize(this, getMainLooper(), this);
-//        } else {
-//            Toast.makeText(this,
-//                    "Severe! Channel is probably lost premanently. Try Disable/Re-Enable P2P.",
-//                    Toast.LENGTH_LONG).show();
-//        }
-//    }
-//
-//    @Override
-//    public void cancelDisconnect() {
-//
-//        /*
-//         * A cancel abort request by user. Disconnect i.e. removeGroup if
-//         * already connected. Else, request WifiP2pManager to abort the ongoing
-//         * request
-//         */
-//        if (manager != null) {
-//            final DeviceListFragment fragment = (DeviceListFragment) getFragmentManager()
-//                    .findFragmentById(R.id.frag_list);
-//            if (fragment.getDevice() == null
-//                    || fragment.getDevice().status == WifiP2pDevice.CONNECTED) {
-//                disconnect();
-//            } else if (fragment.getDevice().status == WifiP2pDevice.AVAILABLE
-//                    || fragment.getDevice().status == WifiP2pDevice.INVITED) {
-//
-//                manager.cancelConnect(channel, new ActionListener() {
-//
-//                    @Override
-//                    public void onSuccess() {
-//                        Toast.makeText(WiFiDirectActivity.this, "Aborting connection",
-//                                Toast.LENGTH_SHORT).show();
-//                    }
-//
-//                    @Override
-//                    public void onFailure(int reasonCode) {
-//                        Toast.makeText(WiFiDirectActivity.this,
-//                                "Connect abort request failed. Reason Code: " + reasonCode,
-//                                Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//            }
-//        }
-//
-//    }
+    private void controlWfdButton(ButtonCmd command){
+        if(wfd_button != null) {
+            switch (command) {
+                case ON:
+                    if (alphaAnim!=null) {
+                        alphaAnim.cancel();
+                    }
+                    wfd_button.clearAnimation();
+                    wfd_button.setChecked(true);
+                    break;
+                case OFF:
+                    if (alphaAnim!=null) {
+                        alphaAnim.cancel();
+                    }
+                    wfd_button.clearAnimation();
+                    wfd_button.setChecked(false);
+                    break;
+                case FLASH:
+                    alphaAnim = new AlphaAnimation(1f, 0.5f);
+                    alphaAnim.setDuration(300);
+                    alphaAnim.setRepeatCount(Animation.INFINITE);
+                    alphaAnim.setRepeatMode(Animation.REVERSE);
+                    wfd_button.startAnimation(alphaAnim);
+            }
+        }
+    }
 }

@@ -54,7 +54,6 @@
         <activity android:name=".Rader.RaderActivity" />
         <activity android:name=".Lookfor.LookActivity"/>
         <activity android:name=".Registor.RegActivity"/>
-        <activity android:name=".WiFiDirect.WiFiDirectActivity"/>
         <activity android:name=".Develop.SecretActivity"/>
     </application>
 
