@@ -3,12 +3,14 @@ package jp.enpitsu.paseri.syugo.Start;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import jp.enpitsu.paseri.syugo.Develop.SecretActivity;
 import jp.enpitsu.paseri.syugo.Global.SyugoApp;
 import jp.enpitsu.paseri.syugo.Lookfor.LookActivity;
 import jp.enpitsu.paseri.syugo.R;
@@ -40,11 +42,11 @@ public class StartActivity extends Activity {
     //隠しボタン
     private View.OnClickListener hideListener =new View.OnClickListener() {
         public void onClick(View v) {
-            Intent intent_hide = new Intent(StartActivity.this, WiFiDirectActivity.class);//WiFIのActivity名に変えてね
+            Intent intent_hide = new Intent(StartActivity.this, SecretActivity.class);
             try {
                 startActivity(intent_hide);
             } catch (Exception e){
-                Log.d("StartActivity","intent error to WiFiActivity");
+                Log.d("StartActivity","intent error to SecretActivity");
             }
         }
     };

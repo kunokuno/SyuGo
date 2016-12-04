@@ -47,6 +47,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private WifiP2pManager manager;
     private Channel channel;
     private WiFiDirectActivity activity;
+    private WiFiDirectConnector connector;
+    private WiFiDirectCommunicator communicator;
 
     /**
      * @param manager WifiP2pManager system service
@@ -59,6 +61,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         this.manager = manager;
         this.channel = channel;
         this.activity = activity;
+        connector = activity.connector;
+        communicator = activity.communicator;
     }
 
     @Override
@@ -89,41 +93,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                 return;
             }
 
-            manager.requestPeers(channel, new PeerListListener() {
-                private List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
-
-                @Override
-                public void onPeersAvailable(WifiP2pDeviceList peerList) {
-                    peers.clear();
-                    peers.addAll(peerList.getDeviceList());
-                    Log.d(TAG,peers.toString());
-
-                    // if Device on Inviting or Connected, terminate.
-                    if (activity.onConnecting || activity.getStatus().equals("Invited") || activity.getStatus().equals("Connected")){
-                        return;
-                    }
-
-                    // Search Opponent Device in Peer List
-                    for(int i=0; i<peers.size(); ++i){
-                        if (peers.get(i).deviceName.equals("enpitsu02")){
-                            activity.toast("Opponent Device Found !");
-
-                            WifiP2pDevice device = peers.get(i);
-                            WifiP2pConfig config = new WifiP2pConfig();
-                            config.deviceAddress = device.deviceAddress;
-                            config.wps.setup = WpsInfo.PBC;
-
-                            Log.d(TAG,"connect challenge");
-                            activity.connect(config);
-                            activity.onConnecting = true;
-                            return;
-                        }
-                    }
-
-                    // Can't Found Opponent Device
-                    activity.toast("Can't found device");
-                }
-            });
+            manager.requestPeers(channel, connector);
 
             Log.d(TAG, "onReceive : P2P peers changed");
 
@@ -141,12 +111,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                 // we are connected with the other device, request connection
                 // info to find group owner IP
 
-                manager.requestConnectionInfo(channel, new WifiP2pManager.ConnectionInfoListener() {
-                    @Override
-                    public void onConnectionInfoAvailable(WifiP2pInfo info) {
-                        activity.setOpponentDeviceInformation(info.toString());
-                    }
-                });
+                manager.requestConnectionInfo(channel, communicator);
 
             } else {
                 // It's a disconnect
