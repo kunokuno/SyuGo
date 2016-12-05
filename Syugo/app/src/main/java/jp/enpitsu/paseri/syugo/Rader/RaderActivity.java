@@ -309,6 +309,9 @@ public class RaderActivity extends Activity {
                 lat = location.getLatitude();
                 lon = location.getLongitude();
 
+                // 自分の位置情報をグローバルクラスにセット
+                // TODO: ロケーションデータに日時追加・セッタとゲッタ
+
 
                 HttpCommunication httpCommunication = new HttpCommunication(
                         new HttpCommunication.AsyncTaskCallback() {
@@ -442,7 +445,7 @@ public class RaderActivity extends Activity {
         String stringInfo = "【 自分( "+ myID + " ) 】\n" +
                 "lat : " + this.lat + "\n" +
                 "lon : " + this.lon + "\n" +
-                "acc : " + data.acc + "\n" +
+//                "acc : " + this.acc + "\n" +
                 "【 相手( "+ reqID + " ) 】\n" +
                 "lat : " + data.lat + "\n" +
                 "lon : " + data.lon + "\n" +
