@@ -38,10 +38,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import jp.enpitsu.paseri.syugo.Global.SyugoApp;
+import jp.enpitsu.paseri.syugo.Lookfor.LookActivity;
 import jp.enpitsu.paseri.syugo.Rader.ARObjects.Graph.GraphView;
 import jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20.MyGLSurfaceView;
 import jp.enpitsu.paseri.syugo.R;
 import jp.enpitsu.paseri.syugo.WiFiDirect.WiFiDirect;
+
 
 /**
  * Created by iyobe on 2016/09/26.
@@ -64,6 +67,9 @@ public class RaderActivity extends Activity {
 
     //WiFiDirect
     WiFiDirect wfd;
+
+
+    private SyugoApp syugoApp; // グローバルクラス
 
 
     ////////////////////////////////////////////////////////////
@@ -103,12 +109,26 @@ public class RaderActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // intent取得
-        Intent intent = getIntent();
-        // intentから文字列取得
-        reqID  = intent.getStringExtra( "reqID" );      // 相手ID
-//        macAdr = intent.getStringExtra( "macAdr" );     // 相手のMACアドレス
-//        oppName= intent.getStringExtra( "oppName" );    // 相手のユーザ名
+        syugoApp = (SyugoApp)this.getApplication(); // グローバルクラス
+        // グローバルクラスから自分・相手のID読み込み
+        myID = syugoApp.getSelfUserId();
+        reqID = syugoApp.getOpponentUserId();
+
+        // 例外処理
+        Intent intent;
+        if ( myID.equals("") ) {
+            Toast.makeText(this, "自分のユーザ名を入力し、\nIDを取得してください", Toast.LENGTH_LONG).show();
+            intent = new Intent( RaderActivity.this, RegActivity.class );
+            startActivity( intent );
+            this.finish();
+        }
+        else if ( reqID.equals("") ) {
+            Toast.makeText( this, "相手のユーザIDを検索し、\nユーザ名を確認してください", Toast.LENGTH_LONG ).show();
+            intent = new Intent( RaderActivity.this, LookActivity.class );
+            startActivity( intent );
+            this.finish();
+        }
+
 
         glView = new MyGLSurfaceView( this );
         glView.setZOrderOnTop(true);
@@ -413,6 +433,7 @@ public class RaderActivity extends Activity {
         else textView_AccuracyMessage.setText( "" );
 
 
+        // デバッグ用にデータを表示したいんじゃよ
         // 現在の時刻を取得
         Date date = new Date();
         // 表示形式を設定
