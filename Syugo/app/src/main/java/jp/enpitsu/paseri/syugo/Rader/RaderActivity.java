@@ -261,7 +261,8 @@ public class RaderActivity extends Activity {
         ////////////////////////////////////////////////////////////////////////////////////////////
         // 位置情報関連のコピペ ////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////////////
-        RequestPermissionLocationInfo();
+//        RequestPermissionLocationInfo();
+        permissionManager.requestLocationInfoPermission();
         if (this.isFinishing()) return;
 
         //  位置情報のリスナーを登録します。全ての位置情報更新はここで処理され、ここから本アプリ内で一元的に位置情報を管理するプロバイダー「locationProvider」に引き渡されます。
@@ -352,7 +353,11 @@ public class RaderActivity extends Activity {
 
         // LocationProviderのライフサイクルメソッド「onResume」を呼び出す必要があります。通常、Resumeが通知されると位置情報の収集が再開され、ステータスバーのGPSインジケーターが点灯します。
         if (this.locationProvider != null) {
-            this.locationProvider.onResume();
+            try {
+                this.locationProvider.onResume();
+            } catch (Exception e ) {
+                ;
+            }
         }
     }
 
