@@ -88,14 +88,15 @@
             android:textColor="@color/colorWhite"
             android:textSize="30dp"
             android:layout_weight="1"
-            android:textOn="AR ON\n"
+            android:textOn="AR ON \n"
             android:textOff="AR OFF\n"
             android:checked="false"
             android:clickable="true"
             android:gravity="center"
             android:layout_gravity="top"
             android:paddingTop="15dp"
-            android:paddingBottom="10dp" />
+            android:paddingBottom="10dp"
+            android:onClick="onARSwitchButtonClicked" />
 
         <ToggleButton
             android:layout_width="wrap_content"
@@ -105,14 +106,15 @@
             android:textColor="@color/colorWhite"
             android:textSize="30dp"
             android:layout_weight="1"
-            android:textOn="Vibe ON\n"
+            android:textOn="Vibe ON \n"
             android:textOff="Vibe OFF\n"
             android:checked="true"
             android:clickable="true"
             android:layout_gravity="top"
             android:gravity="center"
             android:paddingTop="15dp"
-            android:paddingBottom="10dp" />
+            android:paddingBottom="10dp"
+            android:onClick="onVibeSwitchClicked" />
 
         <ToggleButton
             android:layout_width="wrap_content"

@@ -477,17 +477,15 @@ public class RaderActivity extends Activity {
     }
 
     // [振動止める/つける]ボタン押下
-    public void onBottonClick( View v ) {
+    public void onVibeSwitchClicked( View v ) {
         Log.d("onButtonClick", "onButtonClick");
-        if( flag_vibrator == true ) {
+        if( button_Vibration.isChecked() == true ) { // OFF → ONのとき
+            flag_vibrator = true;
+        }
+        else { // ON → OFFのとき
             flag_vibrator = false;
             // 現在動作中の振動も止める
             vibrator.cancel();
-            button_StopVibration.setText("振動つける");
-        }
-        else {
-            flag_vibrator = true;
-            button_StopVibration.setText("振動とめる");
         }
     }
 
