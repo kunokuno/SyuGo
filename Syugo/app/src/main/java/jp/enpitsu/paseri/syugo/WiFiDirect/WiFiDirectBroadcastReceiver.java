@@ -46,23 +46,23 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
     private WifiP2pManager manager;
     private Channel channel;
-    private WiFiDirectActivity activity;
+    private WiFiDirect wfd;
     private WiFiDirectConnector connector;
     private WiFiDirectCommunicator communicator;
 
     /**
      * @param manager WifiP2pManager system service
      * @param channel Wifi p2p channel
-     * @param activity activity associated with the receiver
+     * @param wfd wfd associated with the receiver
      */
     public WiFiDirectBroadcastReceiver(WifiP2pManager manager, Channel channel,
-                                       WiFiDirectActivity activity) {
+                                       WiFiDirect wfd) {
         super();
         this.manager = manager;
         this.channel = channel;
-        this.activity = activity;
-        connector = activity.connector;
-        communicator = activity.communicator;
+        this.wfd = wfd;
+        connector = wfd.connector;
+        communicator = wfd.communicator;
     }
 
     @Override
@@ -75,10 +75,10 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
             if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED) {
                 // Wifi Direct mode is enabled
-                activity.setIsWifiP2pEnabled(true);
+                wfd.setIsWifiP2pEnabled(true);
             } else {
-                activity.setIsWifiP2pEnabled(false);
-                activity.resetData();
+                wfd.setIsWifiP2pEnabled(false);
+                wfd.resetData();
             }
 
             Log.d(TAG, "onReceive : P2P state changed - " + state);
@@ -86,7 +86,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) { // Called if this device found something other device.
 
             // request available peers from the wifi p2p manager. This is an
-            // asynchronous call and the calling activity is notified with a
+            // asynchronous call and the calling wfd is notified with a
             // callback on PeerListListener.onPeersAvailable()
 
             if (manager == null) {
@@ -115,7 +115,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
             } else {
                 // It's a disconnect
-                activity.resetData();
+                //wfd.resetData();
             }
 
             Log.d(TAG,"BroadCaster : P2P Connection Changed");
@@ -123,7 +123,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) { // Called if changed this device status
 
             WifiP2pDevice device = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
-            activity.updateThisDevice(device);
+            wfd.updateThisDevice(device);
 
             Log.d(TAG,"onReceive : This Device Status is Changed");
         }

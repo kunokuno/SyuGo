@@ -19,7 +19,6 @@ import jp.enpitsu.paseri.syugo.Global.SyugoApp;
 import jp.enpitsu.paseri.syugo.Lookfor.LookActivity;
 import jp.enpitsu.paseri.syugo.R;
 import jp.enpitsu.paseri.syugo.Registor.RegActivity;
-import jp.enpitsu.paseri.syugo.WiFiDirect.WiFiDirectActivity;
 
 /**
  * Created by owner on 2016/10/25.

@@ -45,16 +45,16 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
     public static final int MESSAGE_READ = 0x400 + 1;
     public static final int MY_HANDLE = 0x400 + 2;
 
-    WiFiDirectActivity activity;
+    WiFiDirect wfd;
     GPSCommManager manager;
 
-    WiFiDirectCommunicator(WiFiDirectActivity activity){
-        this.activity = activity;
+    WiFiDirectCommunicator(WiFiDirect wfd){
+        this.wfd = wfd;
     }
 
     @Override
     public void onConnectionInfoAvailable(WifiP2pInfo p2pInfo) {
-        activity.setOpponentDeviceInformation(p2pInfo.toString());
+        wfd.setOpponentDeviceInformation(p2pInfo.toString());
 
         Thread handler = null;
         /*
@@ -65,7 +65,7 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
 
         if (p2pInfo.isGroupOwner) {
             Log.d(TAG, "Connected as group owner");
-            activity.setConnection("server");
+            wfd.setSocketDeviceSide("server");
             try {
                 handler = new GroupOwnerSocketHandler(new Handler(this));
                 handler.start();
@@ -75,7 +75,7 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
                 return;
             }
         } else {
-            activity.setConnection("client");
+            wfd.setSocketDeviceSide("client");
             Log.d(TAG, "Connected as peer");
             handler = new ClientSocketHandler(
                     new Handler(this),
@@ -94,28 +94,26 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
                 // construct a string from the valid bytes in the buffer
                 String readMessage = new String(readBuf, 0, msg.arg1);
                 Log.d(TAG, readMessage);
-                activity.toast(readMessage);
+                wfd.toast(readMessage);
                 break;
 
             case MY_HANDLE:
                 Object obj = msg.obj;
                 manager = (GPSCommManager) obj;
                 Log.d(TAG, "manager obj received");
-                activity.setConnection("socket connected");
+                wfd.setSocketConnection("connected");
         }
         return true;
     }
 
     // send message
-    View.OnClickListener pingClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (manager != null) {
-                manager.write("hogehoge\n".getBytes());
-            }else{
-                Log.d(TAG,"manager is null");
-            }
+    public void sendMessage(String str){
+        if (manager != null) {
+            manager.write(str.getBytes());
+        }else{
+            Log.d(TAG,"manager is null");
+            wfd.setSocketConnection("disconnected");
         }
-    };
+    }
 
 }
