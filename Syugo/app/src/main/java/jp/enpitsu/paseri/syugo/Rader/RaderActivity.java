@@ -261,7 +261,6 @@ public class RaderActivity extends Activity {
         ////////////////////////////////////////////////////////////////////////////////////////////
         // 位置情報関連のコピペ ////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////////////
-//        RequestPermissionLocationInfo();
         permissionManager.requestLocationInfoPermission();
         if (this.isFinishing()) return;
 
@@ -370,48 +369,7 @@ public class RaderActivity extends Activity {
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // region 各センサーへのアクセス権限に関する処理
-
-    // アプリの実行に必要な権限をチェックして、不足していればユーザーに要求
-    private void RequestPermissionLocationInfo() {
-
-        List<String> permissionList = new ArrayList<String>();
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
-            Toast.makeText(this, "位置情報（GPS）が使えないと起動できません。", Toast.LENGTH_LONG).show();
-        }
-        if (permissionList.size() > 0) {
-            String[] permissions = permissionList.toArray(new String[permissionList.size()]);
-            int REQUEST_CODE_NONE = 0;  // onRequestPermissionResultオーバーライドメソッド内では何も処理しないので、特に意味の無い数値を指定しています。
-            ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_NONE);
-
-            // 30秒ほど、権限設定をチェックしながら待つ
-            for (int i = 0; i < 300; i++)
-            {
-                if (isFinishing()) return;
-                try {
-                    Thread.sleep(100);
-                    Thread.yield();
-                } catch (InterruptedException e) {
-                    break;
-                }
-
-                if ( ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ) {
-                    return;
-                }
-            }
-
-            // いったんアプリを終了
-            Toast.makeText(this, "権限設定後に、もう一度アプリを起動し直してください。", Toast.LENGTH_LONG).show();
-            canUseCamera = false;
-            this.finish();
-        }
-    }
-
-
-
     // region 位置情報更新の管理（※LocationProviderに一任しており、ここではそのプロバイダーを生成するのみです）
-
     /**
      * LocationProviderを取得します。
      * @param locationListener システムの位置情報リスナーを指定してください。
