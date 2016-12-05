@@ -31,6 +31,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="#96ffffff"
                 android:text="集GO!"
+                android:id="@+id/first_msg"
                 android:textSize="50dp"
                 android:gravity="bottom"
                 android:paddingTop="15dp"
@@ -50,13 +51,14 @@
                 android:background="@drawable/button_getid"
                 android:scaleType="fitXY"
                 android:paddingBottom="10dp"
-                android:paddingLeft="10dp"
+                android:paddingLeft="5dp"
                 android:paddingRight="10dp"
                 android:paddingTop="10dp"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text=" Get ID"
+                android:id="@+id/text_getid"
                 android:textSize="40dp"
                 android:gravity="left|bottom"
                 android:paddingBottom="5dp" />
@@ -81,7 +83,7 @@
                 android:layout_gravity="center"
                 android:scaleType="fitXY"
                 android:paddingBottom="10dp"
-                android:paddingLeft="10dp"
+                android:paddingLeft="5dp"
                 android:paddingRight="10dp"
                 android:paddingTop="10dp"
                 android:layout_weight="0.8"/>
@@ -89,6 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text=" Let's 集GO!"
+                android:id="@+id/text_lets"
                 android:textSize="40dp"
                 android:gravity="left|bottom"
                 android:paddingBottom="5dp" />
