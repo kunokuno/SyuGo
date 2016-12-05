@@ -129,4 +129,36 @@
             android:layout_gravity="top" />
     </LinearLayout>
 
+
+    <!--デバッグ用情報表示-->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="NO DATA"
+            android:textColor="@color/colorWhite"
+            android:id="@+id/textView_info"
+            android:layout_gravity="right|bottom"
+            android:background="@color/colorButtonPressedBackground"
+            android:visibility="gone" />
+
+        <Button
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:text="i"
+            android:textColor="@color/colorWhite"
+            android:id="@+id/button_info"
+            android:layout_gravity="right|bottom"
+            android:onClick="onClickButtonInfo"
+            android:background="@drawable/custom_button_state"
+            />
+    </LinearLayout>
+
+
 </FrameLayout>

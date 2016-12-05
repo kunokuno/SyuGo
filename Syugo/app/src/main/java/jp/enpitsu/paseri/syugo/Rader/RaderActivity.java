@@ -33,7 +33,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import jp.enpitsu.paseri.syugo.Rader.ARObjects.Graph.GraphView;
@@ -59,11 +61,10 @@ public class RaderActivity extends Activity {
 
     TextView textView_DistanceMessage;
     TextView textView_AccuracyMessage;
-    TextView textView_Message;
-    Button button_StopVibration;
 
     //WiFiDirect
     WiFiDirect wfd;
+
 
     ////////////////////////////////////////////////////////////
     // コンパス用のセンサ関連
@@ -138,6 +139,9 @@ public class RaderActivity extends Activity {
         textView_DistanceMessage = (TextView)findViewById( R.id.textView_DistanceMessage );
         textView_AccuracyMessage = (TextView)findViewById( R.id.textView_AccuracyMessage );
 
+        // デバッグ用
+        button_info = (Button)findViewById( R.id.button_info );
+        textView_info = (TextView)findViewById( R.id.textView_info );
 
         // フォント設定
         button_AR.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
@@ -154,10 +158,7 @@ public class RaderActivity extends Activity {
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-//                Log.d( "mCamera open", "start" + " " + isEnd );
-//                while( isEnd == false );
-//                mCamera.open();
-//                Log.d( "mCamera open", "end" );
+                // 通常はここでカメラ起動
             }
 
             @Override
@@ -404,13 +405,32 @@ public class RaderActivity extends Activity {
         else if( results[0] == 0 ) textView_DistanceMessage.setText("やばいよ");
         else textView_DistanceMessage.setText("遠いよ");
 
-        Log.d("httpppppp", "acc"+ data.acc );
         // 精度メッセージ変更
         if( data.acc <= 3 ) textView_AccuracyMessage.setText("精度良好かも");
         else if( data.acc > 3 && data.acc <= 10 ) textView_AccuracyMessage.setText("ふつうの精度");
         else if ( data.acc >= 15 ) textView_AccuracyMessage.setText("精度ひどいよ");
 //        else if ( data.acc >= 15 ) textView_AccuracyMessage.setText("不安な精度");
         else textView_AccuracyMessage.setText( "" );
+
+
+        // 現在の時刻を取得
+        Date date = new Date();
+        // 表示形式を設定
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy'年'MM'月'dd'日'　kk'時'mm'分'ss'秒'");
+
+        String stringInfo = "【 自分( "+ myID + " ) 】\n" +
+                "lat : " + this.lat + "\n" +
+                "lon : " + this.lon + "\n" +
+                "acc : " + data.acc + "\n" +
+                "【 相手( "+ reqID + " ) 】\n" +
+                "lat : " + data.lat + "\n" +
+                "lon : " + data.lon + "\n" +
+                "acc : " + data.acc + "\n" +
+                "【 距離 】 " + results[0] + "m\n" +
+                "【 自 → 相 】 " + results[1] + "\n" +
+                "【 相 → 自 】 " + results[2] + "\n" +
+                "【 "+ sdf.format( date ) +" 】";    // 更新日時
+        textView_info.setText( stringInfo );
 
 
         if( results[0] <= 40 && flag_vibrator == true ) {
@@ -514,6 +534,18 @@ public class RaderActivity extends Activity {
             vibrator.vibrate(pattern1, -1);
             Log.d("viberation", "pattern1");
             Toast.makeText( this, "pattern1", Toast.LENGTH_SHORT ).show();
+        }
+    }
+
+
+    // デバッグ用情報を表示するTextviewの表示、非表示切り替え
+    public void onClickButtonInfo( View view ) {
+        if( isInfoVisible == false ) {
+            textView_info.setVisibility(View.VISIBLE);
+            isInfoVisible = true;
+        } else {
+            textView_info.setVisibility(View.GONE);
+            isInfoVisible = false;
         }
     }
 }
