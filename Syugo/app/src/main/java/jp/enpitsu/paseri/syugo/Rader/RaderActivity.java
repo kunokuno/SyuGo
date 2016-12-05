@@ -51,8 +51,10 @@ public class RaderActivity extends Activity {
 
     private MyGLSurfaceView glView;
 
-    private ToggleButton button_AR, button_Vibration, button_WifiDirect;
-    private ImageView backgroundImageView;
+    private PermissionManager permissionManager;
+
+    ToggleButton button_AR, button_Vibration, button_WifiDirect;
+    ImageView backgroundImageView;
     TextureView textureView;
 
     TextView textView_DistanceMessage;
@@ -76,7 +78,6 @@ public class RaderActivity extends Activity {
     Vibrator vibrator;
     private boolean flag_vibrator = true; // 振動させるかさせないか
 
-    private int REQUEST_CODE_CAMERA_PERMISSION = 0x01;
 
     //    String myID = "r3uhr3";
 //    String reqID = "4hfeu";
@@ -110,6 +111,8 @@ public class RaderActivity extends Activity {
 
         glView = new MyGLSurfaceView( this );
         glView.setZOrderOnTop(true);
+
+        permissionManager = new PermissionManager( this );
 
         final View view = this.getLayoutInflater().inflate(R.layout.activity_rader, null);
 //        // [参考] http://language-and-engineering.hatenablog.jp/entry/20110908/p1
@@ -455,104 +458,11 @@ public class RaderActivity extends Activity {
 
     }
 
-    // Permission handling for Android 6.0
-    private void requestCameraPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                Manifest.permission.CAMERA)) {
-
-            Log.d( "REQUEST PERMISSION", "shouldShowRequestPermissionRationale:追加説明");
-            // 権限チェックした結果、持っていない場合はダイアログを出す
-            new AlertDialog.Builder(this)
-                    .setTitle("パーミッションの追加説明")
-                    .setMessage("このアプリで写真を撮るにはパーミッションが必要です")
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(RaderActivity.this,
-                                    new String[]{Manifest.permission.CAMERA},
-                                    REQUEST_CODE_CAMERA_PERMISSION);
-                        }
-                    })
-                    .create()
-                    .show();
-            return;
-        }
-
-        // 権限を取得する
-        ActivityCompat.requestPermissions(this, new String[]{
-                        Manifest.permission.CAMERA
-                },
-                REQUEST_CODE_CAMERA_PERMISSION);
-        return;
-    }
-
-
+    // PermissionMangerちゃんに任せましょうね～
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-
-        if (requestCode == REQUEST_CODE_CAMERA_PERMISSION) {
-            if (grantResults.length != 1 ||
-                    grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Log.d("REQUEST PERMISSION", "onRequestPermissionsResult:DENYED");
-
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        Manifest.permission.CAMERA)) {
-                    Log.d("REQUEST PERMISSION", "[show error]");
-                    new AlertDialog.Builder(this)
-                            .setTitle("パーミッション取得エラー")
-                            .setMessage("再試行する場合は、再度[AR ON/OFF]ボタンを押してください")
-                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    // 許可されなかった場合
-                                    // ARモード終了
-                                    button_AR.setChecked( false );
-                                }
-                            })
-                            .create()
-                            .show();
-
-                } else {
-                    Log.d("REQUEST PERMISSION", "[show app settings guide]");
-                    new AlertDialog.Builder(this)
-                            .setTitle("パーミッション取得エラー")
-                            .setMessage("今後は許可しないが選択されました。アプリ設定＞権限をチェックしてください（権限をON/OFFすることで状態はリセットされます）")
-                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    openSettings();
-                                }
-                            })
-                            .create()
-                            .show();
-                    // 許可されなかった場合②
-                    button_AR.setChecked( false );
-                }
-            } else {
-                Log.d("REQUEST PERMISSION", "onRequestPermissionsResult:GRANTED");
-                // 許可されたのでカメラにアクセス(AR起動)
-                // ARモード開始
-                glView.switchModeAR( true );
-                // カメラ起動
-                if ( textureView.isAvailable() == true ) {
-                    mCamera = new Camera2(textureView, this);
-                    mCamera.open();
-                }
-                // 背景差し替え（imageView非表示）
-                backgroundImageView.setVisibility( backgroundImageView.INVISIBLE );
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    private void openSettings() {
-        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        //Fragmentの場合はgetContext().getPackageName()
-        Uri uri = Uri.fromParts("package", getPackageName(), null);
-        intent.setData(uri);
-        startActivity(intent);
+    public void onRequestPermissionsResult( int requestCode,
+                                            String permissions[], int[] grantResults ) {
+        permissionManager.onRequestPermissionsResult( requestCode, permissions, grantResults );
     }
 
     // ARモードのon/off切り替えボタンがクリックされたとき
@@ -564,21 +474,12 @@ public class RaderActivity extends Activity {
                     RaderActivity.this, Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED) {
                 // パーミッションをリクエストする
-                requestCameraPermission();
+                permissionManager.requestCameraPermission();
                 return;
             }
-
             Log.d( "REQUEST PERMISSION", "パーミッション取得済み" );
             // ARモード開始
-            glView.switchModeAR( true );
-            // カメラ起動
-            if ( textureView.isAvailable() == true ) {
-                mCamera = new Camera2(textureView, this);
-                mCamera.open();
-            }
-
-            // 背景差し替え（imageView非表示）
-            backgroundImageView.setVisibility( backgroundImageView.INVISIBLE );
+            startARMode();
         }
         else { // ON → OFFのとき
             // ARモード終了
@@ -590,6 +491,19 @@ public class RaderActivity extends Activity {
             backgroundImageView.setVisibility( backgroundImageView.VISIBLE );
         }
     }
+
+    public void startARMode() {
+        glView.switchModeAR( true );
+        // カメラ起動
+        if ( textureView.isAvailable() == true ) {
+            mCamera = new Camera2(textureView, this);
+            mCamera.open();
+        }
+
+        // 背景差し替え（imageView非表示）
+        backgroundImageView.setVisibility( backgroundImageView.INVISIBLE );
+    }
+
 
     // [振動止める/つける]ボタン押下
     public void onVibeSwitchClicked( View v ) {
