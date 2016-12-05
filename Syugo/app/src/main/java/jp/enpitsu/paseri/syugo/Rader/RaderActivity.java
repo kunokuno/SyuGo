@@ -34,6 +34,7 @@ import java.util.List;
 import jp.enpitsu.paseri.syugo.Rader.ARObjects.Graph.GraphView;
 import jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20.MyGLSurfaceView;
 import jp.enpitsu.paseri.syugo.R;
+import jp.enpitsu.paseri.syugo.WiFiDirect.WiFiDirect;
 
 /**
  * Created by iyobe on 2016/09/26.
@@ -53,6 +54,9 @@ public class RaderActivity extends Activity {
     TextView textView_AccuracyMessage;
     TextView textView_Message;
     Button button_StopVibration;
+
+    //WiFiDirect
+    WiFiDirect wfd;
 
     ////////////////////////////////////////////////////////////
     // コンパス用のセンサ関連
@@ -133,6 +137,9 @@ public class RaderActivity extends Activity {
         textView_DistanceMessage.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
         textView_AccuracyMessage.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
 
+        //WiFiDirectクラスのインスタンス作成とボタンの登録
+        wfd = new WiFiDirect(RaderActivity.this);
+        wfd.setCompoundButton(button_WifiDirect);
 
         textureView = (TextureView) findViewById( R.id.texture_view );
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
@@ -332,11 +339,18 @@ public class RaderActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        wfd.onResume();
 
         // LocationProviderのライフサイクルメソッド「onResume」を呼び出す必要があります。通常、Resumeが通知されると位置情報の収集が再開され、ステータスバーのGPSインジケーターが点灯します。
         if (this.locationProvider != null) {
             this.locationProvider.onResume();
         }
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        wfd.onPause();
     }
 
 
