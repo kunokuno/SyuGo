@@ -13,7 +13,7 @@ public class ClientSocketHandler extends Thread {
 
     private static final String TAG = "wifi_direct_c_handler";
     private Handler handler;
-    private GPSCommManager manager;
+    private CommManager manager;
     private InetAddress mAddress;
 
     public ClientSocketHandler(Handler handler, InetAddress groupOwnerAddress) {
@@ -39,7 +39,7 @@ public class ClientSocketHandler extends Thread {
             socket.setReuseAddress(true);
             socket.connect(addr,WiFiDirectCommunicator.TIMEOUT);
             Log.d(TAG, "Launching the I/O handler");
-            manager = new GPSCommManager(socket, handler);
+            manager = new CommManager(socket, handler);
             new Thread(manager).start();
         } catch (IOException e) {
             e.printStackTrace();

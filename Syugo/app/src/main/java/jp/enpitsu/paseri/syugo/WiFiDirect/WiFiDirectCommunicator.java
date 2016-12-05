@@ -10,6 +10,8 @@ import android.widget.EditText;
 
 import java.io.IOException;
 
+import jp.enpitsu.paseri.syugo.Rader.LocationData;
+
 /**
  * Created by Prily on 2016/11/24.
  */
@@ -46,7 +48,7 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
     public static final int MY_HANDLE = 0x400 + 2;
 
     WiFiDirect wfd;
-    GPSCommManager manager;
+    CommManager manager;
 
     WiFiDirectCommunicator(WiFiDirect wfd){
         this.wfd = wfd;
@@ -99,7 +101,7 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
 
             case MY_HANDLE:
                 Object obj = msg.obj;
-                manager = (GPSCommManager) obj;
+                manager = (CommManager) obj;
                 Log.d(TAG, "manager obj received");
                 wfd.setSocketConnection("connected");
         }
@@ -110,6 +112,15 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
     public void sendMessage(String str){
         if (manager != null) {
             manager.write(str.getBytes());
+        }else{
+            Log.d(TAG,"manager is null");
+            wfd.setSocketConnection("disconnected");
+        }
+    }
+
+    public void sendGPSLocation(LocationData loc){
+        if (manager != null) {
+
         }else{
             Log.d(TAG,"manager is null");
             wfd.setSocketConnection("disconnected");

@@ -21,6 +21,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pConfig;
@@ -54,6 +55,7 @@ import java.lang.reflect.Method;
 
 import jp.enpitsu.paseri.syugo.Global.SyugoApp;
 import jp.enpitsu.paseri.syugo.R;
+import jp.enpitsu.paseri.syugo.Rader.LocationData;
 
 import static android.os.Looper.getMainLooper;
 import static android.webkit.ConsoleMessage.MessageLevel.LOG;
@@ -436,4 +438,21 @@ public class WiFiDirect {
             }
         }
     }
+
+    /* -----------------------------------------------------------
+    Communication
+    -------------------------------------------------------------- */
+
+    public void sendMessage(String str){
+        if(communicator!=null){
+            communicator.sendMessage(str);
+        }
+    }
+
+    public void sendGPSLocation(LocationData loc){
+        if(communicator!=null){
+            communicator.sendGPSLocation(loc);
+        }
+    }
+
 }

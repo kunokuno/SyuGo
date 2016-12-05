@@ -12,6 +12,7 @@ import android.widget.ToggleButton;
 
 import jp.enpitsu.paseri.syugo.Global.SyugoApp;
 import jp.enpitsu.paseri.syugo.R;
+import jp.enpitsu.paseri.syugo.Rader.LocationData;
 import jp.enpitsu.paseri.syugo.Start.StartActivity;
 import jp.enpitsu.paseri.syugo.WiFiDirect.WiFiDirect;
 
@@ -28,7 +29,7 @@ public class SecretActivity extends Activity {
     SyugoApp app;
 
     // ui
-    Button reset_button;
+    Button ping_button;
     CompoundButton wfd_button;
 
     @Override
@@ -39,11 +40,12 @@ public class SecretActivity extends Activity {
         wfd = new WiFiDirect(SecretActivity.this);
 
         //reset savedata
-        reset_button = (Button) findViewById(R.id.sc_data_reset);
-        reset_button.setOnClickListener(new View.OnClickListener() {
+        ping_button = (Button) findViewById(R.id.sc_ping);
+        ping_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                app.resetUserInfo();
+                wfd.sendMessage("hoge");
+                wfd.sendGPSLocation(new LocationData(1.2,1.4,1.5));
             }
         });
 
