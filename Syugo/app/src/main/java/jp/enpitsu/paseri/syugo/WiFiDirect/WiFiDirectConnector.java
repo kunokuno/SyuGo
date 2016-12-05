@@ -32,7 +32,7 @@ public class WiFiDirectConnector implements WifiP2pManager.PeerListListener {
         //Log.d(TAG,peers.toString());
 
         // if Device on Inviting or Connected, terminate.
-        if (onConnecting){
+        if (onConnecting || wfd.status.p2p_status.equals("Connected") || wfd.status.p2p_status.equals("Invited")){
             return;
         }
 

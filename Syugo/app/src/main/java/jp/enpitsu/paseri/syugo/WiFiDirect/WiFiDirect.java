@@ -83,7 +83,7 @@ Socket Status
  */
 public class WiFiDirect {
 
-    private class WiFiDirectStatus {
+    public class WiFiDirectStatus {
         public boolean isWifiP2pEnabled = false;
         public String selfDeviceName="unknown", opponentDeviceName = "unknown";
         public String selfDeviceStatus="unknown",opponentDeviceStatus="unknown";
@@ -143,8 +143,8 @@ public class WiFiDirect {
 
         Log.d(TAG,"hello");
 
-        //app.setSelfUserInfo("enpitsublue","n8y6");
-        //app.setOpponentUserInfo("enpitsugreen","bh96");
+        //app.setOpponentUserInfo("enpitsublue","n8y6");
+        //app.setSelfUserInfo("enpitsugreen","bh96");
         //app.saveUserInfo();
     }
 
@@ -168,7 +168,7 @@ public class WiFiDirect {
     protected void updateThisDevice(WifiP2pDevice device) {
         // status
         String s = getP2pDeviceStatus(device.status);
-        status.selfDeviceStatus = s;
+        status.p2p_status = s;
 
         // notify
         if(s.equals("Connected")){
@@ -207,7 +207,7 @@ public class WiFiDirect {
             // Turn on the light
             controlWfdButton(ButtonCmd.ON);
         }else{
-            toast("Socket切断");
+            toast("Socket切断したよ");
             // Turn off the light
             controlWfdButton(ButtonCmd.OFF);
         }
@@ -282,6 +282,7 @@ public class WiFiDirect {
         status.opponentDeviceName = app.getOpponentUserName() + "_" + app.getOpponentUserId();
         status.selfDeviceName = app.getSelfUserName() + "_" + app.getSelfUserId();
         setP2pDeviceName(status.selfDeviceName);
+        toast(status.selfDeviceName + "->" + status.opponentDeviceName);
     }
 
     private void setP2pDeviceName(String devName) {
