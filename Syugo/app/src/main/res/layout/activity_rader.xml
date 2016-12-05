@@ -34,26 +34,21 @@
         android:layout_height="match_parent"
         android:layout_gravity="center">
 
-        <FrameLayout
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="measuring..."
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/colorWhite"
+            android:id="@+id/textView_DistanceMessage"
             android:layout_gravity="center"
-            android:layout_marginTop="30dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="measuring..."
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/colorWhite"
-                android:id="@+id/textView_DistanceMessage"
-                android:layout_gravity="center"
-                android:textSize="70dp"
-                android:textStyle="bold"
-                android:shadowColor="#de000000"
-                android:shadowDx="0"
-                android:shadowDy="0"
-                android:shadowRadius="2.0" />
-        </FrameLayout>
+            android:textSize="40dp"
+            android:textStyle="bold"
+            android:shadowColor="#de000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="2.0"
+            android:layout_marginTop="20dp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -61,7 +56,7 @@
             android:textColor="@color/colorWhite"
             android:id="@+id/textView_AccuracyMessage"
             android:layout_gravity="center_horizontal"
-            android:textSize="15dp"
+            android:textSize="30dp"
             android:shadowColor="#de000000"
             android:shadowDx="0"
             android:shadowDy="0"
@@ -83,10 +78,10 @@
         <ToggleButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:id="@+id/button_AR"
             android:background="@drawable/custom_rader_button_state"
             android:textColor="@color/colorWhite"
-            android:textSize="30dp"
             android:layout_weight="1"
             android:textOn="AR ON \n"
             android:textOff="AR OFF\n"
@@ -101,10 +96,10 @@
         <ToggleButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:id="@+id/button_Vibe"
             android:background="@drawable/custom_rader_button_state"
             android:textColor="@color/colorWhite"
-            android:textSize="30dp"
             android:layout_weight="1"
             android:textOn="Vibe ON \n"
             android:textOff="Vibe OFF\n"
@@ -119,10 +114,10 @@
         <ToggleButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:id="@+id/button_wifiDirect"
             android:background="@drawable/custom_rader_button_state"
             android:textColor="@color/colorWhite"
-            android:textSize="30dp"
             android:layout_weight="1"
             android:textOff="Wifi\nDirect"
             android:textOn="Wifi\nDirect"
