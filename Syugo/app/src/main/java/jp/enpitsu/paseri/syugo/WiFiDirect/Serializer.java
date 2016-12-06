@@ -42,7 +42,7 @@ public final class Serializer {
     }
 
     static private byte[] construction(byte code, byte[] bytes){
-        int size = Byte.SIZE + Integer.SIZE + bytes.length;
+        int size = Byte.SIZE/8 + Integer.SIZE/8 + bytes.length;
         ByteBuffer buffer = ByteBuffer.allocate(size);
         buffer.clear();
         buffer.put(code);

@@ -73,6 +73,7 @@ public class CommManager implements Runnable {
     public void write(byte[] buffer) {
         try {
             oStream.write(buffer);
+            oStream.flush();
             Log.d(TAG,"write to buffer" + String.valueOf(buffer));
         } catch (IOException e) {
             Log.e(TAG, "Exception during write", e);
