@@ -14,6 +14,14 @@ import jp.enpitsu.paseri.syugo.Rader.LocationData;
  */
 
 
+/*
+    1 byte : type(code) (0x00 = String , 0x01 = LocationData)
+    4 byte : byte length
+    n byte : data
+
+ */
+
+
 // Static Class
 public final class Serializer {
     static final byte CHAT = 0x00;
@@ -34,10 +42,11 @@ public final class Serializer {
     }
 
     static private byte[] construction(byte code, byte[] bytes){
-        int size = bytes.length + Character.SIZE;
+        int size = Byte.SIZE + Integer.SIZE + bytes.length;
         ByteBuffer buffer = ByteBuffer.allocate(size);
         buffer.clear();
         buffer.put(code);
+        buffer.putInt(bytes.length);
         buffer.put(bytes);
         return buffer.array();
     };
@@ -47,19 +56,17 @@ public final class Serializer {
     -------------- */
 
     static public Pair<Byte,Object> Decode(byte[] bytes) {
-        int len = bytes.length;
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
         byte code = buffer.get();
+        int len = buffer.getInt();
+        byte[] data = new byte[len];
+        buffer.get(data, 0, len);
         switch (code) {
             case CHAT:
-                byte[] str_bytes = new byte[len - 1];
-                buffer.get(str_bytes, 1, len - 1);
-                String str = new String(str_bytes);
+                String str = new String(data);
                 return new Pair<Byte, Object>(code, (Object) str);
             case LOCATION:
-                byte[] loc_bytes = new byte[len - 1];
-                buffer.get(loc_bytes, 1, len - 1);
-                LocationData loc = new LocationData(loc_bytes);
+                LocationData loc = new LocationData(data);
                 return new Pair<Byte, Object>(code, (Object) loc);
             default:
                 Log.e("wifi_direct_serializer", "Unknown type error");
