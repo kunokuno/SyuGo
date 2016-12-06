@@ -92,7 +92,7 @@ public class RaderActivity extends Activity {
 
     //    String myID = "r3uhr3";
 //    String reqID = "4hfeu";
-    String myID = "4hfeu";
+    String myID;
 //    String reqID = "r3uhr3";
     String reqID; // TODO: 自分のIDは外部ファイルから読んでくる
     String macAdr, oppName; // 相手のMACアドレスとユーザ名
@@ -126,12 +126,12 @@ public class RaderActivity extends Activity {
             startActivity( intent );
             this.finish();
         }
-        else if ( reqID.equals("") ) {
-            Toast.makeText( this, "相手のユーザIDを検索し、\nユーザ名を確認してください", Toast.LENGTH_LONG ).show();
-            intent = new Intent( RaderActivity.this, LookActivity.class );
-            startActivity( intent );
-            this.finish();
-        }
+//        else if ( reqID.equals("") ) {
+//            Toast.makeText( this, "相手のユーザIDを検索し、\nユーザ名を確認してください", Toast.LENGTH_LONG ).show();
+//            intent = new Intent( RaderActivity.this, LookActivity.class );
+//            startActivity( intent );
+//            this.finish();
+//        }
 
 
         glView = new MyGLSurfaceView( this );
@@ -175,8 +175,8 @@ public class RaderActivity extends Activity {
         textView_AccuracyMessage.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
 
         //WiFiDirectクラスのインスタンス作成とボタンの登録
-        wfd = new WiFiDirect(RaderActivity.this);
-        wfd.setCompoundButton(button_WifiDirect);
+        wfd = new WiFiDirect( RaderActivity.this );
+        wfd.setCompoundButton( button_WifiDirect );
 
         textureView = (TextureView) findViewById( R.id.texture_view );
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
