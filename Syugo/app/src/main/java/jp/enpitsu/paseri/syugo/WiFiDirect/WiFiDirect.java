@@ -378,7 +378,7 @@ public class WiFiDirect {
     Notify
     -------------------------------------------------------------- */
 
-    protected void toast(String str){
+    public void toast(String str){
         if(wfd_toast!=null) {
             wfd_toast.cancel();
         }
@@ -452,6 +452,12 @@ public class WiFiDirect {
     public void sendGPSLocation(LocationData loc){
         if(communicator!=null){
             communicator.sendGPSLocation(loc);
+        }
+    }
+
+    public void setWiFiDirectEventListener(WiFiDirectEventListener listener){
+        if(communicator!=null){
+            communicator.listener = listener;
         }
     }
 }

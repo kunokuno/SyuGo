@@ -51,6 +51,7 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
 
     WiFiDirect wfd;
     CommManager manager;
+    WiFiDirectEventListener listener;
 
     WiFiDirectCommunicator(WiFiDirect wfd){
         this.wfd = wfd;
@@ -99,11 +100,11 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
                 switch(decoded.first){
                     case Serializer.CHAT:
                         String str = (String)decoded.second;
-                        //receiveChat(str);
+                        if (listener!=null) listener.receiveChat(str);
 
                     case Serializer.LOCATION:
                         LocationData loc = (LocationData)decoded.second;
-                        //receiveGPSLocation(loc);
+                        if (listener!=null) listener.receiveGPSLocation(loc);
                 }
                 Log.d(TAG, readBuf.toString());
                 break;
@@ -138,5 +139,4 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
         Log.d(TAG,"manager is null");
         wfd.setSocketConnection("disconnected");
     }
-
 }

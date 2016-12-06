@@ -15,6 +15,7 @@ import jp.enpitsu.paseri.syugo.R;
 import jp.enpitsu.paseri.syugo.Rader.LocationData;
 import jp.enpitsu.paseri.syugo.Start.StartActivity;
 import jp.enpitsu.paseri.syugo.WiFiDirect.WiFiDirect;
+import jp.enpitsu.paseri.syugo.WiFiDirect.WiFiDirectEventListener;
 
 /**
  * Created by Prily on 2016/12/01.
@@ -46,6 +47,17 @@ public class SecretActivity extends Activity {
             public void onClick(View v) {
                 wfd.sendChat("hoge");
                 wfd.sendGPSLocation(new LocationData(1.2,1.4,1.5));
+            }
+        });
+        wfd.setWiFiDirectEventListener(new WiFiDirectEventListener() {
+            @Override
+            public void receiveChat(String str) {
+                wfd.toast(str);
+            }
+
+            @Override
+            public void receiveGPSLocation(LocationData loc) {
+                wfd.toast(loc.toString());
             }
         });
 
