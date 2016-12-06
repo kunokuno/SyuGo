@@ -3,22 +3,26 @@ package jp.enpitsu.paseri.syugo.Lookfor;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import jp.enpitsu.paseri.syugo.R;
 import jp.enpitsu.paseri.syugo.Rader.RaderActivity;
 
 public class LookActivity extends Activity {
 
-    private Button find,search;
-    private TextView name,id2;
+    private Button search;
+    private ImageButton find;
+    private TextView name,id2, e_message;
     private EditText id;
-    private String your_id, str, oppName, macAdr, reqID;
+    private String oppName, macAdr, reqID;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,8 +30,9 @@ public class LookActivity extends Activity {
 
         id2 = (TextView) findViewById(R.id.id_show);
         name = (TextView) findViewById(R.id. name_show);
+        e_message = (TextView) findViewById(R.id.error);
         search = (Button) findViewById(R.id.button1);
-        find = (Button) findViewById(R.id.button2);
+        find = (ImageButton) findViewById(R.id.button2);
         id = (EditText) findViewById(R.id.id_enter);
         search.setOnClickListener(searchListener);
         find.setOnClickListener(findListener);
@@ -53,7 +58,7 @@ public class LookActivity extends Activity {
                                 name.setText( "接続エラー" );
                             }
                             else if( '0' == result.charAt(1) ) { // reqIDに一致するIDのユーザ名が見つからなかった場合
-                                name.setText( "検索失敗。入力したIDが正しいか確認してください。" );
+                                name.setText( "失敗" );
                             }
                             else {
                                 try {
@@ -79,15 +84,21 @@ public class LookActivity extends Activity {
     //検索ボタン押してマップ画面へ
     private View.OnClickListener findListener = new View.OnClickListener() {
         public void onClick(View v) {
+            if(TextUtils.isEmpty(oppName) == false) {
             try {
                 Intent intent_find = new Intent(LookActivity.this, RaderActivity.class);
-                intent_find.putExtra( "reqID", reqID );         // 相手ID
-                intent_find.putExtra( "macAdr", macAdr );       // MACアドレス
-                intent_find.putExtra( "oppName", oppName );     // 相手のユーザ名
+                intent_find.putExtra("reqID", reqID);         // 相手ID
+                intent_find.putExtra("macAdr", macAdr);       // MACアドレス
+                intent_find.putExtra("oppName", oppName);     // 相手のユーザ名
                 startActivity(intent_find);
             } catch (Exception e) {
                 Log.d("LookActivity", "intent error RaderActivity");
             }
+        }
+        else{
+            e_message.setText("正しいIDを入力して下さい");
+                Log.d("LookActivity","UserName is null.");
+        }
         }
 
     };

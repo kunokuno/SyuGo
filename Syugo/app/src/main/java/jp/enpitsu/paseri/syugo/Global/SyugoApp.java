@@ -65,7 +65,7 @@ public class SyugoApp extends android.app.Application {
         dump();
     }
 
-    private void loadUserInfo(){
+    public void loadUserInfo(){
         SharedPreferences data = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
         self.name = data.getString("self_name","");
         self.id = data.getString("self_id","");
@@ -95,6 +95,10 @@ public class SyugoApp extends android.app.Application {
         self.id = id;
     };
 
+    public void setSelfLocationData( LocationData locationData ) {
+        self.locationData = locationData;
+    }
+
     public String getSelfUserName(){
         return self.name;
     }
@@ -103,10 +107,16 @@ public class SyugoApp extends android.app.Application {
         return self.id;
     }
 
+    public LocationData getSelfLocationData() { return self.locationData; }
+
     public void setOpponentUserInfo(String name, String id){
         opponent.name = name;
         opponent.id = id;
     };
+
+    public void setOpponentLocationData( LocationData locationData ) {
+        opponent.locationData = locationData;
+    }
 
     public String getOpponentUserName(){
         return opponent.name;
@@ -115,6 +125,8 @@ public class SyugoApp extends android.app.Application {
     public String getOpponentUserId(){
         return opponent.id;
     }
+
+    public LocationData getOpponentLocationData() { return opponent.locationData; }
 
     public void dump(){
         Log.d(TAG,self.name);

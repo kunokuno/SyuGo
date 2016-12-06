@@ -1,114 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:paddingBottom="16dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="16dp"
-    android:background="@color/colorBackground"
-    android:weightSum="1">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <TextView
-        android:text="友達を探す"
-        android:textSize="50dp"
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/colorWhite"
-        android:gravity="center"
-        android:id="@+id/text1"/>
+        android:layout_height="match_parent"
+        android:src="@drawable/menu_bg2"
+        android:scaleType="fitXY"/>
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.16" />
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:paddingBottom="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp"
+        android:weightSum="1">
 
-    <TextView
-        android:text="友達のIDを入力してください"
-        android:textSize="30dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/colorWhite"
-        android:id="@+id/text2"/>
+        <TextView
+            android:text="Enter ID"
+            android:textSize="40dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorWhite"
+            android:gravity="left"
+            android:id="@+id/text1"/>
 
-    <EditText
-        android:ems="10"
-        android:textSize="40dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.06"
-        android:maxLength="10"
-        android:inputType="text"
-        android:background="@color/colorLightBackground"
-        android:id="@+id/id_enter"/>
+        <EditText
+            android:ems="10"
+            android:textSize="40dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLength="20"
+            android:inputType="text"
+            android:background="@color/colorLightBackground"
+            android:id="@+id/id_enter"
+            android:layout_weight="0.08" />
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.11" />
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.11" />
 
-    <Button
-        android:text="探す"
-        android:textSize="40dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button1"
-        android:textColor="@color/colorWhite"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center_vertical|center_horizontal"
-        android:background="@drawable/custom_button_green_state"
-        android:paddingLeft="40dp"
-        android:paddingRight="40dp"/>
+        <Button
+            android:text="SEARCH"
+            android:textSize="40dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/button1"
+            android:textColor="@color/colorWhite"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical|center_horizontal"
+            android:background="#00AFFF"
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp" />
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.26" />
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.14" />
 
-    <TextView
-        android:text=""
-        android:textSize="40dp"
-        android:textColor="@color/colorWhite"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/id_show"
-        android:gravity="center" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp"
+            android:paddingTop="10dp"
+            android:paddingRight="20dp"
+            android:weightSum="1">
 
-    <TextView
-        android:text="のユーザ名は"
-        android:textSize="40dp"
-        android:textColor="@color/colorWhite"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/text3"
-        android:gravity="center" />
+            <TextView
+                android:text=""
+                android:textSize="35dp"
+                android:background="#50ffffff"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/id_show"
+                android:layout_weight="0.3"
+                android:gravity="center" />
 
+            <TextView
+                android:text="は"
+                android:textSize="35dp"
+                android:textColor="@color/colorWhite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/word"
+                android:layout_weight="0.4"
+                android:gravity="center" />
 
-    <TextView
-        android:textSize="40dp"
-        android:layout_weight="0.13"
-        android:textColor="@color/colorWhite"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:id="@+id/name_show" />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.17" />
-
-    <Button
-        android:text="検索"
-        android:textSize="40dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/colorWhite"
-        android:layout_gravity="center_horizontal"
-        android:background="@drawable/custom_button_green_state"
-        android:paddingLeft="40dp"
-        android:paddingRight="40dp"
-        android:id="@+id/button2" />
+            <TextView
+                android:textSize="35dp"
+                android:background="#50ffffff"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/name_show"
+                android:layout_weight="0.3"
+                android:gravity="center" />
+        </LinearLayout>
 
 
-</LinearLayout>
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.06" />
+
+        <ImageButton
+            android:layout_width="207dp"
+            android:layout_height="161dp"
+            android:id="@+id/button2"
+            android:background="@drawable/search"
+            android:scaleType="center"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.10" />
+
+        <TextView
+            android:text="Go Rader"
+            android:textSize="35dp"
+            android:textColor="@color/colorWhite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView3"
+            android:gravity="center" />
+
+        <TextView
+            android:text=""
+            android:textSize="30dp"
+            android:textColor="@color/colorWhite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/error"
+            android:gravity="center" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.17" />
+    </LinearLayout>
+</FrameLayout>
