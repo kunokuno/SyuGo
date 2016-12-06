@@ -26,6 +26,9 @@ import jp.enpitsu.paseri.syugo.Rader.LocationData;
 public final class Serializer {
     static final byte CHAT = 0x00;
     static final byte LOCATION = 0x01;
+    static final byte HEARTBEAT = 0x0F;
+    static final byte[] ping = {HEARTBEAT};
+
 
     /* ---------------
         Encoder
@@ -57,17 +60,24 @@ public final class Serializer {
 
     static public final Pair<Byte,Object> Decode(byte[] bytes) {
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
+        int len;
+        byte[] data;
         byte code = buffer.get();
-        int len = buffer.getInt();
-        byte[] data = new byte[len];
-        buffer.get(data, 0, len);
         switch (code) {
             case CHAT:
+                len = buffer.getInt();
+                data = new byte[len];
+                buffer.get(data, 0, len);
                 String str = new String(data);
                 return new Pair<Byte, Object>(code, (Object) str);
             case LOCATION:
+                len = buffer.getInt();
+                data = new byte[len];
+                buffer.get(data, 0, len);
                 LocationData loc = new LocationData(data);
                 return new Pair<Byte, Object>(code, (Object) loc);
+            case HEARTBEAT:
+                return new Pair<Byte, Object>(code, null);
             default:
                 Log.e("wifi_direct_serializer", "Unknown type error");
                 return null;

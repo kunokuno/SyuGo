@@ -141,6 +141,14 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
         }
     }
 
+    public void sendHeartBeat(){
+        if (manager != null) {
+            manager.write(Serializer.ping);
+        }else{
+            socketFailed();
+        }
+    }
+
     private void socketFailed(){
         Log.d(TAG,"manager is null");
         wfd.setSocketConnection("disconnected");

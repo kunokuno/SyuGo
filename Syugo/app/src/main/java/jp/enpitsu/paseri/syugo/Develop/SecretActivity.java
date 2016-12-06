@@ -88,4 +88,10 @@ public class SecretActivity extends Activity {
         wfd.onPause();
     }
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        wfd.onDestroy();
+    }
+
 }

@@ -159,6 +159,10 @@ public class WiFiDirect {
         activity.unregisterReceiver(receiver);
     }
 
+    public void onDestroy(){
+        endConnection();
+    }
+
     /* -----------------------------------------------------------
     Catch status by BroadcastReceiver : notify us wifip2p & device status
     -------------------------------------------------------------- */
@@ -209,7 +213,6 @@ public class WiFiDirect {
             // Turn on the light
             controlWfdButton(ButtonCmd.ON);
         }else{
-            toast("Socket切断したよ");
             // Turn off the light
             controlWfdButton(ButtonCmd.OFF);
         }
