@@ -47,6 +47,8 @@ public class PermissionManager extends RaderActivity {
                     })
                     .create()
                     .show();
+            // ダイアログが無視された場合
+            raderActivity.button_AR.setChecked( false );
             return;
         }
 
@@ -132,6 +134,8 @@ public class PermissionManager extends RaderActivity {
                         })
                         .create()
                         .show();
+                // ダイアログが無視された場合
+                raderActivity.button_AR.setChecked( false );
 
             } else {
                 Log.d("REQUEST PERMISSION", "[show app settings guide]");
