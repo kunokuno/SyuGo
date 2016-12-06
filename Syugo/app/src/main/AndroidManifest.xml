@@ -45,16 +45,21 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Start.StartActivity">
+        <activity android:name=".Start.StartActivity"
+                    android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Rader.RaderActivity" />
-        <activity android:name=".Lookfor.LookActivity"/>
-        <activity android:name=".Registor.RegActivity"/>
-        <activity android:name=".Develop.SecretActivity"/>
+        <activity android:name=".Rader.RaderActivity"
+                    android:screenOrientation="portrait"/>
+        <activity android:name=".Lookfor.LookActivity"
+                    android:screenOrientation="portrait"/>
+        <activity android:name=".Registor.RegActivity"
+                    android:screenOrientation="portrait"/>
+        <activity android:name=".Develop.SecretActivity"
+                    android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
