@@ -8,14 +8,15 @@ import android.os.Handler;
  */
 
 public class HeartBeatTask implements Runnable {
-    static boolean respond = true;
-    static final int INTERVAL = 2500;
+    static boolean respond;
+    static final int INTERVAL = 5000;
     WiFiDirectCommunicator communicator;
     Handler handler;
 
     HeartBeatTask(WiFiDirectCommunicator communicator, Handler handler){
         this.communicator = communicator;
         this.handler = handler;
+        this.respond = true;
     }
 
     @Override

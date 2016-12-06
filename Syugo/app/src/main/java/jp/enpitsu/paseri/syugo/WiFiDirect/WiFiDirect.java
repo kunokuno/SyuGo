@@ -216,6 +216,7 @@ public class WiFiDirect {
             // Turn off the light
             controlWfdButton(ButtonCmd.OFF);
         }else if (str.equals("disconnected")){
+            toast("相手端末と通信隔絶…");
             endConnection();
         }
     }
