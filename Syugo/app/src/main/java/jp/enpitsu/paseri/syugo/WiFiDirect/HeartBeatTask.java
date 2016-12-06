@@ -9,7 +9,7 @@ import android.os.Handler;
 
 public class HeartBeatTask implements Runnable {
     static boolean respond;
-    static final int INTERVAL = 5000;
+    static final int INTERVAL = 8000;
     WiFiDirectCommunicator communicator;
     Handler handler;
 

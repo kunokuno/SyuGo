@@ -142,7 +142,7 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
     public void startHeartBeat(){
         Handler handler = new Handler();
         heartBeatTask = new HeartBeatTask(this,handler);
-        handler.postDelayed(heartBeatTask,HeartBeatTask.INTERVAL);
+        handler.postDelayed(heartBeatTask,HeartBeatTask.INTERVAL*2);
     }
 
     // send message
