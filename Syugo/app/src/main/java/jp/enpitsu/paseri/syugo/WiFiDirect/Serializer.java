@@ -15,10 +15,16 @@ import jp.enpitsu.paseri.syugo.Rader.LocationData;
 
 
 /*
-    1 byte : type(code) (0x00 = String , 0x01 = LocationData)
+    # CODE
+    0x00 String
+    0x01 LocationData
+    0x02 Audio
+    0x0F HeartBeat
+
+    # DATA FORMAT (excepting Heartbeat)
+    1 byte : type(code)
     4 byte : byte length
     n byte : data
-
  */
 
 

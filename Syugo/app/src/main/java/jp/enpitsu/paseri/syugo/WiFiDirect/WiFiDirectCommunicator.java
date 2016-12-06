@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.EditText;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import jp.enpitsu.paseri.syugo.Rader.LocationData;
 
@@ -52,6 +54,7 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
     WiFiDirect wfd;
     CommManager manager;
     WiFiDirectEventListener listener;
+    HeartBeatTask heartBeatTask;
 
     WiFiDirectCommunicator(WiFiDirect wfd){
         this.wfd = wfd;
@@ -110,6 +113,12 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
                             listener.receiveGPSLocation(loc);
                         }
                         break;
+                    case Serializer.HEARTBEAT:
+                        if(heartBeatTask!=null){
+                            heartBeatTask.respond = true;
+                            sendHeartBeat();
+                            Log.d(TAG,"heart-beat");
+                        }
                     default:
                         Log.e(TAG,"unknown type");
                 }
@@ -120,8 +129,15 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
                 manager = (CommManager) obj;
                 Log.d(TAG, "manager obj received");
                 wfd.setSocketConnection("connected");
+                startHeartBeat();
         }
         return true;
+    }
+
+    public void startHeartBeat(){
+        Timer timer = new Timer();
+        heartBeatTask = new HeartBeatTask(this);
+        timer.schedule(heartBeatTask, 1000, 1000);
     }
 
     // send message
