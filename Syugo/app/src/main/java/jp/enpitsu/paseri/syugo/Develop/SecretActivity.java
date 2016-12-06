@@ -44,7 +44,7 @@ public class SecretActivity extends Activity {
         ping_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wfd.sendMessage("hoge");
+                wfd.sendChat("hoge");
                 wfd.sendGPSLocation(new LocationData(1.2,1.4,1.5));
             }
         });

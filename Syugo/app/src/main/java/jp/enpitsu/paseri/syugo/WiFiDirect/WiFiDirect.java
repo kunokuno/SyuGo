@@ -443,7 +443,7 @@ public class WiFiDirect {
     Communication
     -------------------------------------------------------------- */
 
-    public void sendMessage(String str){
+    public void sendChat(String str){
         if(communicator!=null){
             communicator.sendChat(str);
         }
