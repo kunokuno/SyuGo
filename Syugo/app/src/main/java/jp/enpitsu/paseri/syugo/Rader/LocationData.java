@@ -1,5 +1,7 @@
 package jp.enpitsu.paseri.syugo.Rader;
 
+import java.nio.ByteBuffer;
+
 /**
  * Created by soniyama on 2016/08/29.
  */
@@ -9,5 +11,14 @@ public class LocationData {
         this.lat = lat;
         this.lon = lon;
         this.acc = acc;
+    }
+    public byte[] getBytes(){
+        int size = Double.SIZE/8 * 3;
+        ByteBuffer buffer = ByteBuffer.allocate(size);
+        buffer.clear();
+        buffer.putDouble(lat);
+        buffer.putDouble(lon);
+        buffer.putDouble(acc);
+        return buffer.array();
     }
 }
