@@ -31,17 +31,17 @@ public final class Serializer {
         Encoder
     -------------- */
 
-    static public byte[] Encode(String str){
+    static public final byte[] Encode(String str){
         byte code = CHAT;
         return construction(code,str.getBytes());
     }
 
-    static public byte[] Encode(LocationData loc){
+    static public final byte[] Encode(LocationData loc){
         byte code = LOCATION;
         return construction(code,loc.getBytes());
     }
 
-    static private byte[] construction(byte code, byte[] bytes){
+    static private final byte[] construction(byte code, byte[] bytes){
         int size = Byte.SIZE/8 + Integer.SIZE/8 + bytes.length;
         ByteBuffer buffer = ByteBuffer.allocate(size);
         buffer.clear();
@@ -55,7 +55,7 @@ public final class Serializer {
         Decoder
     -------------- */
 
-    static public Pair<Byte,Object> Decode(byte[] bytes) {
+    static public final Pair<Byte,Object> Decode(byte[] bytes) {
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
         byte code = buffer.get();
         int len = buffer.getInt();
