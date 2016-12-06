@@ -44,7 +44,7 @@ import jp.enpitsu.paseri.syugo.Rader.ARObjects.Graph.GraphView;
 import jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20.MyGLSurfaceView;
 import jp.enpitsu.paseri.syugo.R;
 import jp.enpitsu.paseri.syugo.WiFiDirect.WiFiDirect;
-
+import jp.enpitsu.paseri.syugo.Registor.RegActivity;
 
 /**
  * Created by iyobe on 2016/09/26.
@@ -67,6 +67,10 @@ public class RaderActivity extends Activity {
 
     //WiFiDirect
     WiFiDirect wfd;
+
+    Button button_info;
+    TextView textView_info;
+    boolean isInfoVisible = false;
 
 
     private SyugoApp syugoApp; // グローバルクラス
