@@ -212,9 +212,11 @@ public class WiFiDirect {
             toast("Socket接続完了！");
             // Turn on the light
             controlWfdButton(ButtonCmd.ON);
-        }else{
+        }else if (str.equals("unconnected")){
             // Turn off the light
             controlWfdButton(ButtonCmd.OFF);
+        }else if (str.equals("disconnected")){
+            endConnection();
         }
     }
 

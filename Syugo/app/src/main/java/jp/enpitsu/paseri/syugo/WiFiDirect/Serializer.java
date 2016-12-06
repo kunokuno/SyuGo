@@ -21,7 +21,7 @@ import jp.enpitsu.paseri.syugo.Rader.LocationData;
     0x02 Audio
     0x0F HeartBeat
 
-    # DATA FORMAT (excepting Heartbeat)
+    # DATA FORMAT (except Heartbeat)
     1 byte : type(code)
     4 byte : byte length
     n byte : data
@@ -32,8 +32,11 @@ import jp.enpitsu.paseri.syugo.Rader.LocationData;
 public final class Serializer {
     static final byte CHAT = 0x00;
     static final byte LOCATION = 0x01;
-    static final byte HEARTBEAT = 0x0F;
-    static final byte[] ping = {HEARTBEAT};
+    static final byte PING = 0x0F;
+    static final byte ACK = 0x0E;
+    static final byte[] ping = {PING};
+    static final byte[] ack = {ACK};
+
 
 
     /* ---------------
@@ -82,7 +85,9 @@ public final class Serializer {
                 buffer.get(data, 0, len);
                 LocationData loc = new LocationData(data);
                 return new Pair<Byte, Object>(code, (Object) loc);
-            case HEARTBEAT:
+            case PING:
+                return new Pair<Byte, Object>(code, null);
+            case ACK:
                 return new Pair<Byte, Object>(code, null);
             default:
                 Log.e("wifi_direct_serializer", "Unknown type error");

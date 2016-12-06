@@ -113,12 +113,17 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
                             listener.receiveGPSLocation(loc);
                         }
                         break;
-                    case Serializer.HEARTBEAT:
+                    case Serializer.PING:
+                        if(heartBeatTask!=null){
+                            sendAck();
+                        }
+                        break;
+                    case Serializer.ACK:
                         if(heartBeatTask!=null){
                             heartBeatTask.respond = true;
-                            sendHeartBeat();
-                            Log.d(TAG,"heart-beat");
+                            Log.d(TAG,"opponent is live");
                         }
+                        break;
                     default:
                         Log.e(TAG,"unknown type");
                 }
@@ -135,9 +140,9 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
     }
 
     public void startHeartBeat(){
-        Timer timer = new Timer();
-        heartBeatTask = new HeartBeatTask(this);
-        timer.schedule(heartBeatTask, 1000, 1000);
+        Handler handler = new Handler();
+        heartBeatTask = new HeartBeatTask(this,handler);
+        handler.postDelayed(heartBeatTask,HeartBeatTask.INTERVAL);
     }
 
     // send message
@@ -145,7 +150,7 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
         if (manager != null) {
             manager.write(Serializer.Encode(str));
         }else{
-            socketFailed();
+            socketUnconnected();
         }
     }
 
@@ -153,20 +158,32 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
         if (manager != null) {
             manager.write(Serializer.Encode(loc));
         }else{
-            socketFailed();
+            socketUnconnected();
         }
     }
 
-    public void sendHeartBeat(){
+    public void sendPing(){
         if (manager != null) {
             manager.write(Serializer.ping);
         }else{
-            socketFailed();
+            socketUnconnected();
         }
     }
 
-    private void socketFailed(){
+    public void sendAck(){
+        if (manager != null) {
+            manager.write(Serializer.ack);
+        }else{
+            socketUnconnected();
+        }
+    }
+
+    protected void socketUnconnected(){
         Log.d(TAG,"manager is null");
+        wfd.setSocketConnection("unconnected");
+    }
+    protected void socketNotResponding(){
+        Log.d(TAG,"socket disconnect");
         wfd.setSocketConnection("disconnected");
     }
 }
