@@ -2,7 +2,9 @@ package jp.enpitsu.paseri.syugo.Rader;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
@@ -13,11 +15,14 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 import android.view.TextureView;
 import android.view.View;
@@ -28,13 +33,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import jp.enpitsu.paseri.syugo.Global.SyugoApp;
+import jp.enpitsu.paseri.syugo.Lookfor.LookActivity;
 import jp.enpitsu.paseri.syugo.Rader.ARObjects.Graph.GraphView;
 import jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20.MyGLSurfaceView;
 import jp.enpitsu.paseri.syugo.R;
 import jp.enpitsu.paseri.syugo.WiFiDirect.WiFiDirect;
+import jp.enpitsu.paseri.syugo.Registor.RegActivity;
 
 /**
  * Created by iyobe on 2016/09/26.
@@ -46,17 +56,25 @@ public class RaderActivity extends Activity {
 
     private MyGLSurfaceView glView;
 
-    private ToggleButton button_AR, button_Vibration, button_WifiDirect;
-    private ImageView backgroundImageView;
+    private PermissionManager permissionManager;
+
+    ToggleButton button_AR, button_Vibration, button_WifiDirect;
+    ImageView backgroundImageView;
     TextureView textureView;
 
     TextView textView_DistanceMessage;
     TextView textView_AccuracyMessage;
-    TextView textView_Message;
-    Button button_StopVibration;
 
     //WiFiDirect
     WiFiDirect wfd;
+
+    Button button_info;
+    TextView textView_info;
+    boolean isInfoVisible = false;
+
+
+    private SyugoApp syugoApp; // グローバルクラス
+
 
     ////////////////////////////////////////////////////////////
     // コンパス用のセンサ関連
@@ -74,7 +92,7 @@ public class RaderActivity extends Activity {
 
     //    String myID = "r3uhr3";
 //    String reqID = "4hfeu";
-    String myID = "4hfeu";
+    String myID;
 //    String reqID = "r3uhr3";
     String reqID; // TODO: 自分のIDは外部ファイルから読んでくる
     String macAdr, oppName; // 相手のMACアドレスとユーザ名
@@ -95,15 +113,31 @@ public class RaderActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // intent取得
-        Intent intent = getIntent();
-        // intentから文字列取得
-        reqID  = intent.getStringExtra( "reqID" );      // 相手ID
-//        macAdr = intent.getStringExtra( "macAdr" );     // 相手のMACアドレス
-//        oppName= intent.getStringExtra( "oppName" );    // 相手のユーザ名
+        syugoApp = (SyugoApp)this.getApplication(); // グローバルクラス
+        // グローバルクラスから自分・相手のID読み込み
+        myID = syugoApp.getSelfUserId();
+        reqID = syugoApp.getOpponentUserId();
+
+        // 例外処理
+        Intent intent;
+        if ( myID.equals("") ) {
+            Toast.makeText(this, "自分のユーザ名を入力し、\nIDを取得してください", Toast.LENGTH_LONG).show();
+            intent = new Intent( RaderActivity.this, RegActivity.class );
+            startActivity( intent );
+            this.finish();
+        }
+//        else if ( reqID.equals("") ) {
+//            Toast.makeText( this, "相手のユーザIDを検索し、\nユーザ名を確認してください", Toast.LENGTH_LONG ).show();
+//            intent = new Intent( RaderActivity.this, LookActivity.class );
+//            startActivity( intent );
+//            this.finish();
+//        }
+
 
         glView = new MyGLSurfaceView( this );
         glView.setZOrderOnTop(true);
+
+        permissionManager = new PermissionManager( this );
 
         final View view = this.getLayoutInflater().inflate(R.layout.activity_rader, null);
 //        // [参考] http://language-and-engineering.hatenablog.jp/entry/20110908/p1
@@ -129,6 +163,9 @@ public class RaderActivity extends Activity {
         textView_DistanceMessage = (TextView)findViewById( R.id.textView_DistanceMessage );
         textView_AccuracyMessage = (TextView)findViewById( R.id.textView_AccuracyMessage );
 
+        // デバッグ用
+        button_info = (Button)findViewById( R.id.button_info );
+        textView_info = (TextView)findViewById( R.id.textView_info );
 
         // フォント設定
         button_AR.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
@@ -138,17 +175,14 @@ public class RaderActivity extends Activity {
         textView_AccuracyMessage.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
 
         //WiFiDirectクラスのインスタンス作成とボタンの登録
-        wfd = new WiFiDirect(RaderActivity.this);
-        wfd.setCompoundButton(button_WifiDirect);
+        wfd = new WiFiDirect( RaderActivity.this );
+        wfd.setCompoundButton( button_WifiDirect );
 
         textureView = (TextureView) findViewById( R.id.texture_view );
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-//                Log.d( "mCamera open", "start" + " " + isEnd );
-//                while( isEnd == false );
-//                mCamera.open();
-//                Log.d( "mCamera open", "end" );
+                // 通常はここでカメラ起動
             }
 
             @Override
@@ -252,7 +286,7 @@ public class RaderActivity extends Activity {
         ////////////////////////////////////////////////////////////////////////////////////////////
         // 位置情報関連のコピペ ////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////////////
-        RequestPermission();
+        permissionManager.requestLocationInfoPermission();
         if (this.isFinishing()) return;
 
         //  位置情報のリスナーを登録します。全ての位置情報更新はここで処理され、ここから本アプリ内で一元的に位置情報を管理するプロバイダー「locationProvider」に引き渡されます。
@@ -278,6 +312,9 @@ public class RaderActivity extends Activity {
                 Log.d("Location", "onLcationChanged");
                 lat = location.getLatitude();
                 lon = location.getLongitude();
+
+                // 自分の位置情報をグローバルクラスにセット
+                // TODO: ロケーションデータに日時追加・セッタとゲッタ
 
 
                 HttpCommunication httpCommunication = new HttpCommunication(
@@ -343,7 +380,11 @@ public class RaderActivity extends Activity {
 
         // LocationProviderのライフサイクルメソッド「onResume」を呼び出す必要があります。通常、Resumeが通知されると位置情報の収集が再開され、ステータスバーのGPSインジケーターが点灯します。
         if (this.locationProvider != null) {
-            this.locationProvider.onResume();
+            try {
+                this.locationProvider.onResume();
+            } catch (Exception e ) {
+                ;
+            }
         }
     }
 
@@ -356,47 +397,7 @@ public class RaderActivity extends Activity {
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // region 各センサーへのアクセス権限に関する処理
-
-    // アプリの実行に必要な権限をチェックして、不足していればユーザーに要求
-    private void RequestPermission() {
-
-        List<String> permissionList = new ArrayList<String>();
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
-            Toast.makeText(this, "位置情報（GPS）が使えないと起動できません。", Toast.LENGTH_LONG).show();
-        }
-        if (permissionList.size() > 0) {
-            String[] permissions = permissionList.toArray(new String[permissionList.size()]);
-            int REQUEST_CODE_NONE = 0;  // onRequestPermissionResultオーバーライドメソッド内では何も処理しないので、特に意味の無い数値を指定しています。
-            ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE_NONE);
-
-            // 30秒ほど、権限設定をチェックしながら待つ
-            for (int i = 0; i < 300; i++)
-            {
-                if (isFinishing()) return;
-                try {
-                    Thread.sleep(100);
-                    Thread.yield();
-                } catch (InterruptedException e) {
-                    break;
-                }
-
-                if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) &&
-                        (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
-                    return;
-                }
-            }
-
-            // いったんアプリを終了
-            Toast.makeText(this, "権限設定後に、もう一度アプリを起動し直してください。", Toast.LENGTH_LONG).show();
-            this.finish();
-        }
-    }
-
-
     // region 位置情報更新の管理（※LocationProviderに一任しており、ここではそのプロバイダーを生成するのみです）
-
     /**
      * LocationProviderを取得します。
      * @param locationListener システムの位置情報リスナーを指定してください。
@@ -431,13 +432,33 @@ public class RaderActivity extends Activity {
         else if( results[0] == 0 ) textView_DistanceMessage.setText("やばいよ");
         else textView_DistanceMessage.setText("遠いよ");
 
-        Log.d("httpppppp", "acc"+ data.acc );
         // 精度メッセージ変更
         if( data.acc <= 3 ) textView_AccuracyMessage.setText("精度良好かも");
         else if( data.acc > 3 && data.acc <= 10 ) textView_AccuracyMessage.setText("ふつうの精度");
         else if ( data.acc >= 15 ) textView_AccuracyMessage.setText("精度ひどいよ");
 //        else if ( data.acc >= 15 ) textView_AccuracyMessage.setText("不安な精度");
         else textView_AccuracyMessage.setText( "" );
+
+
+        // デバッグ用にデータを表示したいんじゃよ
+        // 現在の時刻を取得
+        Date date = new Date();
+        // 表示形式を設定
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy'年'MM'月'dd'日'　kk'時'mm'分'ss'秒'");
+
+        String stringInfo = "【 自分( "+ myID + " ) 】\n" +
+                "lat : " + this.lat + "\n" +
+                "lon : " + this.lon + "\n" +
+//                "acc : " + this.acc + "\n" +
+                "【 相手( "+ reqID + " ) 】\n" +
+                "lat : " + data.lat + "\n" +
+                "lon : " + data.lon + "\n" +
+                "acc : " + data.acc + "\n" +
+                "【 距離 】 " + results[0] + "m\n" +
+                "【 自 → 相 】 " + results[1] + "\n" +
+                "【 相 → 自 】 " + results[2] + "\n" +
+                "【 "+ sdf.format( date ) +" 】";    // 更新日時
+        textView_info.setText( stringInfo );
 
 
         if( results[0] <= 40 && flag_vibrator == true ) {
@@ -448,20 +469,28 @@ public class RaderActivity extends Activity {
 
     }
 
+    // PermissionMangerちゃんに任せましょうね～
+    @Override
+    public void onRequestPermissionsResult( int requestCode,
+                                            String permissions[], int[] grantResults ) {
+        permissionManager.onRequestPermissionsResult( requestCode, permissions, grantResults );
+    }
+
     // ARモードのon/off切り替えボタンがクリックされたとき
     public void onARSwitchButtonClicked(View v) {
         if( button_AR.isChecked() == true ) { // OFF → ONのとき
-            // ARモード開始
-            glView.switchModeAR( true );
-            // カメラ起動
-//            if ( textureView == null ) textureView = (TextureView) findViewById( R.id.texture_view );
-            if ( textureView.isAvailable() == true ) {
-                mCamera = new Camera2(textureView, this);
-                mCamera.open();
-            }
 
-            // 背景差し替え（imageView非表示）
-            backgroundImageView.setVisibility( backgroundImageView.INVISIBLE );
+            // パーミッションを持っているか確認する
+            if (PermissionChecker.checkSelfPermission(
+                    RaderActivity.this, Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // パーミッションをリクエストする
+                permissionManager.requestCameraPermission();
+                return;
+            }
+            Log.d( "REQUEST PERMISSION", "パーミッション取得済み" );
+            // ARモード開始
+            startARMode();
         }
         else { // ON → OFFのとき
             // ARモード終了
@@ -469,25 +498,34 @@ public class RaderActivity extends Activity {
             // カメラ開放
             mCamera.close();
             mCamera = null;
-//            textureView = null;
-
             // 背景差し替え(imageView表示)
             backgroundImageView.setVisibility( backgroundImageView.VISIBLE );
         }
     }
 
+    public void startARMode() {
+        glView.switchModeAR( true );
+        // カメラ起動
+        if ( textureView.isAvailable() == true ) {
+            mCamera = new Camera2(textureView, this);
+            mCamera.open();
+        }
+
+        // 背景差し替え（imageView非表示）
+        backgroundImageView.setVisibility( backgroundImageView.INVISIBLE );
+    }
+
+
     // [振動止める/つける]ボタン押下
-    public void onBottonClick( View v ) {
+    public void onVibeSwitchClicked( View v ) {
         Log.d("onButtonClick", "onButtonClick");
-        if( flag_vibrator == true ) {
+        if( button_Vibration.isChecked() == true ) { // OFF → ONのとき
+            flag_vibrator = true;
+        }
+        else { // ON → OFFのとき
             flag_vibrator = false;
             // 現在動作中の振動も止める
             vibrator.cancel();
-            button_StopVibration.setText("振動つける");
-        }
-        else {
-            flag_vibrator = true;
-            button_StopVibration.setText("振動とめる");
         }
     }
 
@@ -524,6 +562,18 @@ public class RaderActivity extends Activity {
             vibrator.vibrate(pattern1, -1);
             Log.d("viberation", "pattern1");
             Toast.makeText( this, "pattern1", Toast.LENGTH_SHORT ).show();
+        }
+    }
+
+
+    // デバッグ用情報を表示するTextviewの表示、非表示切り替え
+    public void onClickButtonInfo( View view ) {
+        if( isInfoVisible == false ) {
+            textView_info.setVisibility(View.VISIBLE);
+            isInfoVisible = true;
+        } else {
+            textView_info.setVisibility(View.GONE);
+            isInfoVisible = false;
         }
     }
 }

@@ -70,6 +70,10 @@ public class RaderObject_UI {
     private ByteBuffer  arcRing_indexBuffer; //インデックスバッファ
     private FloatBuffer arcRing_normalBuffer;//法線バッファ
 
+    private FloatBuffer arcLine_vertexBuffer;//頂点バッファ
+    private ByteBuffer  arcLine_indexBuffer; //インデックスバッファ
+    private FloatBuffer arcLine_normalBuffer;//法線バッファ
+
 
 
     RaderObject_UI() {
@@ -84,9 +88,9 @@ public class RaderObject_UI {
 
         frameCount = 0.0f;
 
-        distance_state = -1; // 初期状態は圏外
+        distance_state = -2; // 初期状態
 
-        RADIUS = 2f;         // レーダーの半径
+        RADIUS = 1.75f;    // レーダーの半径
         MAX_DISTANCE = 40;  // レーダー中に表示される最大距離[m]
 //        ROTATE_TO_DEFAULT = 60 - 30.5f; // レーダーを初期位置にするための角度
         ROTATE_TO_DEFAULT = 60; // レーダーを初期位置にするための角度
@@ -101,7 +105,7 @@ public class RaderObject_UI {
         for( float i = RADIUS; i >= RADIUS - 0.05f; i = i - 0.007f ) {
             initCircle( 0f, 0f, 0f, i );
         }
-        initFillArc( 0f, 0f, 0f, RADIUS - 0.1f );
+        initFillArc( 0f, 0f, 0f, RADIUS - 0.01f );
 
         initFillCircle( 0f, 0f, 0f, RADIUS );
 
@@ -113,6 +117,7 @@ public class RaderObject_UI {
         initArcRing( (RADIUS*2)/3, RADIUS/3, 50, 1 );
 
         initFrameLines( 0f, 0f, 0f, RADIUS );
+        initArcLine( 0f, 0f, 0f, RADIUS );
     }
 
 
@@ -463,6 +468,45 @@ public class RaderObject_UI {
         arcRing_normalBuffer = makeFloatBuffer(normals);
     }
 
+    // 円弧（線）を描画する準備
+    private void initArcLine( float centerX, float centerY, float centerZ, float r ) {
+        int length = 100;
+
+        float [] vertexs = new float[ ( length * 3 ) ];//頂点の数はn角形の場合はn*3*2になる
+        byte [] indexs = new byte[ length * 2 ];
+
+        //頂点配列情報
+        for (int j = 0; j < length/6; j++) {
+            float angle = (float) (2 * Math.PI * j / length);
+            vertexs[ j * 3 + 0] = (float) (centerX + Math.cos(angle) * r);
+            vertexs[ j * 3 + 1] = (float) (-centerY + Math.sin(angle) * r);
+            vertexs[ j * 3 + 2] = centerZ;
+//            indexs[ j ] = (byte) j;
+        }
+        int count = 0;
+        for( int j = 0; (j+1) < (length/6); ++j ) {
+            indexs[ count++ ] = (byte) j;
+            indexs[ count++ ] = (byte) (j+1);
+        }
+
+
+        //法線バッファの生成
+        float[] normals= new float[ vertexs.length ];
+        for( int j = 0; j < vertexs.length; j += 3 ) {
+            normals[j  ] = 0.0f;
+            normals[j+1] = 0.0f;
+            normals[j+2] = 1.0f;
+        }
+        float div=(float)Math.sqrt(
+                (1.0f*1.0f)+(1.0f*1.0f)+(1.0f*1.0f));
+        for (int i=0;i<normals.length;i++) normals[i]/=div;
+
+        arcLine_vertexBuffer = makeFloatBuffer( vertexs );
+        arcLine_indexBuffer  = makeByteBuffer( indexs );
+        arcLine_normalBuffer = makeFloatBuffer( normals );
+    }
+
+
     public void draw( boolean isModeAR ) {
 
         Log.d( "RaderObject", "onDrawFrame___draw" );
@@ -489,7 +533,7 @@ public class RaderObject_UI {
             drawFillCircle( 0f, 0f, 0f, 0.2f );   // 半透明の円
             drawFillArc( 1,1,1,0.3f );       // 円弧
 
-            drawRing( 1f, 1f, 1f, 0.05f );         // なんか輪
+            drawRing( 1f, 1f, 1f, 0.03f );         // なんか輪
 
             // それっぽく回るやつ
             GLES.glPushMatrix();
@@ -534,9 +578,10 @@ public class RaderObject_UI {
 
             GLES.updateMatrix();
             drawFillCircle( 0f, 0f, 0f, 0.2f );   // 半透明の円
-            drawFillArc( 1,1,1,0.3f );       // 円弧
-
-            drawRing( 1f, 1f, 1f, 0.05f );         // なんか輪
+            if( distance_state == -1 ) {
+                drawFillArc( 1f, 0.2f, 0.5f, 0.025f);       // 円弧
+            }
+            drawRing( 1f, 1f, 1f, 0.03f );         // なんか輪
 
             // それっぽく回るやつ
             GLES.glPushMatrix();
@@ -558,31 +603,48 @@ public class RaderObject_UI {
                     if (distanceOnRader <= BORDER_NEAREST) { // [めっちゃ近い]圏内
                         if( distance_state != 0 ) { // 状態が変化する場合
                             distance_state = 0;
-                            initArcRing( 0f, BORDER_NEAREST, 30, 1 );
+                            initArcRing( BORDER_NEAREST, 0f, 30, 1 );
                         }
                     }
                     else {
                         if( distance_state != 1 ) { // 状態が変化する場合
                             distance_state = 1;
-                            initArcRing( BORDER_NEAREST, BORDER_NEAR, 50, 1 );
+                            initArcRing( BORDER_NEAR, BORDER_NEAREST, 50, 1 );
                         }
                     }
                 }
                 else {
                     if( distance_state != 2 ) { // 状態が変化する場合
                         distance_state = 2;
-                        initArcRing( BORDER_NEAR, MAX_DISTANCE, 50, 1 );
+                        initArcRing( RADIUS-0.01f, BORDER_NEAR, 50, 1 );
                     }
                 }
+                GLES.glPushMatrix();
+                Matrix.rotateM(GLES.mMatrix, 0, 30.5f, 0f, 0f, 1f);
+                GLES.updateMatrix();
+                drawArcRing(1f, 0.2f, 0.5f, 0.08f);
+                GLES.glPopMatrix();
 
                 // 1m当たりのレーダー上での距離 = RADIUS[レーダーの半径]/MAX_DISTANCE[距離(m)]
+                GLES.glPushMatrix();
                 Matrix.translateM(GLES.mMatrix, 0, 0f, (float)distanceOnRader, 0f);
                 GLES.updateMatrix();
-                drawTarget( 1f, 0.2f, 0.5f, 0.3f );       // レーダー上の相手の位置
+                drawTarget( 1f, 0.2f, 0.5f, 0.5f );       // レーダー上の相手の位置
                 GLES.glPopMatrix();
+
             } else {
-                distance_state = -1; // レーダー圏外
+                if( distance_state != -1 ) // 上体が変化するとき
+                    distance_state = -1; // レーダー圏外
             }
+
+            if( distance_state == -1 ) {
+                GLES.glPushMatrix();
+                Matrix.rotateM(GLES.mMatrix, 0, 3f, 0f, 0f, 1f);
+                GLES.updateMatrix();
+                drawArcLine( 1f, 0.2f, 0.5f, 0.3f );
+                GLES.glPopMatrix();
+            }
+
 
             GLES.glPopMatrix();
             GLES.glPopMatrix();
@@ -753,17 +815,34 @@ public class RaderObject_UI {
 
         //描画
         setMaterial( r, g, b, a );
-        arcRing_indexBuffer.position(0);
+        arcRing_indexBuffer.position( 0 );
         GLES20.glDrawElements( GLES20.GL_TRIANGLE_STRIP,
                 arcRing_indexBuffer.capacity(), GLES20.GL_UNSIGNED_BYTE, arcRing_indexBuffer );
-//        ring_indexBuffer.position(0);
+        arcRing_indexBuffer.position( 0 );
+        GLES20.glDrawElements( GLES20.GL_TRIANGLE_STRIP,
+                3, GLES20.GL_UNSIGNED_BYTE, arcRing_indexBuffer );
+//        arcRing_indexBuffer.position( arcRing_indexBuffer.capacity()-9 );
 //        GLES20.glDrawElements( GLES20.GL_TRIANGLE_STRIP,
-//                3, GLES20.GL_UNSIGNED_BYTE, arcRing_indexBuffer );
-//        ring_indexBuffer.position(ring_indexBuffer.capacity()-3);
-//        GLES20.glDrawElements( GLES20.GL_TRIANGLE_STRIP,
-//                3, GLES20.GL_UNSIGNED_BYTE, ring_indexBuffer );
+//                9, GLES20.GL_UNSIGNED_BYTE, arcRing_indexBuffer );
     }
 
+    //円弧（線）の描画
+    private void drawArcLine( float r, float g, float b, float a ) {
+        //頂点バッファの指定
+        GLES20.glVertexAttribPointer( GLES.positionHandle, 3,
+                GLES20.GL_FLOAT, false, 0, arcLine_vertexBuffer );
+
+        //法線バッファの指定
+        GLES20.glVertexAttribPointer( GLES.normalHandle, 3,
+                GLES20.GL_FLOAT, false, 0, arcLine_normalBuffer );
+
+        //描画
+        setMaterial( r, g, b, a );
+        arcLine_indexBuffer.position(0);
+        GLES20.glLineWidth( 7f );
+        GLES20.glDrawElements( GLES20.GL_LINES,
+                arcLine_indexBuffer.capacity(), GLES20.GL_UNSIGNED_BYTE, arcLine_indexBuffer );
+    }
 
     public void invalidateRotation( float rotation ) {
         this.rotation = rotation;
