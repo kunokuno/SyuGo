@@ -1,10 +1,12 @@
 package jp.enpitsu.paseri.syugo.WiFiDirect;
 
+import android.location.Location;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.EditText;
 
@@ -93,10 +95,17 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
         switch (msg.what) {
             case MESSAGE_READ:
                 byte[] readBuf = (byte[]) msg.obj;
-                // construct a string from the valid bytes in the buffer
-                String readMessage = new String(readBuf, 0, msg.arg1);
-                Log.d(TAG, readMessage);
-                wfd.toast(readMessage);
+                Pair<Byte,Object> decoded = Serializer.Decode(readBuf);
+                switch(decoded.first){
+                    case Serializer.CHAT:
+                        String str = (String)decoded.second;
+                        //receiveChat(str);
+
+                    case Serializer.LOCATION:
+                        LocationData loc = (LocationData)decoded.second;
+                        //receiveGPSLocation(loc);
+                }
+                Log.d(TAG, readBuf.toString());
                 break;
 
             case MY_HANDLE:
@@ -109,22 +118,25 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
     }
 
     // send message
-    public void sendMessage(String str){
+    public void sendChat(String str){
         if (manager != null) {
-            manager.write(str.getBytes());
+            manager.write(Serializer.Encode(str));
         }else{
-            Log.d(TAG,"manager is null");
-            wfd.setSocketConnection("disconnected");
+            socketFailed();
         }
     }
 
     public void sendGPSLocation(LocationData loc){
         if (manager != null) {
-
+            manager.write(Serializer.Encode(loc));
         }else{
-            Log.d(TAG,"manager is null");
-            wfd.setSocketConnection("disconnected");
+            socketFailed();
         }
+    }
+
+    private void socketFailed(){
+        Log.d(TAG,"manager is null");
+        wfd.setSocketConnection("disconnected");
     }
 
 }

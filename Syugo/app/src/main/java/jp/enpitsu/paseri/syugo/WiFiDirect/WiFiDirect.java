@@ -445,7 +445,7 @@ public class WiFiDirect {
 
     public void sendMessage(String str){
         if(communicator!=null){
-            communicator.sendMessage(str);
+            communicator.sendChat(str);
         }
     }
 
@@ -454,5 +454,4 @@ public class WiFiDirect {
             communicator.sendGPSLocation(loc);
         }
     }
-
 }
