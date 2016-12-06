@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
  * Created by soniyama on 2016/08/29.
  */
 public class LocationData {
-    double lat, lon, acc;
+    public double lat, lon, acc;
     public LocationData( double lat, double lon, double acc ) {
         this.lat = lat;
         this.lon = lon;
@@ -28,5 +28,8 @@ public class LocationData {
         buffer.putDouble(lon);
         buffer.putDouble(acc);
         return buffer.array();
+    }
+    public String dump() {
+        return String.valueOf(lat) + " , " + String.valueOf(lon) + " , " + String.valueOf(acc);
     }
 }

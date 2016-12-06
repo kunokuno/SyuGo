@@ -100,16 +100,19 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
                 switch(decoded.first){
                     case Serializer.CHAT:
                         String str = (String)decoded.second;
-                        if (listener!=null) listener.receiveChat(str);
+                        if (listener!=null) {
+                            listener.receiveChat(str);
+                        }
                         break;
                     case Serializer.LOCATION:
                         LocationData loc = (LocationData)decoded.second;
-                        if (listener!=null) listener.receiveGPSLocation(loc);
+                        if (listener!=null) {
+                            listener.receiveGPSLocation(loc);
+                        }
                         break;
                     default:
                         Log.e(TAG,"unknown type");
                 }
-                Log.d(TAG, readBuf.toString());
                 break;
 
             case MY_HANDLE:

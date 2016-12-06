@@ -53,7 +53,7 @@ public class CommManager implements Runnable {
                     }
 
                     // Send the obtained bytes to the UI Activity
-                    Log.d(TAG, "Rec:" + String.valueOf(buffer));
+                    Log.d(TAG, "received :" + String.valueOf(buffer));
                     handler.obtainMessage(WiFiDirectCommunicator.MESSAGE_READ,bytes, -1, buffer).sendToTarget();
                 } catch (IOException e) {
                     Log.e(TAG, "disconnected", e);
