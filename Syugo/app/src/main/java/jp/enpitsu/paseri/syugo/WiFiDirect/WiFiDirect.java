@@ -34,6 +34,7 @@ import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -389,6 +390,7 @@ public class WiFiDirect {
             wfd_toast.cancel();
         }
         wfd_toast = Toast.makeText(activity, str, Toast.LENGTH_SHORT);
+        wfd_toast.setGravity(Gravity.CENTER,0,0);
         wfd_toast.show();
     }
 
