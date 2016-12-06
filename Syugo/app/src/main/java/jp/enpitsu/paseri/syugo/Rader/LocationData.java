@@ -1,7 +1,5 @@
 package jp.enpitsu.paseri.syugo.Rader;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Created by soniyama on 2016/08/29.
