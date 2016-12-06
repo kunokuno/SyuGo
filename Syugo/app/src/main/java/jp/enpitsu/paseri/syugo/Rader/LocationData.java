@@ -12,8 +12,16 @@ public class LocationData {
         this.lon = lon;
         this.acc = acc;
     }
-    public byte[] getBytes(){
-        int size = Double.SIZE/8 * 3;
+
+    public LocationData( byte[] bytes ) {
+        int size = Double.SIZE / 8 * 3;
+        ByteBuffer buffer = ByteBuffer.wrap(bytes);
+        this.lat = buffer.getDouble();
+        this.lon = buffer.getDouble();
+        this.acc = buffer.getDouble();
+    }
+    public byte[] getBytes() {
+        int size = Double.SIZE / 8 * 3;
         ByteBuffer buffer = ByteBuffer.allocate(size);
         buffer.clear();
         buffer.putDouble(lat);
