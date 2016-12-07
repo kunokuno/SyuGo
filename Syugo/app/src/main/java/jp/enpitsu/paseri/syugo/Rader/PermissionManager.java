@@ -80,6 +80,9 @@ public class PermissionManager extends RaderActivity {
                     })
                     .create()
                     .show();
+            // ダイアログが無視された場合
+            // RaderActivity終了
+            raderActivity.finish();
             return;
         }
 
@@ -182,6 +185,9 @@ public class PermissionManager extends RaderActivity {
                         })
                         .create()
                         .show();
+                // ダイアログが無視された場合
+                // RaderActivity終了
+                raderActivity.finish();
 
             } else {
                 Log.d("REQUEST PERMISSION", "[show app settings guide]");
@@ -192,13 +198,13 @@ public class PermissionManager extends RaderActivity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 openSettings();
-
-                                raderActivity.finish();
                             }
                         })
                         .create()
                         .show();
                 // 許可されなかった場合②
+                // RaderActivity終了
+                raderActivity.finish();
             }
         } else {
             Log.d("REQUEST PERMISSION", "onRequestPermissionsResult:GRANTED");
