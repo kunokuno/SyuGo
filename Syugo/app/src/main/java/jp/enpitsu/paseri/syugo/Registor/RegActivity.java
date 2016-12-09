@@ -80,6 +80,7 @@ public class RegActivity extends Activity {
         error_message.setGravity(Gravity.CENTER);
 
 
+
         //各ボタンのClickListenerの宣言
         btn_issue.setOnClickListener(issListener);
         hidebtn_reset.setOnClickListener(hideListener);

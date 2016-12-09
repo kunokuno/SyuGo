@@ -72,9 +72,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingLeft="20dp"
             android:paddingTop="10dp"
-            android:paddingRight="20dp"
             android:weightSum="1">
 
             <TextView
@@ -114,8 +112,8 @@
             android:layout_weight="0.06" />
 
         <ImageButton
-            android:layout_width="161dp"
-            android:layout_height="161dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/button2"
             android:background="@drawable/search"
             android:scaleType="center"
@@ -128,7 +126,7 @@
 
         <TextView
             android:text="Go Rader"
-            android:textSize="35dp"
+            android:textSize="30dp"
             android:textColor="#96ffffff"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -137,7 +135,6 @@
 
         <TextView
             android:text=""
-            android:textSize="30dp"
             android:textColor="@color/colorWhite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

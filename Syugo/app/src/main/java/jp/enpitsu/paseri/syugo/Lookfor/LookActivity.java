@@ -5,10 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.Image;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -36,6 +39,47 @@ public class LookActivity extends Activity {
         id = (EditText) findViewById(R.id.id_enter);
         search.setOnClickListener(searchListener);
         find.setOnClickListener(findListener);
+
+// ボタンの幅，高さが決定してから幅=高さに揃える
+        // ViewTreeObserverを利用
+        // 参考 : http://tech.admax.ninja/2014/09/17/how-to-get-the-height-and-width-of-the-view/
+        //        https://anz-note.tumblr.com/post/96096731156/androidで動的に縦幅あるいは横幅に合わせて正方形のviewを作成したい
+        final ViewTreeObserver observer = find.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        // ボタンの幅=高さにする
+//                        Log.d("btn", btn_share.getWidth() + ", " + btn_share.getHeight());
+                        ViewGroup.LayoutParams params = find.getLayoutParams();
+                        // 短辺の長さに長辺を揃える
+                        if (find.getWidth()/2 < find.getHeight()/2) {
+                            params.height = find.getWidth() / 2;
+                            params.width = find.getWidth() / 2;
+                        }
+                        else{
+                            params.width = find.getHeight()/2;
+                            params.height = find.getHeight()/2;
+                        }
+
+                        find.setLayoutParams( params );
+                        find.setLayoutParams( params );
+
+                        removeOnGlobalLayoutListener(find.getViewTreeObserver(), this);
+                    }
+                });
+    }
+    // onGlobalLayout()が1回目以降呼ばれないようにリス名を外す
+    private static void removeOnGlobalLayoutListener(ViewTreeObserver observer, ViewTreeObserver.OnGlobalLayoutListener listener) {
+        if (observer == null) {
+            return ;
+        }
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            observer.removeGlobalOnLayoutListener(listener);
+        } else {
+            observer.removeOnGlobalLayoutListener(listener);
+        }
     }
     // コードでユーザー検索"name,mac"
     private View.OnClickListener searchListener = new View.OnClickListener() {
