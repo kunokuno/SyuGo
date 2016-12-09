@@ -3,6 +3,7 @@ package jp.enpitsu.paseri.syugo.Lookfor;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -23,7 +24,7 @@ public class LookActivity extends Activity {
 
     private Button search;
     private ImageButton find;
-    private TextView name,id2, e_message;
+    private TextView name,id2, e_message,text1,word,textView3;
     private EditText id;
     private String oppName, macAdr, reqID;
 
@@ -39,6 +40,19 @@ public class LookActivity extends Activity {
         id = (EditText) findViewById(R.id.id_enter);
         search.setOnClickListener(searchListener);
         find.setOnClickListener(findListener);
+        text1 = (TextView)findViewById(R.id.text1);
+        word = (TextView)findViewById(R.id.word);
+        textView3 = (TextView)findViewById(R.id.textView3);
+
+        //フォント設定
+        id2.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        name.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        e_message.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        search.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        id.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        text1.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        word.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        textView3.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
 
 // ボタンの幅，高さが決定してから幅=高さに揃える
         // ViewTreeObserverを利用
@@ -53,13 +67,13 @@ public class LookActivity extends Activity {
 //                        Log.d("btn", btn_share.getWidth() + ", " + btn_share.getHeight());
                         ViewGroup.LayoutParams params = find.getLayoutParams();
                         // 短辺の長さに長辺を揃える
-                        if (find.getWidth()/2 < find.getHeight()/2) {
-                            params.height = find.getWidth() / 2;
-                            params.width = find.getWidth() / 2;
+                        if (find.getWidth()/3 < find.getHeight()/3) {
+                            params.height = find.getWidth() / 3;
+                            params.width = find.getWidth() / 3;
                         }
                         else{
-                            params.width = find.getHeight()/2;
-                            params.height = find.getHeight()/2;
+                            params.width = find.getHeight()/3;
+                            params.height = find.getHeight()/3;
                         }
 
                         find.setLayoutParams( params );
