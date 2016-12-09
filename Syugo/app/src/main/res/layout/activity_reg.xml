@@ -65,7 +65,7 @@
             android:textSize="25dp"
             android:layout_gravity="center_horizontal"
             android:gravity="center_vertical|center_horizontal"
-            android:background="#00AFFF"
+            android:background="#5D98D1"
             android:layout_weight="2"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"

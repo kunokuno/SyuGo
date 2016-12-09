@@ -23,7 +23,7 @@
             android:textSize="40dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorWhite"
+            android:textColor="#96ffffff"
             android:gravity="left"
             android:id="@+id/text1"/>
 
@@ -52,7 +52,7 @@
             android:textColor="@color/colorWhite"
             android:layout_gravity="center_horizontal"
             android:gravity="center_vertical|center_horizontal"
-            android:background="#00AFFF"
+            android:background="#5D98D1"
             android:paddingLeft="40dp"
             android:paddingRight="40dp" />
 
@@ -83,7 +83,7 @@
             <TextView
                 android:text="は"
                 android:textSize="35dp"
-                android:textColor="@color/colorWhite"
+                android:textColor="#96ffffff"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/word"
@@ -122,7 +122,7 @@
         <TextView
             android:text="Go Rader"
             android:textSize="35dp"
-            android:textColor="@color/colorWhite"
+            android:textColor="#96ffffff"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textView3"
