@@ -15,7 +15,7 @@
         android:paddingBottom="16dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingTop="16dp"
+        android:paddingTop="25dp"
         android:weightSum="1">
 
         <TextView
@@ -23,19 +23,24 @@
             android:textSize="40dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorWhite"
-            android:gravity="left"
+            android:textColor="#96ffffff"
+            android:gravity="bottom"
+            android:paddingTop="15dp"
+            android:paddingBottom="5dp"
             android:id="@+id/text1"/>
 
         <EditText
             android:ems="10"
-            android:textSize="40dp"
+            android:textSize="30dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLength="20"
             android:inputType="text"
-            android:background="@color/colorLightBackground"
+            android:background="#96ffffff"
             android:id="@+id/id_enter"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="10dp"
             android:layout_weight="0.08" />
 
         <Space
@@ -45,16 +50,18 @@
 
         <Button
             android:text="SEARCH"
-            android:textSize="40dp"
+            android:textSize="25dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/button1"
             android:textColor="@color/colorWhite"
             android:layout_gravity="center_horizontal"
             android:gravity="center_vertical|center_horizontal"
-            android:background="#00AFFF"
-            android:paddingLeft="40dp"
-            android:paddingRight="40dp" />
+            android:background="#5D98D1"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"/>
 
         <Space
             android:layout_width="match_parent"
@@ -65,14 +72,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingLeft="20dp"
             android:paddingTop="10dp"
-            android:paddingRight="20dp"
             android:weightSum="1">
 
             <TextView
                 android:text=""
-                android:textSize="35dp"
+                android:textSize="30dp"
                 android:background="#50ffffff"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -82,8 +87,8 @@
 
             <TextView
                 android:text="は"
-                android:textSize="35dp"
-                android:textColor="@color/colorWhite"
+                android:textSize="30dp"
+                android:textColor="#96ffffff"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/word"
@@ -91,7 +96,7 @@
                 android:gravity="center" />
 
             <TextView
-                android:textSize="35dp"
+                android:textSize="30dp"
                 android:background="#50ffffff"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -107,8 +112,8 @@
             android:layout_weight="0.06" />
 
         <ImageButton
-            android:layout_width="207dp"
-            android:layout_height="161dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/button2"
             android:background="@drawable/search"
             android:scaleType="center"
@@ -121,8 +126,8 @@
 
         <TextView
             android:text="Go Rader"
-            android:textSize="35dp"
-            android:textColor="@color/colorWhite"
+            android:textSize="30dp"
+            android:textColor="#96ffffff"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textView3"
@@ -130,7 +135,6 @@
 
         <TextView
             android:text=""
-            android:textSize="30dp"
             android:textColor="@color/colorWhite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
