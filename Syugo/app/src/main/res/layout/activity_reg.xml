@@ -83,7 +83,6 @@
             android:layout_height="80dp"
             android:id="@+id/id_show"
             android:text=" "
-            android:textColor="@color/colorWhite"
             android:textSize="60dp"
             android:layout_gravity="center"
             android:gravity="top|center_horizontal"
