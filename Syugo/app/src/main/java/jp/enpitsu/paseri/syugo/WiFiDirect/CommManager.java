@@ -17,7 +17,7 @@ import java.net.Socket;
  * Handles reading and writing of messages with socket buffers. Uses a Handler
  * to post messages to UI thread for UI updates.
  */
-public class GPSCommManager implements Runnable {
+public class CommManager implements Runnable {
 
     private Socket socket = null;
     private Handler handler;
@@ -25,12 +25,11 @@ public class GPSCommManager implements Runnable {
     private OutputStream oStream;
     private static final String TAG = "wifi_direct_commanager";
 
-    public GPSCommManager(Socket socket, Handler handler) {
+    public CommManager(Socket socket, Handler handler) {
         this.socket = socket;
         this.handler = handler;
         Log.d(TAG,"instantiate");
     }
-
 
 
     @Override
@@ -54,9 +53,8 @@ public class GPSCommManager implements Runnable {
                     }
 
                     // Send the obtained bytes to the UI Activity
-                    Log.d(TAG, "Rec:" + String.valueOf(buffer));
-                    handler.obtainMessage(WiFiDirectCommunicator.MESSAGE_READ,
-                            bytes, -1, buffer).sendToTarget();
+                    Log.d(TAG, "received :" + String.valueOf(buffer));
+                    handler.obtainMessage(WiFiDirectCommunicator.MESSAGE_READ,bytes, -1, buffer).sendToTarget();
                 } catch (IOException e) {
                     Log.e(TAG, "disconnected", e);
                 }
@@ -75,6 +73,7 @@ public class GPSCommManager implements Runnable {
     public void write(byte[] buffer) {
         try {
             oStream.write(buffer);
+            oStream.flush();
             Log.d(TAG,"write to buffer" + String.valueOf(buffer));
         } catch (IOException e) {
             Log.e(TAG, "Exception during write", e);

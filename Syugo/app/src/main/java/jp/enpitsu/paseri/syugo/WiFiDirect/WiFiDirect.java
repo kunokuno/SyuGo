@@ -21,6 +21,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.p2p.WifiP2pConfig;
@@ -33,6 +34,7 @@ import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -54,6 +56,7 @@ import java.lang.reflect.Method;
 
 import jp.enpitsu.paseri.syugo.Global.SyugoApp;
 import jp.enpitsu.paseri.syugo.R;
+import jp.enpitsu.paseri.syugo.Rader.LocationData;
 
 import static android.os.Looper.getMainLooper;
 import static android.webkit.ConsoleMessage.MessageLevel.LOG;
@@ -157,6 +160,10 @@ public class WiFiDirect {
         activity.unregisterReceiver(receiver);
     }
 
+    public void onDestroy(){
+        endConnection();
+    }
+
     /* -----------------------------------------------------------
     Catch status by BroadcastReceiver : notify us wifip2p & device status
     -------------------------------------------------------------- */
@@ -206,10 +213,12 @@ public class WiFiDirect {
             toast("Socket接続完了！");
             // Turn on the light
             controlWfdButton(ButtonCmd.ON);
-        }else{
-            toast("Socket切断したよ");
+        }else if (str.equals("unconnected")){
             // Turn off the light
             controlWfdButton(ButtonCmd.OFF);
+        }else if (str.equals("disconnected")){
+            toast("相手端末と通信隔絶…");
+            endConnection();
         }
     }
 
@@ -376,11 +385,12 @@ public class WiFiDirect {
     Notify
     -------------------------------------------------------------- */
 
-    protected void toast(String str){
+    public void toast(String str){
         if(wfd_toast!=null) {
             wfd_toast.cancel();
         }
         wfd_toast = Toast.makeText(activity, str, Toast.LENGTH_SHORT);
+        wfd_toast.setGravity(Gravity.CENTER,0,0);
         wfd_toast.show();
     }
 
@@ -434,6 +444,28 @@ public class WiFiDirect {
                     alphaAnim.setRepeatMode(Animation.REVERSE);
                     wfd_button.startAnimation(alphaAnim);
             }
+        }
+    }
+
+    /* -----------------------------------------------------------
+    Communication
+    -------------------------------------------------------------- */
+
+    public void sendChat(String str){
+        if(communicator!=null){
+            communicator.sendChat(str);
+        }
+    }
+
+    public void sendGPSLocation(LocationData loc){
+        if(communicator!=null){
+            communicator.sendGPSLocation(loc);
+        }
+    }
+
+    public void setWiFiDirectEventListener(WiFiDirectEventListener listener){
+        if(communicator!=null){
+            communicator.listener = listener;
         }
     }
 }

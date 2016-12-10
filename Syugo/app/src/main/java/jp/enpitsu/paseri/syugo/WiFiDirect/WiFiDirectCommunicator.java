@@ -1,14 +1,20 @@
 package jp.enpitsu.paseri.syugo.WiFiDirect;
 
+import android.location.Location;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.EditText;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import jp.enpitsu.paseri.syugo.Rader.LocationData;
 
 /**
  * Created by Prily on 2016/11/24.
@@ -46,7 +52,9 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
     public static final int MY_HANDLE = 0x400 + 2;
 
     WiFiDirect wfd;
-    GPSCommManager manager;
+    CommManager manager;
+    WiFiDirectEventListener listener;
+    HeartBeatTask heartBeatTask;
 
     WiFiDirectCommunicator(WiFiDirect wfd){
         this.wfd = wfd;
@@ -91,29 +99,91 @@ public class WiFiDirectCommunicator implements WifiP2pManager.ConnectionInfoList
         switch (msg.what) {
             case MESSAGE_READ:
                 byte[] readBuf = (byte[]) msg.obj;
-                // construct a string from the valid bytes in the buffer
-                String readMessage = new String(readBuf, 0, msg.arg1);
-                Log.d(TAG, readMessage);
-                wfd.toast(readMessage);
+                Pair<Byte,Object> decoded = Serializer.Decode(readBuf);
+                switch(decoded.first){
+                    case Serializer.CHAT:
+                        String str = (String)decoded.second;
+                        if (listener!=null) {
+                            listener.receiveChat(str);
+                        }
+                        break;
+                    case Serializer.LOCATION:
+                        LocationData loc = (LocationData)decoded.second;
+                        if (listener!=null) {
+                            listener.receiveGPSLocation(loc);
+                        }
+                        break;
+                    case Serializer.PING:
+                        if(heartBeatTask!=null){
+                            sendAck();
+                        }
+                        break;
+                    case Serializer.ACK:
+                        if(heartBeatTask!=null){
+                            heartBeatTask.respond = true;
+                            Log.d(TAG,"opponent is live");
+                        }
+                        break;
+                    default:
+                        Log.e(TAG,"unknown type");
+                }
                 break;
 
             case MY_HANDLE:
                 Object obj = msg.obj;
-                manager = (GPSCommManager) obj;
+                manager = (CommManager) obj;
                 Log.d(TAG, "manager obj received");
                 wfd.setSocketConnection("connected");
+                startHeartBeat();
         }
         return true;
     }
 
+    public void startHeartBeat(){
+        Handler handler = new Handler();
+        heartBeatTask = new HeartBeatTask(this,handler);
+        handler.postDelayed(heartBeatTask,HeartBeatTask.INTERVAL*2);
+    }
+
     // send message
-    public void sendMessage(String str){
+    public void sendChat(String str){
         if (manager != null) {
-            manager.write(str.getBytes());
+            manager.write(Serializer.Encode(str));
         }else{
-            Log.d(TAG,"manager is null");
-            wfd.setSocketConnection("disconnected");
+            socketUnconnected();
         }
     }
 
+    public void sendGPSLocation(LocationData loc){
+        if (manager != null) {
+            manager.write(Serializer.Encode(loc));
+        }else{
+            socketUnconnected();
+        }
+    }
+
+    public void sendPing(){
+        if (manager != null) {
+            manager.write(Serializer.ping);
+        }else{
+            socketUnconnected();
+        }
+    }
+
+    public void sendAck(){
+        if (manager != null) {
+            manager.write(Serializer.ack);
+        }else{
+            socketUnconnected();
+        }
+    }
+
+    protected void socketUnconnected(){
+        Log.d(TAG,"manager is null");
+        wfd.setSocketConnection("unconnected");
+    }
+    protected void socketNotResponding(){
+        Log.d(TAG,"socket disconnect");
+        wfd.setSocketConnection("disconnected");
+    }
 }

@@ -394,6 +394,12 @@ public class RaderActivity extends Activity {
         wfd.onPause();
     }
 
+    @Override
+    protected void onDestroy(){
+        super.onPause();
+        wfd.onDestroy();
+    }
+
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////

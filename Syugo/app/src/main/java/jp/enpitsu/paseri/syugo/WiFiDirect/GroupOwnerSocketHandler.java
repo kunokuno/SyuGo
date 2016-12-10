@@ -54,7 +54,7 @@ public class GroupOwnerSocketHandler extends Thread {
                 // there is a new connection
                 //pool.execute(new GPSCommManager(server_socket.accept(), handler));
                 Socket socket = server_socket.accept(); // blocking method. The Program stops until a connection request is received from the client.
-                new Thread(new GPSCommManager(socket, handler)).start();
+                new Thread(new CommManager(socket, handler)).start();
                 Log.d(TAG, "Launching the I/O handler");
 
             } catch (IOException e) {
