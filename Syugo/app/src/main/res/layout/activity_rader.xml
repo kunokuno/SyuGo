@@ -160,4 +160,33 @@
             />
     </LinearLayout>
 
+    
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorTransparentBlack"
+        android:id="@+id/linearLayout_ARMassages"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="reqName"
+            android:textColor="@color/colorWhite"
+            android:id="@+id/textView_reqNameAR" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Distance"
+            android:textColor="@color/colorWhite"
+            android:id="@+id/textView_distanceAR" />
+    </LinearLayout>
+
+
 </FrameLayout>
