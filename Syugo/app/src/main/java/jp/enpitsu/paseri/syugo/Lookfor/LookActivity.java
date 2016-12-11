@@ -110,13 +110,12 @@ public class LookActivity extends Activity {
     private View.OnClickListener searchListener = new View.OnClickListener() {
         public void onClick(View v) {
             reqID = id.getText().toString(); // 相手ID入力テキストボックスから相手のID取得
-            id2.setText( reqID ); // 入力された相手IDをメッセージ部分に表示
-
             HttpComLookFor httpComLookFor = new HttpComLookFor(
                     new HttpComLookFor.AsyncTaskCallback() {
                         @Override
                         public void postExecute(String result) {
-
+                            id2.setText( reqID ); // 入力された相手IDをメッセージ部分に表示
+                            name.setText(oppName);
                             app.setOpponentUserInfo(oppName, reqID);
                             app.saveUserInfo();
                             Log.d("PrilyClass_name", app.getOpponentUserName());
