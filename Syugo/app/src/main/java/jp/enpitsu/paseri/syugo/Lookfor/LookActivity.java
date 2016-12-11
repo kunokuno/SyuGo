@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import jp.enpitsu.paseri.syugo.Global.SyugoApp;
 import jp.enpitsu.paseri.syugo.R;
 import jp.enpitsu.paseri.syugo.Rader.RaderActivity;
 
@@ -27,6 +28,7 @@ public class LookActivity extends Activity {
     private TextView name,id2, e_message,text1,word,textView3;
     private EditText id;
     private String oppName, macAdr, reqID;
+    private SyugoApp app;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +45,15 @@ public class LookActivity extends Activity {
         text1 = (TextView)findViewById(R.id.text1);
         word = (TextView)findViewById(R.id.word);
         textView3 = (TextView)findViewById(R.id.textView3);
+        app = (SyugoApp) this.getApplication();
+
+        //Globalクラス適用
+        app.loadUserInfo();
+        oppName = app.getOpponentUserName();
+        reqID = app.getOpponentUserId();
+        id.setText(reqID);
+        id2.setText(reqID);
+        name.setText(oppName);
 
         //フォント設定
         id2.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
@@ -105,6 +116,11 @@ public class LookActivity extends Activity {
                     new HttpComLookFor.AsyncTaskCallback() {
                         @Override
                         public void postExecute(String result) {
+
+                            app.setOpponentUserInfo(oppName, reqID);
+                            app.saveUserInfo();
+                            Log.d("PrilyClass_name", app.getOpponentUserName());
+                            Log.d("PrilyClass_id", app.getOpponentUserId());
 
 //                            // 検索結果として"0"が返ってきた場合，ふつうに出力すると"0"だけどbyteとかlengthとか見ると別のものもくっついてるっぽい
 //                            // のでID検索一致0の場合の判定で妙なことしてます
