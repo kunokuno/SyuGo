@@ -110,17 +110,11 @@ public class LookActivity extends Activity {
     private View.OnClickListener searchListener = new View.OnClickListener() {
         public void onClick(View v) {
             reqID = id.getText().toString(); // 相手ID入力テキストボックスから相手のID取得
+            id2.setText( reqID ); // 入力された相手IDをメッセージ部分に表示
             HttpComLookFor httpComLookFor = new HttpComLookFor(
                     new HttpComLookFor.AsyncTaskCallback() {
                         @Override
                         public void postExecute(String result) {
-                            id2.setText( reqID ); // 入力された相手IDをメッセージ部分に表示
-                            name.setText(oppName);
-                            app.setOpponentUserInfo(oppName, reqID);
-                            app.saveUserInfo();
-                            Log.d("PrilyClass_name", app.getOpponentUserName());
-                            Log.d("PrilyClass_id", app.getOpponentUserId());
-
 //                            // 検索結果として"0"が返ってきた場合，ふつうに出力すると"0"だけどbyteとかlengthとか見ると別のものもくっついてるっぽい
 //                            // のでID検索一致0の場合の判定で妙なことしてます
 //                            Log.d("result byte  ", result.getBytes() + ", " + "0".getBytes() );
@@ -141,6 +135,10 @@ public class LookActivity extends Activity {
                                     macAdr = result.substring(result.indexOf(",") + 1, result.length());
                                     // ","の次の文字から最後までの部分文字列
                                     name.setText(oppName); // [検索結果]相手のユーザ名を表示
+                                    app.setOpponentUserInfo(oppName, reqID);
+                                    app.saveUserInfo();
+                                    Log.d("PrilyClass_name", app.getOpponentUserName());
+                                    Log.d("PrilyClass_id", app.getOpponentUserId());
                                 } catch ( Exception e ) {
                                     name.setText( result );
                                     Log.d("@LookActivity", "postExecute -> error:" + e.toString() );
