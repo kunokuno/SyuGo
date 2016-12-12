@@ -113,11 +113,11 @@ public class RegActivity extends Activity {
 
                         // 表示位置を調整
                         if ( diff > 0 ) { // 高さを幅に合わせた（縦幅が縮んだ）場合Y座標を調整
-                            btn_share.setTranslationY( diff );
-                            btn_findmode.setTranslationY( diff );
+                            btn_share.setTranslationY( diff/2 );
+                            btn_findmode.setTranslationY( diff/2 );
                         } else { // 幅に高さを合わせた（横幅が縮んだ）場合X座標を調整
-                            btn_share.setTranslationX( -diff );
-                            btn_findmode.setTranslationX( -diff );
+                            btn_share.setTranslationX( -diff/2 );
+                            btn_findmode.setTranslationX( -diff/2 );
                         }
 
                         removeOnGlobalLayoutListener(btn_share.getViewTreeObserver(), this);
