@@ -141,16 +141,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_weight="0.1">
+                android:layout_weight="0.1"
+                android:paddingRight="40dp"
+                android:paddingLeft ="40dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=" Share"
+                    android:text="Share"
                     android:id="@+id/text_share"
                     android:textSize="30dp"
                     android:textColor="#96ffffff"
                     android:layout_weight="1"
-                    android:gravity="right"/>
+                    android:gravity="center"/>
                 <Space
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -164,7 +166,8 @@
                     android:textSize="30dp"
                     android:textColor="#96ffffff"
                     android:layout_weight="1"
-                    android:gravity="left"/>
+                    android:gravity="center"/>
             </LinearLayout>
+
     </LinearLayout>
 </FrameLayout>
