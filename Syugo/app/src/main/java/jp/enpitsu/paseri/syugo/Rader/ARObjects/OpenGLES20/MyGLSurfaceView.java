@@ -42,10 +42,10 @@ public class MyGLSurfaceView extends GLSurfaceView {
         Log.d( "DISTANCE", "distance@MyGLSurfaceView = " + distance );
     }
 
-//    // ARActivityからRendere→EffectObjectへ中継貿易
-//    public void invalidateElevation( double elevation ) {
-//        mRenderer.invalidateElevation( elevation );
-//    }
+    // ARActivityからRendere→EffectObjectへ中継貿易
+    public void invalidateElevation( double elevation ) {
+        mRenderer.invalidateElevation( elevation );
+    }
 
     // ARActivityからRendererへカメラアングルを横流し
     public void setCameraAngle( float[] angle ) {

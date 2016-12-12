@@ -1,16 +1,23 @@
 package jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20;
 
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import jp.enpitsu.paseri.syugo.R;
 
 //レンダラー
 public class MyRenderer implements GLSurfaceView.Renderer {
@@ -21,6 +28,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 
 //    private  RaderObject raderObject;
     private  RaderObject_UI raderObject;
+    private TargetObject targetObject;
 
     private float rotation;
     private double locationDirection, deviceDirection;
@@ -60,8 +68,25 @@ public class MyRenderer implements GLSurfaceView.Renderer {
         GLES20.glUniform4f(GLES.lightDiffuseHandle,0.7f,0.7f,0.7f,1.0f);
         GLES20.glUniform4f(GLES.lightSpecularHandle,0.0f,0.0f,0.0f,1.0f);
 
+
+        // テクスチャ画像読み込み
+        //テクスチャの生成
+//        Bitmap bmpTexture = BitmapFactory.decodeResource(
+//                glView.getResources(), R.drawable.rader_target );
+        Bitmap bmpTexture = null;
+        //テクスチャの生成
+        String name="rader_target.png";
+        try {
+            AssetManager am =glView.getResources().getAssets();
+            InputStream is = am.open(name);
+            bmpTexture = BitmapFactory.decodeStream(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 //        raderObject = new RaderObject();
         raderObject = new RaderObject_UI();
+        targetObject = new TargetObject( bmpTexture );
     }
 
     //画面サイズ変更時に呼ばれる
@@ -98,6 +123,8 @@ public class MyRenderer implements GLSurfaceView.Renderer {
                 0.0f,0.0f,-0.01f, //カメラの焦点
                 0.0f,1.0f,0.0f);//カメラの上方向
 
+        // ARのターゲット描画
+        targetObject.draw( isModeAR );
         // レーダー描画
         raderObject.draw( isModeAR );
 
@@ -166,10 +193,11 @@ public class MyRenderer implements GLSurfaceView.Renderer {
     }
 
     // 仰角更新
-//    public void invalidateElevation( double elevation ) {
-//        if ( effectObject != null )
-//            effectObject.invalidateElevation( (float)elevation );
-//    }
+    public void invalidateElevation( double elevation ) {
+        if ( targetObject != null ) {
+            targetObject.invalidateElevation((float) elevation);
+        }
+    }
 
     public void switchModeAR( boolean isModeAR ) {
         this.isModeAR = isModeAR;

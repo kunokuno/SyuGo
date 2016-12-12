@@ -274,7 +274,7 @@ public class RaderActivity extends Activity {
                         // レーダー更新
 //                        graphView.onDeviceDirectionChanged( direction );
                         glView.invalidateRader( "Device Direction Changed", (float)direction );
-//                        glView.invalidateElevation( elevation );
+                        glView.invalidateElevation( elevation );
                     }
                 }
             }
