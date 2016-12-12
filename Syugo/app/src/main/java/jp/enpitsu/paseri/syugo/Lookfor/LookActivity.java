@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import jp.enpitsu.paseri.syugo.Global.SyugoApp;
 import jp.enpitsu.paseri.syugo.R;
 import jp.enpitsu.paseri.syugo.Rader.RaderActivity;
 
@@ -27,6 +28,7 @@ public class LookActivity extends Activity {
     private TextView name,id2, e_message,text1,word,textView3;
     private EditText id;
     private String oppName, macAdr, reqID;
+    private SyugoApp app;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +45,15 @@ public class LookActivity extends Activity {
         text1 = (TextView)findViewById(R.id.text1);
         word = (TextView)findViewById(R.id.word);
         textView3 = (TextView)findViewById(R.id.textView3);
+        app = (SyugoApp) this.getApplication();
+
+        //Globalクラス適用
+        app.loadUserInfo();
+        oppName = app.getOpponentUserName();
+        reqID = app.getOpponentUserId();
+        id.setText(reqID);
+        id2.setText(reqID);
+        name.setText(oppName);
 
         //フォント設定
         id2.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
@@ -100,12 +111,10 @@ public class LookActivity extends Activity {
         public void onClick(View v) {
             reqID = id.getText().toString(); // 相手ID入力テキストボックスから相手のID取得
             id2.setText( reqID ); // 入力された相手IDをメッセージ部分に表示
-
             HttpComLookFor httpComLookFor = new HttpComLookFor(
                     new HttpComLookFor.AsyncTaskCallback() {
                         @Override
                         public void postExecute(String result) {
-
 //                            // 検索結果として"0"が返ってきた場合，ふつうに出力すると"0"だけどbyteとかlengthとか見ると別のものもくっついてるっぽい
 //                            // のでID検索一致0の場合の判定で妙なことしてます
 //                            Log.d("result byte  ", result.getBytes() + ", " + "0".getBytes() );
@@ -126,6 +135,10 @@ public class LookActivity extends Activity {
                                     macAdr = result.substring(result.indexOf(",") + 1, result.length());
                                     // ","の次の文字から最後までの部分文字列
                                     name.setText(oppName); // [検索結果]相手のユーザ名を表示
+                                    app.setOpponentUserInfo(oppName, reqID);
+                                    app.saveUserInfo();
+                                    Log.d("PrilyClass_name", app.getOpponentUserName());
+                                    Log.d("PrilyClass_id", app.getOpponentUserId());
                                 } catch ( Exception e ) {
                                     name.setText( result );
                                     Log.d("@LookActivity", "postExecute -> error:" + e.toString() );
