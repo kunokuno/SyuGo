@@ -105,8 +105,20 @@ public class RegActivity extends Activity {
                             params.height = btn_share.getWidth();
                         else params.width = btn_share.getHeight();
 
+                        // 位置調整用に幅・高さの差をとる
+                        int diff = btn_share.getHeight() - btn_share.getWidth();
+
                         btn_share.setLayoutParams( params );
                         btn_findmode.setLayoutParams( params );
+
+                        // 表示位置を調整
+                        if ( diff > 0 ) { // 高さを幅に合わせた（縦幅が縮んだ）場合Y座標を調整
+                            btn_share.setTranslationY( diff );
+                            btn_findmode.setTranslationY( diff );
+                        } else { // 幅に高さを合わせた（横幅が縮んだ）場合X座標を調整
+                            btn_share.setTranslationX( -diff );
+                            btn_findmode.setTranslationX( -diff );
+                        }
 
                         removeOnGlobalLayoutListener(btn_share.getViewTreeObserver(), this);
                     }
