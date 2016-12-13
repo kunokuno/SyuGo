@@ -166,7 +166,7 @@ public class RaderActivity extends Activity {
 
         linearLayout_ARMessages = (LinearLayout)findViewById( R.id.linearLayout_ARMassages );
         textView_reqNameAR = (TextView)findViewById( R.id.textView_reqNameAR );
-        textView_distanceAR = (TextView)findViewById( R.id.textView_reqNameAR );
+        textView_distanceAR = (TextView)findViewById( R.id.textView_distanceAR );
         textView_reqNameAR.setText( oppName ); // 相手のユーザ名セット
 
         // デバッグ用
@@ -442,7 +442,7 @@ public class RaderActivity extends Activity {
 //        graphView.onLocationChanged( results[1] );
 
         // 距離メッセージ変更
-        textView_distanceAR.setText( results[0] + "m");
+        textView_distanceAR.setText( (int)results[0] + "m");
         if( results[0] <= 20 ) textView_DistanceMessage.setText("近いよ");
         else if( results[0] == 0 ) textView_DistanceMessage.setText("やばいよ");
         else textView_DistanceMessage.setText("遠いよ");
