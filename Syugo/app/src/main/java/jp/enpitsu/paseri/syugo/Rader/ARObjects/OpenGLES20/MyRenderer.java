@@ -10,14 +10,9 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-
-import jp.enpitsu.paseri.syugo.R;
 
 //レンダラー
 public class MyRenderer implements GLSurfaceView.Renderer {
@@ -75,7 +70,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
 //                glView.getResources(), R.drawable.rader_target );
         Bitmap bmpTexture = null;
         //テクスチャの生成
-        String name="rader_target.png";
+        String name= "rader_target1.png";
         try {
             AssetManager am =glView.getResources().getAssets();
             InputStream is = am.open(name);
