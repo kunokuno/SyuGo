@@ -1,5 +1,6 @@
 package jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20;
 
+import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,8 +32,9 @@ public class MyRenderer implements GLSurfaceView.Renderer {
     private boolean isModeAR =false;
 
     // コンストラクタ
-    MyRenderer( MyGLSurfaceView glView ) {
+    MyRenderer( MyGLSurfaceView glView, Context context ) {
         this.glView = glView;
+        GLES.context = context;
 
         rotation = 0f;
         locationDirection = 0;
@@ -63,25 +65,9 @@ public class MyRenderer implements GLSurfaceView.Renderer {
         GLES20.glUniform4f(GLES.lightDiffuseHandle,0.7f,0.7f,0.7f,1.0f);
         GLES20.glUniform4f(GLES.lightSpecularHandle,0.0f,0.0f,0.0f,1.0f);
 
-
-        // テクスチャ画像読み込み
-        //テクスチャの生成
-//        Bitmap bmpTexture = BitmapFactory.decodeResource(
-//                glView.getResources(), R.drawable.rader_target );
-        Bitmap bmpTexture = null;
-        //テクスチャの生成
-        String name= "rader_target1.png";
-        try {
-            AssetManager am =glView.getResources().getAssets();
-            InputStream is = am.open(name);
-            bmpTexture = BitmapFactory.decodeStream(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
 //        raderObject = new RaderObject();
         raderObject = new RaderObject_UI();
-        targetObject = new TargetObject( bmpTexture );
+        targetObject = new TargetObject();
     }
 
     //画面サイズ変更時に呼ばれる

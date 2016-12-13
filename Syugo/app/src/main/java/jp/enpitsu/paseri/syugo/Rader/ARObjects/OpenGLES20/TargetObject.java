@@ -1,11 +1,15 @@
 package jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20;
 
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLUtils;
 import android.opengl.Matrix;
 import android.util.Log;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -47,7 +51,7 @@ public class TargetObject {
     private int texID;  // テクスチャID
     private Bitmap bmpTexture;
 
-    TargetObject( Bitmap bmpTexture ) {
+    TargetObject() {
         // 各変数の初期化
         rotation = 0;
         northDdirection = 0;
@@ -71,22 +75,34 @@ public class TargetObject {
         BORDER_NEAR = (RADIUS * 2) / 3;  // [遠い]と[近い]の境界
         BORDER_NEAREST = RADIUS / 3;  // [近い]と[めっちゃ近い]の境界
 
-        this.bmpTexture = bmpTexture;
+
+        // テクスチャ画像読み込み
+        bmpTexture = null;
+        String name= "rader_target1.png";
+        try {
+            AssetManager am = GLES.context.getResources().getAssets();
+            InputStream is = am.open( name );
+            bmpTexture = BitmapFactory.decodeStream( is );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         Log.d( "tex", bmpTexture.getWidth() + ", " + bmpTexture.getHeight() );
+        // テクスチャ生成
         texID = makeTexture( this.bmpTexture );
 
-        initCube();
+        initTarget();
     }
 
     // 立方体を描画する準備
-    private void initCube() {
+    private void initTarget() {
         //頂点バッファの生成
         //頂点バッファの生成
         float[] vertexs={
-                -1.0f, 1.0f,0.0f,//頂点0
-                -1.0f,-1.0f,0.0f,//頂点1
-                1.0f, 1.0f,0.0f,//頂点2
-                1.0f,-1.0f,0.0f,//頂点3
+                -5.0f, 5.0f,0.0f,//頂点0
+                -5.0f,-5.0f,0.0f,//頂点1
+                5.0f, 5.0f,0.0f,//頂点2
+                5.0f,-5.0f,0.0f,//頂点3
         };
         vertexBuffer = makeFloatBuffer(vertexs);
 
@@ -129,7 +145,7 @@ public class TargetObject {
             Matrix.rotateM( GLES.mMatrix, 0, elevation+80, 1, 0, 0 );
             Matrix.translateM( GLES.mMatrix, 0, 0, 0, -30 );
             GLES.glPushMatrix();
-            Matrix.scaleM( GLES.mMatrix, 0, 2, 2, 2 );
+//            Matrix.scaleM( GLES.mMatrix, 0, 2, 2, 2 );
             GLES.updateMatrix();
 
             drawTarget(); // 立方体描画

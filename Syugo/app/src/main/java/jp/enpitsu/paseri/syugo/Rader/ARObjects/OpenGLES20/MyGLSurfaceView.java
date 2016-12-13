@@ -21,7 +21,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
         super(context);
         this.context = context;
 
-        mRenderer = new MyRenderer( this );
+        mRenderer = new MyRenderer( this, context );
 
         setEGLConfigChooser(8, 8, 8, 8, 0, 0); // setRendererする前にやらんとerror吐く
         setEGLContextClientVersion( OPENGL_ES_VERSION );

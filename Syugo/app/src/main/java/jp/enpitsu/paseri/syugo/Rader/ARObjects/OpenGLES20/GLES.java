@@ -1,8 +1,10 @@
 package jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20;
 
+import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
+import java.net.ContentHandler;
 import java.util.ArrayList;
 
 //シェーダ操作
@@ -83,6 +85,7 @@ public class GLES {
 
     //システム
     private static int program;//プログラムオブジェクト
+    public static Context context;
 
     //光源のハンドル
     public static int lightAmbientHandle; //光源の環境光色ハンドル
