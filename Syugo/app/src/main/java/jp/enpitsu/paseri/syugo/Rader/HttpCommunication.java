@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Calendar;
 
 
 // HttpUrlConnection
@@ -47,7 +48,7 @@ public class HttpCommunication extends AsyncTask<Integer, Integer, LocationData>
         StringBuilder uri = new StringBuilder(
                 "http://ubermensch.noor.jp/enPiT/get_gps.php?" +
                         "code=" + myID + "&opponentcode=" + oppID + "&alt=30" +
-                        "&lat=" + lat + "&lan=" + lon + "&accuracy=" + acc + "&etime="+ gettime );
+                        "&lat=" + lat + "&lan=" + lon + "&accuracy=" + acc + "&gettime="+ gettime );
 
         Log.d("HttpURL", uri.toString());
 
@@ -98,8 +99,21 @@ public class HttpCommunication extends AsyncTask<Integer, Integer, LocationData>
 
                 // 結果をdataに格納
                 if( items.length == 7 && !items[6].equals("") ) {
+                    // items[6] には「yyyy-mm-dd kk:mm:ss」の形で取得時間が入っている
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.clear();
+                    String[] date_time = items[6].split(" "); // " "で分割→ [0] 年月日, [1]時刻 となる
+                    String[] date = date_time[0].split("-");  // "-"で分割→ [0] 年, [1] 月, [2] 日
+                    String[] time = date_time[1].split(":");  // ":"で分割→ [0] 時, [1] 分, [3] 秒
+                    calendar.set( Integer.parseInt( date[0] ),
+                                  Integer.parseInt( date[1] ),
+                                  Integer.parseInt( date[2] ),
+                                  Integer.parseInt( time[0] ),
+                                  Integer.parseInt( time[1] ),
+                                  Integer.parseInt( time[2] )
+                                );
                     data = new LocationData(
-                            Double.parseDouble(items[2]), Double.parseDouble(items[3]), Double.parseDouble(items[4]), Long.parseLong(items[6]) );
+                            Double.parseDouble(items[2]), Double.parseDouble(items[3]), Double.parseDouble(items[4]), calendar.getTimeInMillis() );
                 }
                 else data = new LocationData(
                         Double.parseDouble(items[2]), Double.parseDouble(items[3]), Double.parseDouble(items[4]) );

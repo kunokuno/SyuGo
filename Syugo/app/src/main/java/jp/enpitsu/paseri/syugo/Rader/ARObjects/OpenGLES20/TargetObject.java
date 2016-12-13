@@ -145,6 +145,7 @@ public class TargetObject {
             Matrix.rotateM( GLES.mMatrix, 0, elevation+95, 1, 0, 0 );
 
             distanceOnRader = distance * ( RADIUS / MAX_DISTANCE );
+            Log.d( "distanceOnRader", ""+distanceOnRader );
 
 //            Matrix.translateM( GLES.mMatrix, 0, 0, 0, (float)-distanceOnRader );
             Matrix.translateM( GLES.mMatrix, 0, 0, 0, -100 );
