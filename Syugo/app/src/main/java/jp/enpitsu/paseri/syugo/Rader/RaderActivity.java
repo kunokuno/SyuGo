@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -62,8 +63,13 @@ public class RaderActivity extends Activity {
     ImageView backgroundImageView;
     TextureView textureView;
 
+    LinearLayout linearLayout_raderMessages;
     TextView textView_DistanceMessage;
     TextView textView_AccuracyMessage;
+
+    LinearLayout linearLayout_ARMessages;
+    TextView textView_reqNameAR;
+    TextView textView_distanceAR;
 
     //WiFiDirect
     WiFiDirect wfd;
@@ -89,13 +95,8 @@ public class RaderActivity extends Activity {
     Vibrator vibrator;
     private boolean flag_vibrator = true; // 振動させるかさせないか
 
-
-    //    String myID = "r3uhr3";
-//    String reqID = "4hfeu";
-    String myID;
-//    String reqID = "r3uhr3";
-    String reqID; // TODO: 自分のIDは外部ファイルから読んでくる
-    String macAdr, oppName; // 相手のMACアドレスとユーザ名
+    String myID, oppID;
+    String oppName; // 相手ユーザ名
 
     private double lat = 30;
     private double lon = 30;
@@ -116,7 +117,8 @@ public class RaderActivity extends Activity {
         syugoApp = (SyugoApp)this.getApplication(); // グローバルクラス
         // グローバルクラスから自分・相手のID読み込み
         myID = syugoApp.getSelfUserId();
-        reqID = syugoApp.getOpponentUserId();
+        oppID = syugoApp.getOpponentUserId();
+        oppName = syugoApp.getOpponentUserName();
 
         // 例外処理
         Intent intent;
@@ -126,13 +128,12 @@ public class RaderActivity extends Activity {
             startActivity( intent );
             this.finish();
         }
-//        else if ( reqID.equals("") ) {
-//            Toast.makeText( this, "相手のユーザIDを検索し、\nユーザ名を確認してください", Toast.LENGTH_LONG ).show();
-//            intent = new Intent( RaderActivity.this, LookActivity.class );
-//            startActivity( intent );
-//            this.finish();
-//        }
-
+        else if ( oppID.equals("") || oppName.equals("") ) {
+            Toast.makeText( this, "相手のユーザIDを検索し、\nユーザ名を確認してください", Toast.LENGTH_LONG ).show();
+            intent = new Intent( RaderActivity.this, LookActivity.class );
+            startActivity( intent );
+            this.finish();
+        }
 
         glView = new MyGLSurfaceView( this );
         glView.setZOrderOnTop(true);
@@ -159,9 +160,14 @@ public class RaderActivity extends Activity {
         button_Vibration  = (ToggleButton)findViewById( R.id.button_Vibe );
         button_WifiDirect = (ToggleButton)findViewById( R.id.button_wifiDirect );
 
-//        textView_Message = (TextView)findViewById( R.id.textView_Message );
+        linearLayout_raderMessages = (LinearLayout)findViewById( R.id.linearLayout_raderMessages );
         textView_DistanceMessage = (TextView)findViewById( R.id.textView_DistanceMessage );
         textView_AccuracyMessage = (TextView)findViewById( R.id.textView_AccuracyMessage );
+
+        linearLayout_ARMessages = (LinearLayout)findViewById( R.id.linearLayout_ARMassages );
+        textView_reqNameAR = (TextView)findViewById( R.id.textView_reqNameAR );
+        textView_distanceAR = (TextView)findViewById( R.id.textView_reqNameAR );
+        textView_reqNameAR.setText( oppName ); // 相手のユーザ名セット
 
         // デバッグ用
         button_info = (Button)findViewById( R.id.button_info );
@@ -173,6 +179,8 @@ public class RaderActivity extends Activity {
         button_Vibration.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
         textView_DistanceMessage.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
         textView_AccuracyMessage.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        textView_reqNameAR.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        textView_distanceAR.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
 
         //WiFiDirectクラスのインスタンス作成とボタンの登録
         wfd = new WiFiDirect( RaderActivity.this );
@@ -327,7 +335,7 @@ public class RaderActivity extends Activity {
                             }
                         }
                 );
-                httpCommunication.setID( myID, reqID );
+                httpCommunication.setID( myID, oppID );
                 httpCommunication.setLocation( location.getLatitude(), location.getLongitude(), location.getAccuracy() );
                 httpCommunication.executeOnExecutor( AsyncTask.THREAD_POOL_EXECUTOR );
 
@@ -434,6 +442,7 @@ public class RaderActivity extends Activity {
 //        graphView.onLocationChanged( results[1] );
 
         // 距離メッセージ変更
+        textView_distanceAR.setText( results[0] + "m");
         if( results[0] <= 20 ) textView_DistanceMessage.setText("近いよ");
         else if( results[0] == 0 ) textView_DistanceMessage.setText("やばいよ");
         else textView_DistanceMessage.setText("遠いよ");
@@ -456,7 +465,7 @@ public class RaderActivity extends Activity {
                 "lat : " + this.lat + "\n" +
                 "lon : " + this.lon + "\n" +
 //                "acc : " + this.acc + "\n" +
-                "【 相手( "+ reqID + " ) 】\n" +
+                "【 相手( "+ oppID + " ) 】\n" +
                 "lat : " + data.lat + "\n" +
                 "lon : " + data.lon + "\n" +
                 "acc : " + data.acc + "\n" +
@@ -506,6 +515,10 @@ public class RaderActivity extends Activity {
             mCamera = null;
             // 背景差し替え(imageView表示)
             backgroundImageView.setVisibility( backgroundImageView.VISIBLE );
+            // AR用メッセージ非表示
+            linearLayout_ARMessages.setVisibility( View.GONE );
+            // レーダー用メッセージ表示
+            linearLayout_raderMessages.setVisibility( View.VISIBLE );
         }
     }
 
@@ -519,6 +532,11 @@ public class RaderActivity extends Activity {
 
         // 背景差し替え（imageView非表示）
         backgroundImageView.setVisibility( backgroundImageView.INVISIBLE );
+        // AR用メッセージ表示
+        linearLayout_ARMessages.setVisibility( View.VISIBLE );
+        // レーダー用メッセージ非表示
+        linearLayout_raderMessages.setVisibility( View.GONE );
+
     }
 
 

@@ -32,7 +32,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:id="@+id/linearLayout_raderMessages">
 
         <TextView
             android:layout_width="wrap_content"
@@ -171,7 +172,7 @@
         android:gravity="center"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
-        android:visibility="visible">
+        android:visibility="gone">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
