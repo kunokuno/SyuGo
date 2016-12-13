@@ -21,8 +21,6 @@ public class MyRenderer implements GLSurfaceView.Renderer {
     private float aspect;//アスペクト比
 
     private  MyGLSurfaceView glView;
-
-//    private  RaderObject raderObject;
     private  RaderObject_UI raderObject;
     private TargetObject targetObject;
 
@@ -65,7 +63,6 @@ public class MyRenderer implements GLSurfaceView.Renderer {
         GLES20.glUniform4f(GLES.lightDiffuseHandle,0.7f,0.7f,0.7f,1.0f);
         GLES20.glUniform4f(GLES.lightSpecularHandle,0.0f,0.0f,0.0f,1.0f);
 
-//        raderObject = new RaderObject();
         raderObject = new RaderObject_UI();
         targetObject = new TargetObject();
     }

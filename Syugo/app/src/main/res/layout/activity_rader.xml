@@ -171,21 +171,31 @@
         android:gravity="center"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
-        android:visibility="gone">
+        android:visibility="visible">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="reqName"
             android:textColor="@color/colorWhite"
-            android:id="@+id/textView_reqNameAR" />
+            android:id="@+id/textView_reqNameAR"
+            android:shadowColor="#de000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="2.0"
+            />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Distance"
             android:textColor="@color/colorWhite"
-            android:id="@+id/textView_distanceAR" />
+            android:id="@+id/textView_distanceAR"
+            android:shadowColor="#de000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="2.0"
+            />
     </LinearLayout>
 
 
