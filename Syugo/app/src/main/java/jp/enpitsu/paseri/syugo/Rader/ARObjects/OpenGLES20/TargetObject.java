@@ -142,8 +142,12 @@ public class TargetObject {
 
             GLES.glPushMatrix();
             Matrix.rotateM( GLES.mMatrix, 0, northDdirection-rotation, 0, 1, 0 );
-            Matrix.rotateM( GLES.mMatrix, 0, elevation+80, 1, 0, 0 );
-            Matrix.translateM( GLES.mMatrix, 0, 0, 0, -30 );
+            Matrix.rotateM( GLES.mMatrix, 0, elevation+95, 1, 0, 0 );
+
+            distanceOnRader = distance * ( RADIUS / MAX_DISTANCE );
+
+//            Matrix.translateM( GLES.mMatrix, 0, 0, 0, (float)-distanceOnRader );
+            Matrix.translateM( GLES.mMatrix, 0, 0, 0, -100 );
             GLES.glPushMatrix();
 //            Matrix.scaleM( GLES.mMatrix, 0, 2, 2, 2 );
             GLES.updateMatrix();

@@ -127,14 +127,19 @@ public class MyRenderer implements GLSurfaceView.Renderer {
     // ロケーションが変わった時
     public void invalidateRader( String tag, float direction, float distance ) {
         Log.d( "RaderObject", "invalidateRader" );
-        if( raderObject != null ) {
+        if( raderObject != null || targetObject != null ) {
             // 角度更新
             this.locationDirection = direction;
             // rotationを更新
             getRotate();
             Log.d( "DISTANCE", "distance@MyRenderer = " + distance );
             // 距離更新
-            raderObject.invalidateDistance( distance );
+            try {
+                raderObject.invalidateDistance(distance);
+                targetObject.invalidateDistance(distance);
+            } catch( Exception e ) {
+                e.toString();
+            }
         }
     }
 
@@ -163,19 +168,30 @@ public class MyRenderer implements GLSurfaceView.Renderer {
         glView.requestRender();
         Log.d( "RaderObject", "RequestRender" );
 
-        if ( raderObject != null ) {
-//            raderObject.invalidateRotation(rotation);
-            raderObject.invalidateNorthDirection( (float)deviceDirection );
-            raderObject.invalidateRotation( (float)locationDirection );
+        if ( raderObject != null || targetObject != null ) {
+            try {
+                raderObject.invalidateNorthDirection( (float) deviceDirection );
+                raderObject.invalidateRotation( (float) locationDirection );
+
+                targetObject.invalidateNorthDirection( (float) deviceDirection );
+                targetObject.invalidateRotation( (float) locationDirection );
+            } catch ( Exception e ) {
+                Log.d( "getRotate@MyRenderer", e.toString() );
+            }
         }
     }
 
     // 仰角更新
     public void invalidateElevation( double elevation ) {
-        if ( targetObject != null ) {
-            targetObject.invalidateElevation((float) elevation);
+        if (targetObject != null) {
+            try {
+                targetObject.invalidateElevation((float) elevation);
+            } catch ( Exception e ) {
+                Log.d( "invalidElev@MyRenderer", e.toString() );
+            }
         }
     }
+
 
     public void switchModeAR( boolean isModeAR ) {
         this.isModeAR = isModeAR;
