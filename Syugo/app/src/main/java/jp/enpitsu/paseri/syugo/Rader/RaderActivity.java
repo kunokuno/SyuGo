@@ -98,8 +98,7 @@ public class RaderActivity extends Activity {
     String myID, oppID;
     String oppName; // 相手ユーザ名
 
-    private double lat = 30;
-    private double lon = 30;
+    private LocationData myLocationData;
 
     /** 位置情報の更新を受信するためのリスナー。これを、ARchitectViewに通知して、ARchitect Worldの位置情報を更新します。*/
     protected LocationListener locationListener;
@@ -318,13 +317,9 @@ public class RaderActivity extends Activity {
             @Override
             public void onLocationChanged(final Location location) {
                 Log.d("Location", "onLcationChanged");
-                lat = location.getLatitude();
-                lon = location.getLongitude();
+                myLocationData = new LocationData( location.getLatitude(), location.getLongitude(), location.getAccuracy() );
 
                 // 自分の位置情報をグローバルクラスにセット
-                // TODO: ロケーションデータに日時追加・セッタとゲッタ
-
-
                 HttpCommunication httpCommunication = new HttpCommunication(
                         new HttpCommunication.AsyncTaskCallback() {
                             @Override
@@ -336,7 +331,7 @@ public class RaderActivity extends Activity {
                         }
                 );
                 httpCommunication.setID( myID, oppID );
-                httpCommunication.setLocation( location.getLatitude(), location.getLongitude(), location.getAccuracy() );
+                httpCommunication.setLocation( myLocationData );
                 httpCommunication.executeOnExecutor( AsyncTask.THREAD_POOL_EXECUTOR );
 
                 Log.d( "MyLocation", location.getLatitude() + ", " + location.getLongitude() + " ( " + location.getAccuracy() + " )" );
@@ -428,7 +423,7 @@ public class RaderActivity extends Activity {
         // results[0] : 距離（メートル）
         //        [1] : 始点から終点までの方位角
         //        [2] : 終点から始点までの方位角
-        Location.distanceBetween( lat, lon, data.lat, data.lon, results);
+        Location.distanceBetween( myLocationData.lat, myLocationData.lon, data.lat, data.lon, results);
 //        Location.distanceBetween( lat, lon, 36.56815810607431, 140.6476289042621, results);
         Log.d( "DISTANCE", "distance`getDistance = " + results[0] );
 
@@ -456,23 +451,24 @@ public class RaderActivity extends Activity {
 
 
         // デバッグ用にデータを表示したいんじゃよ
-        // 現在の時刻を取得
-        Date date = new Date();
         // 表示形式を設定
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy'年'MM'月'dd'日'　kk'時'mm'分'ss'秒'");
 
         String stringInfo = "【 自分( "+ myID + " ) 】\n" +
-                "lat : " + this.lat + "\n" +
-                "lon : " + this.lon + "\n" +
-//                "acc : " + this.acc + "\n" +
+                "lat : " + myLocationData.lat + "\n" +
+                "lon : " + myLocationData.lon + "\n" +
+                "acc : " + myLocationData.acc + "\n" +
                 "【 相手( "+ oppID + " ) 】\n" +
                 "lat : " + data.lat + "\n" +
                 "lon : " + data.lon + "\n" +
                 "acc : " + data.acc + "\n" +
+                "\n"+
                 "【 距離 】 " + results[0] + "m\n" +
                 "【 自 → 相 】 " + results[1] + "\n" +
                 "【 相 → 自 】 " + results[2] + "\n" +
-                "【 "+ sdf.format( date ) +" 】";    // 更新日時
+                "【 取得時刻 】\n" +
+                "(自)" + sdf.format( new Date(myLocationData.gettime) ) + "\n" +
+                "(相)" + sdf.format( new Date(data.gettime) );
         textView_info.setText( stringInfo );
 
 
