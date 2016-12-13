@@ -70,11 +70,11 @@ public class GLES {
                     "uniform int u_UseTex;"+    //テクスチャ利用
 
                     // 入力
-                    "varying vec4 v_Color;"+ // UV
-                    "uniform vec2 v_UV;"+    // 色
+                    "varying vec4 v_Color;"+ // 色
+                    "varying vec2 v_UV;"+    // UV
                     "void main(){"+
                         "if (u_UseTex==1){"+
-                            "gl_FragColor=texture2D(u_Tex,v_UV)*v_Color;"+
+                            "gl_FragColor=texture2D(u_Tex,v_UV);"+
                         "}else {"+
                             "gl_FragColor=v_Color;"+
                         "}"+

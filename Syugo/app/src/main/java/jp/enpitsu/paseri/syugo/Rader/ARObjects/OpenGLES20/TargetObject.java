@@ -72,7 +72,8 @@ public class TargetObject {
         BORDER_NEAREST = RADIUS / 3;  // [近い]と[めっちゃ近い]の境界
 
         this.bmpTexture = bmpTexture;
-        makeTexture( this.bmpTexture );
+        Log.d( "tex", bmpTexture.getWidth() + ", " + bmpTexture.getHeight() );
+        texID = makeTexture( this.bmpTexture );
 
         initCube();
     }
@@ -119,8 +120,6 @@ public class TargetObject {
 
     public void draw( boolean isModeAR ) {
 
-        Log.d( "RaderObject", "onDrawFrame___draw" );
-
         if ( isModeAR == true ) {
             //光源位置の指定
             GLES20.glUniform4f(GLES.lightPosHandle,0f,10f,0f,1.0f);
@@ -149,24 +148,32 @@ public class TargetObject {
         GLES20.glVertexAttribPointer(GLES.normalHandle,3,
                 GLES20.GL_FLOAT,false,0,normalBuffer);
 
-        //テクスチャの指定
-        GLES20.glActiveTexture( GLES20.GL_TEXTURE0 );
-        GLES20.glBindTexture( GLES20.GL_TEXTURE_2D, texID );
-        GLES20.glUniform1i( GLES.texHandle, 0 );
-        GLES20.glUniform1i( GLES.useTexHandle, 1 );
+        if ( texID != 0 ) {
+            //テクスチャの指定
+            GLES20.glEnableVertexAttribArray(GLES.uvHandle);
+            GLES20.glEnable(GLES20.GL_TEXTURE_2D);
+            GLES20.glUniform1i(GLES.useTexHandle, 1);
+            GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, texID);
+            GLES20.glUniform1i(GLES.texHandle, 0);
 
-        //UVバッファの指定
-        GLES20.glVertexAttribPointer( GLES.uvHandle,2,
-                GLES20.GL_FLOAT,false,0,uvBuffer );
 
+            //UVバッファの指定
+            GLES20.glVertexAttribPointer(GLES.uvHandle, 2,
+                    GLES20.GL_FLOAT, false, 0, uvBuffer);
+        }
         //面0の描画
-        setMaterial(50f/255f,1f,219f/255f,0.7f);
+        setMaterial(50f/255f,1f,219f/255f,1f);
         indexBuffer.position(0);
         GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP,
                 4,GLES20.GL_UNSIGNED_BYTE,indexBuffer);
 
-
-        GLES20.glUniform1i( GLES.useTexHandle, 0 );
+        if ( texID != 0 ) {
+            GLES20.glDisable(GLES20.GL_TEXTURE_2D);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
+            GLES20.glUniform1i(GLES.useTexHandle, 0);
+            GLES20.glDisableVertexAttribArray(GLES.uvHandle);
+        }
     }
 
 
