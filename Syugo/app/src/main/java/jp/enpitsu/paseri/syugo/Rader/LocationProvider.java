@@ -20,19 +20,19 @@ public class LocationProvider implements ILocationProvider {
     private final LocationManager locationManager;
 
     /** 位置更新（GPS）が発生するミリ秒を指定します。おおよそ毎秒、発生するようにした方がよいです。これ例では1000ミリ秒＝1秒ごと。 */
-    private static final int        LOCATION_UPDATE_MIN_TIME_GPS	= 1000;
+    private static int        LOCATION_UPDATE_MIN_TIME_GPS	= 5000;
 
     /** 位置更新（GPS）のシグナルが発生する距離（m）を指定します。「0」mを指定すると、場所が前回と同じでもシグナルが発生します。 */
-    private static final int        LOCATION_UPDATE_DISTANCE_GPS	= 0;
+    private static int        LOCATION_UPDATE_DISTANCE_GPS	= 0;
 
     /** 位置更新（ネットワーク基地局）が発生するミリ秒を指定します。おおよそ毎秒、発生するようにした方がよいです。これ例では1000ミリ秒＝1秒ごと。 */
-    private static final int        LOCATION_UPDATE_MIN_TIME_NW		= 1000;
+    private static int        LOCATION_UPDATE_MIN_TIME_NW		= 5000;
 
     /** 位置更新（ネットワーク基地局）のシグナルが発生する距離（m）を指定します。「0」mを指定すると、場所が前回と同じでもシグナルが発生します。 */
-    private static final int        LOCATION_UPDATE_DISTANCE_NW		= 0;
+    private static int        LOCATION_UPDATE_DISTANCE_NW		= 0;
 
     /** 位置情報へのアクセスを早めるために、10分（＝1000ミリ秒×60秒×10分）前の古い位置情報であっても起動時に使用します。時間は微調整できます。 */
-    private static final int        LOCATION_OUTDATED_WHEN_OLDER_MS	= 1000 * 60 * 10;
+    private static int        LOCATION_OUTDATED_WHEN_OLDER_MS	= 1000 * 60 * 10;
 
     /** システム設定において、GPSプロバイダーやネットワークプロバイダーが有効になっているかどうかを示すフィールド変数。 */
     private boolean                 gpsProviderEnabled, networkProviderEnabled;
