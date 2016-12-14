@@ -88,7 +88,7 @@ public class HttpCommunication extends AsyncTask<Integer, Integer, LocationData>
 
 
 
-        LocationData data = new LocationData( 30, 30, 30 );
+        LocationData data = new LocationData( 30, 30, 30, 30 );
         //if( HttpStatus.SC_OK == status ) {
         if( !result.equals("") ) { // データを受け取れている場合
             try {

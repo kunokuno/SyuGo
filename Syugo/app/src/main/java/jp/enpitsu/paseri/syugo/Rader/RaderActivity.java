@@ -102,7 +102,8 @@ public class RaderActivity extends Activity {
     String myID, oppID;
     String oppName; // 相手ユーザ名
 
-    private LocationData myLocationData;
+    private LocationData myLocationData;  // 自分の位置情報
+    private LocationData oppLocationData; // 相手の位置情報
 
     /** 位置情報の更新を受信するためのリスナー。これを、ARchitectViewに通知して、ARchitect Worldの位置情報を更新します。*/
     protected LocationListener locationListener;
@@ -116,6 +117,9 @@ public class RaderActivity extends Activity {
 
     // ボタンとかいろいろ初期化
     private void initViewsAndItems() {
+
+        myLocationData  = new LocationData( 30, 30, 30 );
+        oppLocationData = new LocationData( 30, 30, 30 );
 
         glView = new MyGLSurfaceView( this );
         glView.setZOrderOnTop(true);
@@ -318,15 +322,17 @@ public class RaderActivity extends Activity {
                             new HttpCommunication.AsyncTaskCallback() {
                                 @Override
                                 public void postExecute(LocationData result) {
-                                    getDistance(result);
+                                    oppLocationData = result;
+                                    getDistance();
                                 }
                             }
                     );
-                    httpCommunication.setID(myID, oppID);
-                    httpCommunication.setLocation(myLocationData);
-                    httpCommunication.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    httpCommunication.setID( myID, oppID );
+                    httpCommunication.setLocation( myLocationData );
+                    httpCommunication.executeOnExecutor( AsyncTask.THREAD_POOL_EXECUTOR );
                 }
 
+                getDistance(); // 自分の位置情報更新
 
 //                Log.d( "MyLocation", location.getLatitude() + ", " + location.getLongitude() + " ( " + location.getAccuracy() + " )" );
 
@@ -472,13 +478,14 @@ public class RaderActivity extends Activity {
     }
 
 
-    void getDistance( LocationData data ) {
+    void getDistance() {
         float[] results = new float[3];
         // 距離を計算 ///////////////////////////
         // results[0] : 距離（メートル）
         //        [1] : 始点から終点までの方位角
         //        [2] : 終点から始点までの方位角
-        Location.distanceBetween( myLocationData.lat, myLocationData.lon, data.lat, data.lon, results);
+        Location.distanceBetween( myLocationData.lat, myLocationData.lon,
+                                    oppLocationData.lat, oppLocationData.lon, results);
 //        Location.distanceBetween( lat, lon, 36.56815810607431, 140.6476289042621, results);
 //        Log.d( "DISTANCE", "distance`getDistance = " + results[0] );
 
@@ -497,9 +504,9 @@ public class RaderActivity extends Activity {
         else textView_DistanceMessage.setText("遠いよ");
 
         // 精度メッセージ変更
-        if( data.acc <= 3 ) textView_AccuracyMessage.setText("精度良好かも");
-        else if( data.acc > 3 && data.acc <= 10 ) textView_AccuracyMessage.setText("ふつうの精度");
-        else if ( data.acc >= 15 ) textView_AccuracyMessage.setText("精度ひどいよ");
+        if( oppLocationData.acc <= 3 ) textView_AccuracyMessage.setText("精度良好かも");
+        else if( oppLocationData.acc > 3 && oppLocationData.acc <= 10 ) textView_AccuracyMessage.setText("ふつうの精度");
+        else if ( oppLocationData.acc >= 15 ) textView_AccuracyMessage.setText("精度ひどいよ");
 //        else if ( data.acc >= 15 ) textView_AccuracyMessage.setText("不安な精度");
         else textView_AccuracyMessage.setText( "" );
 
@@ -513,16 +520,18 @@ public class RaderActivity extends Activity {
                 "lon : " + myLocationData.lon + "\n" +
                 "acc : " + myLocationData.acc + "\n" +
                 "【 相手( "+ oppID + " ) 】\n" +
-                "lat : " + data.lat + "\n" +
-                "lon : " + data.lon + "\n" +
-                "acc : " + data.acc + "\n" +
+                "lat : " + oppLocationData.lat + "\n" +
+                "lon : " + oppLocationData.lon + "\n" +
+                "acc : " + oppLocationData.acc + "\n" +
                 "\n"+
                 "【 距離 】 " + results[0] + "m\n" +
                 "【 自 → 相 】 " + results[1] + "\n" +
                 "【 相 → 自 】 " + results[2] + "\n" +
                 "【 取得時刻 】\n" +
-                "(自)" + sdf.format( new Date(myLocationData.gettime) ) + "\n" +
-                "(相)" + sdf.format( new Date(data.gettime) );
+                "(自)" + sdf.format( new Date( myLocationData.gettime ) ) + "\n" +
+                "(相)" + sdf.format( new Date( oppLocationData.gettime ) );
+
+        Log.d("Location", myLocationData.gettime + " " + oppLocationData.gettime );
         textView_info.setText( stringInfo );
 
 
