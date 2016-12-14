@@ -100,8 +100,9 @@ public class LocationProvider implements ILocationProvider {
         }
     }
 
-
+    @Override
     public void setLocationUpdateMinTime( boolean isWithInRaderRange ) {
+
         if ( isWithInRaderRange == true ) {
             this.LOCATION_UPDATE_MIN_TIME_GPS = UPDATE_MIN_TIME_IN_RADER_RANGE;
             this.LOCATION_UPDATE_MIN_TIME_NW = UPDATE_MIN_TIME_IN_RADER_RANGE;
