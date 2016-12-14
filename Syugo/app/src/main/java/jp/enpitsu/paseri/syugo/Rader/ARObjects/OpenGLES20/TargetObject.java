@@ -96,7 +96,7 @@ public class TargetObject {
             GLES20.glUniform4f(GLES.lightPosHandle,0f,10f,0f,1.0f);
 
             GLES.glPushMatrix();
-            Matrix.rotateM( GLES.mMatrix, 0, RADER_VALUES.northDdirection - RADER_VALUES.rotation, 0, 1, 0 );
+            Matrix.rotateM( GLES.mMatrix, 0, RADER_VALUES.northDirection - RADER_VALUES.rotation, 0, 1, 0 );
             Matrix.rotateM( GLES.mMatrix, 0, RADER_VALUES.elevation+95, 1, 0, 0 );
 
             Matrix.translateM( GLES.mMatrix, 0, 0, 0, -RADER_VALUES.distance );

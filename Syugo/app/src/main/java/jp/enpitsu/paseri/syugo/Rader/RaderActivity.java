@@ -280,10 +280,7 @@ public class RaderActivity extends Activity {
                             direction = 360f + direction;
                         }
                         // レーダー更新
-//                        graphView.onDeviceDirectionChanged( direction );
-//                        glView.invalidateRader( "Device Direction Changed", (float)direction );
                         RADER_VALUES.invalidateDeviceDirection( (float)direction );
-//                        glView.invalidateElevation( elevation );
                         RADER_VALUES.invalidateElevation( (float) elevation );
                     }
                 }
@@ -328,8 +325,6 @@ public class RaderActivity extends Activity {
                             @Override
                             public void postExecute(LocationData result) {
                                 getDistance( result );
-
-//                                glView.invalidateRader( "Location Changed", direction );
                             }
                         }
                 );
@@ -436,9 +431,7 @@ public class RaderActivity extends Activity {
         }
 
         // 円グラフを回転
-//        glView.invalidateRader( "Location Changed", results[1], results[0] );
         RADER_VALUES.invalidateLocation( results[1], results[0] );
-//        graphView.onLocationChanged( results[1] );
 
         // 距離メッセージ変更
         textView_distanceAR.setText( (int)results[0] + "m");
@@ -510,7 +503,6 @@ public class RaderActivity extends Activity {
         else { // ON → OFFのとき
             // ARモード終了
             RADER_VALUES.switchARMode( false );
-//            glView.switchModeAR( false );
             // カメラ開放
             mCamera.close();
             mCamera = null;
@@ -525,7 +517,6 @@ public class RaderActivity extends Activity {
 
     public void startARMode() {
         RADER_VALUES.switchARMode( true );
-//        glView.switchModeAR( true );
         // カメラ起動
         if ( textureView.isAvailable() == true ) {
             mCamera = new Camera2(textureView, this);

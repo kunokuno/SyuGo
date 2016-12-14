@@ -8,7 +8,7 @@ import android.util.Log;
 public class RADER_VALUES {
 
     public static float rotation = 0;        // 北側からの相手の方向（=レーダーを回転させる方向）
-    public static float northDdirection = 0; // 北側の方向
+    public static float northDirection = 0; // 北側の方向
                                                 // 相手の方向 = direction + rotation
     public static float distance = 9999;     // 相手との距離
 
@@ -23,7 +23,6 @@ public class RADER_VALUES {
 
     public static float elevation = 0;          // 端末の仰角的な傾き
     public static double locationDirection =0;  // 位置情報から見た相手の方向
-    public static double deviceDirection = 0;   // 端末の向いている方向
     public static double distanceOnRader = 0;   // 実際の距離に対するレーダー上の距離
                                                    //  = distance * ( RADIUS / MAX_DISTANCE )
 
@@ -36,6 +35,7 @@ public class RADER_VALUES {
         locationDirection = direction;
         // 距離更新
         distance = dist;
+        distanceOnRader = distance * ( RADIUS / MAX_DISTANCE );
 
         // rotationを更新
         getRotate();
@@ -44,7 +44,7 @@ public class RADER_VALUES {
     // 端末の向きが変化したとき
     public static void invalidateDeviceDirection( float direction ) {
         // 角度更新
-        deviceDirection = direction;
+        northDirection = direction;
         // rotation更新
         getRotate();
     }
@@ -56,7 +56,7 @@ public class RADER_VALUES {
 
     private static void getRotate() {
         // - [端末の向き] + [相手のいる方角]
-        rotation = (float)( -deviceDirection + locationDirection );
+        rotation = (float)( -northDirection + locationDirection );
     }
 
     public static void switchARMode( boolean bool ) {
