@@ -109,88 +109,88 @@ public class MyRenderer implements GLSurfaceView.Renderer {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    // MyGLSurfaceViewからRaderObjectへ中継貿易
-    // 端末の傾きが変わった時
-    public void invalidateRader( String tag, float direction ) {
-        Log.d( "RaderObject", "invalidateRader" );
-        if( raderObject != null ) {
-            // 角度更新
-            this.deviceDirection = direction;
-            Log.d("RaderObject", "onDeviceDirectionChanged");
+//    // MyGLSurfaceViewからRaderObjectへ中継貿易
+//    // 端末の傾きが変わった時
+//    public void invalidateRader( String tag, float direction ) {
+//        Log.d( "RaderObject", "invalidateRader" );
+//        if( raderObject != null ) {
+//            // 角度更新
+//            this.deviceDirection = direction;
+//            Log.d("RaderObject", "onDeviceDirectionChanged");
+//
+//            // rotation更新
+//            getRotate();
+//        }
+////        if( tag.equals("Location Changed") ) this.onLocationChanged( direction );
+////        else if( tag.equals("Device Direction Changed") ) this.onDeviceDirectionChanged( direction );
+//    }
+//    // ロケーションが変わった時
+//    public void invalidateRader( String tag, float direction, float distance ) {
+//        Log.d( "RaderObject", "invalidateRader" );
+//        if( raderObject != null || targetObject != null ) {
+//            // 角度更新
+//            this.locationDirection = direction;
+//            // rotationを更新
+//            getRotate();
+//            Log.d( "DISTANCE", "distance@MyRenderer = " + distance );
+//            // 距離更新
+//            try {
+//                raderObject.invalidateDistance(distance);
+//                targetObject.invalidateDistance(distance);
+//            } catch( Exception e ) {
+//                e.toString();
+//            }
+//        }
+//    }
 
-            // rotation更新
-            getRotate();
-        }
-//        if( tag.equals("Location Changed") ) this.onLocationChanged( direction );
-//        else if( tag.equals("Device Direction Changed") ) this.onDeviceDirectionChanged( direction );
-    }
-    // ロケーションが変わった時
-    public void invalidateRader( String tag, float direction, float distance ) {
-        Log.d( "RaderObject", "invalidateRader" );
-        if( raderObject != null || targetObject != null ) {
-            // 角度更新
-            this.locationDirection = direction;
-            // rotationを更新
-            getRotate();
-            Log.d( "DISTANCE", "distance@MyRenderer = " + distance );
-            // 距離更新
-            try {
-                raderObject.invalidateDistance(distance);
-                targetObject.invalidateDistance(distance);
-            } catch( Exception e ) {
-                e.toString();
-            }
-        }
-    }
-
-    public void onLocationChanged( float direction ) {
-        // 角度更新
-        this.locationDirection = direction;
-
-        // rotationを更新
-        getRotate();
-    }
-
-    // 端末の向きを取得し、rotationを更新
-    public void onDeviceDirectionChanged( double direction ) {
-        // 角度更新
-        this.deviceDirection = direction;
-        Log.d( "RaderObject", "onDeviceDirectionChanged" );
-
-        // rotation更新
-        getRotate();
-    }
-
-    private void getRotate() {
-        // - [端末の向き] + [相手のいる方角]
-        rotation = (float)(-deviceDirection + locationDirection);
-        Log.d( "RaderObject", "getRotate" );
-        glView.requestRender();
-        Log.d( "RaderObject", "RequestRender" );
-
-        if ( raderObject != null || targetObject != null ) {
-            try {
-                raderObject.invalidateNorthDirection( (float) deviceDirection );
-                raderObject.invalidateRotation( (float) locationDirection );
-
-                targetObject.invalidateNorthDirection( (float) deviceDirection );
-                targetObject.invalidateRotation( (float) locationDirection );
-            } catch ( Exception e ) {
-                Log.d( "getRotate@MyRenderer", e.toString() );
-            }
-        }
-    }
-
-    // 仰角更新
-    public void invalidateElevation( double elevation ) {
-        if (targetObject != null) {
-            try {
-                targetObject.invalidateElevation((float) elevation);
-            } catch ( Exception e ) {
-                Log.d( "invalidElev@MyRenderer", e.toString() );
-            }
-        }
-    }
+//    public void onLocationChanged( float direction ) {
+//        // 角度更新
+//        this.locationDirection = direction;
+//
+//        // rotationを更新
+//        getRotate();
+//    }
+//
+//    // 端末の向きを取得し、rotationを更新
+//    public void onDeviceDirectionChanged( double direction ) {
+//        // 角度更新
+//        this.deviceDirection = direction;
+//        Log.d( "RaderObject", "onDeviceDirectionChanged" );
+//
+//        // rotation更新
+//        getRotate();
+//    }
+//
+//    private void getRotate() {
+//        // - [端末の向き] + [相手のいる方角]
+//        rotation = (float)(-deviceDirection + locationDirection);
+//        Log.d( "RaderObject", "getRotate" );
+//        glView.requestRender();
+//        Log.d( "RaderObject", "RequestRender" );
+//
+//        if ( raderObject != null || targetObject != null ) {
+//            try {
+//                raderObject.invalidateNorthDirection( (float) deviceDirection );
+//                raderObject.invalidateRotation( (float) locationDirection );
+//
+//                targetObject.invalidateNorthDirection( (float) deviceDirection );
+//                targetObject.invalidateRotation( (float) locationDirection );
+//            } catch ( Exception e ) {
+//                Log.d( "getRotate@MyRenderer", e.toString() );
+//            }
+//        }
+//    }
+//
+//    // 仰角更新
+//    public void invalidateElevation( double elevation ) {
+//        if (targetObject != null) {
+//            try {
+//                targetObject.invalidateElevation((float) elevation);
+//            } catch ( Exception e ) {
+//                Log.d( "invalidElev@MyRenderer", e.toString() );
+//            }
+//        }
+//    }
 
 
     public void switchModeAR( boolean isModeAR ) {

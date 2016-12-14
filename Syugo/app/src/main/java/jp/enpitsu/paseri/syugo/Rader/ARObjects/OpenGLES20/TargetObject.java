@@ -26,22 +26,6 @@ public class TargetObject {
     float distance; // 相手との距離
     float elevation; // 端末の仰角的な傾き
 
-    float RADIUS;           // レーダーの半径
-    float MAX_DISTANCE;    // レーダー中に表示される最大距離[m]
-
-    float ROTATE_TO_DEFAULT; // レーダーを初期状態にするための角度
-
-    int distance_state;     // 距離の状況
-    // めっちゃ近い : 0 , 近い : 1, 遠い : 2, 圏外 : -1
-    float BORDER_NEAR;
-    float BORDER_NEAREST;
-
-    double locationDirection;
-    double deviceDirection;
-    double distanceOnRader;
-
-    float frameCount;
-
     //バッファ
     private FloatBuffer vertexBuffer;//頂点バッファ
     private ByteBuffer indexBuffer; //インデックスバッファ
@@ -52,28 +36,28 @@ public class TargetObject {
     private Bitmap bmpTexture;
 
     TargetObject() {
-        // 各変数の初期化
-        rotation = 0;
-        northDdirection = 0;
-        distance = 9999;
-        distanceOnRader = 0;
-        elevation = 80;
-
-        locationDirection = 0;
-        deviceDirection = 0;
-
-        frameCount = 0.0f;
-
-        distance_state = -1; // 初期状態は圏外
-
-        RADIUS = 2f;         // レーダーの半径
-        MAX_DISTANCE = 40;  // レーダー中に表示される最大距離[m]
-//        ROTATE_TO_DEFAULT = 60 - 30.5f; // レーダーを初期位置にするための角度
-        ROTATE_TO_DEFAULT = 60; // レーダーを初期位置にするための角度
-//        ROTATE_TO_DEFAULT = 117; // レーダーを初期位置にするための角度
-
-        BORDER_NEAR = (RADIUS * 2) / 3;  // [遠い]と[近い]の境界
-        BORDER_NEAREST = RADIUS / 3;  // [近い]と[めっちゃ近い]の境界
+//        // 各変数の初期化
+//        rotation = 0;
+//        northDdirection = 0;
+//        distance = 9999;
+//        distanceOnRader = 0;
+//        elevation = 80;
+//
+//        locationDirection = 0;
+//        deviceDirection = 0;
+//
+//        frameCount = 0.0f;
+//
+//        distance_state = -1; // 初期状態は圏外
+//
+//        RADIUS = 2f;         // レーダーの半径
+//        MAX_DISTANCE = 40;  // レーダー中に表示される最大距離[m]
+////        ROTATE_TO_DEFAULT = 60 - 30.5f; // レーダーを初期位置にするための角度
+//        ROTATE_TO_DEFAULT = 60; // レーダーを初期位置にするための角度
+////        ROTATE_TO_DEFAULT = 117; // レーダーを初期位置にするための角度
+//
+//        BORDER_NEAR = (RADIUS * 2) / 3;  // [遠い]と[近い]の境界
+//        BORDER_NEAREST = RADIUS / 3;  // [近い]と[めっちゃ近い]の境界
 
 
         // テクスチャ画像読み込み
@@ -141,16 +125,12 @@ public class TargetObject {
             GLES20.glUniform4f(GLES.lightPosHandle,0f,10f,0f,1.0f);
 
             GLES.glPushMatrix();
-            Matrix.rotateM( GLES.mMatrix, 0, northDdirection-rotation, 0, 1, 0 );
-            Matrix.rotateM( GLES.mMatrix, 0, elevation+95, 1, 0, 0 );
+            Matrix.rotateM( GLES.mMatrix, 0, RADER_VALUES.northDdirection - RADER_VALUES.rotation, 0, 1, 0 );
+            Matrix.rotateM( GLES.mMatrix, 0, RADER_VALUES.elevation+95, 1, 0, 0 );
 
-            distanceOnRader = distance * ( RADIUS / MAX_DISTANCE );
-            Log.d( "distanceOnRader", ""+distanceOnRader );
-
-//            Matrix.translateM( GLES.mMatrix, 0, 0, 0, (float)-distanceOnRader );
-            Matrix.translateM( GLES.mMatrix, 0, 0, 0, -100 );
+            Matrix.translateM( GLES.mMatrix, 0, 0, 0, -RADER_VALUES.distance );
+//            Matrix.translateM( GLES.mMatrix, 0, 0, 0, -100 );
             GLES.glPushMatrix();
-//            Matrix.scaleM( GLES.mMatrix, 0, 2, 2, 2 );
             GLES.updateMatrix();
 
             drawTarget(); // 立方体描画

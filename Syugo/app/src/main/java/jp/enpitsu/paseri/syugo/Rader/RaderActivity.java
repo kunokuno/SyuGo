@@ -44,6 +44,7 @@ import jp.enpitsu.paseri.syugo.Lookfor.LookActivity;
 import jp.enpitsu.paseri.syugo.Rader.ARObjects.Graph.GraphView;
 import jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20.MyGLSurfaceView;
 import jp.enpitsu.paseri.syugo.R;
+import jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20.RADER_VALUES;
 import jp.enpitsu.paseri.syugo.WiFiDirect.WiFiDirect;
 import jp.enpitsu.paseri.syugo.Registor.RegActivity;
 
@@ -280,8 +281,10 @@ public class RaderActivity extends Activity {
                         }
                         // レーダー更新
 //                        graphView.onDeviceDirectionChanged( direction );
-                        glView.invalidateRader( "Device Direction Changed", (float)direction );
-                        glView.invalidateElevation( elevation );
+//                        glView.invalidateRader( "Device Direction Changed", (float)direction );
+                        RADER_VALUES.invalidateDeviceDirection( (float)direction );
+//                        glView.invalidateElevation( elevation );
+                        RADER_VALUES.invalidateElevation( (float) elevation );
                     }
                 }
             }
@@ -399,7 +402,7 @@ public class RaderActivity extends Activity {
 
     @Override
     protected void onDestroy(){
-        super.onPause();
+        super.onDestroy();
         wfd.onDestroy();
     }
 
@@ -433,7 +436,8 @@ public class RaderActivity extends Activity {
         }
 
         // 円グラフを回転
-        glView.invalidateRader( "Location Changed", results[1], results[0] );
+//        glView.invalidateRader( "Location Changed", results[1], results[0] );
+        RADER_VALUES.invalidateLocation( results[1], results[0] );
 //        graphView.onLocationChanged( results[1] );
 
         // 距離メッセージ変更
