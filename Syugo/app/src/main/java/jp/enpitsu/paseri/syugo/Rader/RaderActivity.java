@@ -509,7 +509,8 @@ public class RaderActivity extends Activity {
         }
         else { // ON → OFFのとき
             // ARモード終了
-            glView.switchModeAR( false );
+            RADER_VALUES.switchARMode( false );
+//            glView.switchModeAR( false );
             // カメラ開放
             mCamera.close();
             mCamera = null;
@@ -523,7 +524,8 @@ public class RaderActivity extends Activity {
     }
 
     public void startARMode() {
-        glView.switchModeAR( true );
+        RADER_VALUES.switchARMode( true );
+//        glView.switchModeAR( true );
         // カメラ起動
         if ( textureView.isAvailable() == true ) {
             mCamera = new Camera2(textureView, this);

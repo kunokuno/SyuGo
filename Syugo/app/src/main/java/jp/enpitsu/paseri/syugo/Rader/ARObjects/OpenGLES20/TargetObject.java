@@ -20,11 +20,6 @@ import javax.microedition.khronos.opengles.GL10;
  * Created by iyobe on 2016/11/15.
  */
 public class TargetObject {
-    float rotation; // 北側からの相手の方向
-    float northDdirection; // 北側の方向
-    // 相手の方向 = direction + rotation
-    float distance; // 相手との距離
-    float elevation; // 端末の仰角的な傾き
 
     //バッファ
     private FloatBuffer vertexBuffer;//頂点バッファ
@@ -36,30 +31,6 @@ public class TargetObject {
     private Bitmap bmpTexture;
 
     TargetObject() {
-//        // 各変数の初期化
-//        rotation = 0;
-//        northDdirection = 0;
-//        distance = 9999;
-//        distanceOnRader = 0;
-//        elevation = 80;
-//
-//        locationDirection = 0;
-//        deviceDirection = 0;
-//
-//        frameCount = 0.0f;
-//
-//        distance_state = -1; // 初期状態は圏外
-//
-//        RADIUS = 2f;         // レーダーの半径
-//        MAX_DISTANCE = 40;  // レーダー中に表示される最大距離[m]
-////        ROTATE_TO_DEFAULT = 60 - 30.5f; // レーダーを初期位置にするための角度
-//        ROTATE_TO_DEFAULT = 60; // レーダーを初期位置にするための角度
-////        ROTATE_TO_DEFAULT = 117; // レーダーを初期位置にするための角度
-//
-//        BORDER_NEAR = (RADIUS * 2) / 3;  // [遠い]と[近い]の境界
-//        BORDER_NEAREST = RADIUS / 3;  // [近い]と[めっちゃ近い]の境界
-
-
         // テクスチャ画像読み込み
         bmpTexture = null;
         String name= "rader_target1.png";
@@ -118,9 +89,9 @@ public class TargetObject {
         normalBuffer = makeFloatBuffer(normals);
     }
 
-    public void draw( boolean isModeAR ) {
+    public void draw() {
 
-        if ( isModeAR == true ) {
+        if ( RADER_VALUES.isModeAR == true ) {
             //光源位置の指定
             GLES20.glUniform4f(GLES.lightPosHandle,0f,10f,0f,1.0f);
 
@@ -175,23 +146,6 @@ public class TargetObject {
             GLES20.glUniform1i(GLES.useTexHandle, 0);
             GLES20.glDisableVertexAttribArray(GLES.uvHandle);
         }
-    }
-
-
-    public void invalidateRotation( float rotation ) {
-        this.rotation = rotation;
-    }
-    public void invalidateNorthDirection( float northDirection ) {
-        this.northDdirection = northDirection;
-    }
-
-    public void invalidateDistance( float distance ) {
-        Log.d( "DISTANCE", "distance@RaderObject_invalidate = " + distance );
-        this.distance = distance;
-    }
-
-    public  void invalidateElevation( float elevation ) {
-        this.elevation = elevation;
     }
 
     //マテリアルの指定

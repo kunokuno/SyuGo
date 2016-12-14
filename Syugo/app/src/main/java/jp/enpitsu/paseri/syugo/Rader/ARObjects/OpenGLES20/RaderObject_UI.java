@@ -507,11 +507,11 @@ public class RaderObject_UI {
     }
 
 
-    public void draw( boolean isModeAR ) {
+    public void draw() {
 
         Log.d( "RaderObject", "onDrawFrame___draw" );
 
-        if ( isModeAR == true ) {
+        if ( RADER_VALUES.isModeAR == true ) {
             //光源位置の指定
             GLES20.glUniform4f(GLES.lightPosHandle,0f,10f,0f,1.0f);
 

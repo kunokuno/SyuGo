@@ -27,6 +27,8 @@ public class RADER_VALUES {
     public static double distanceOnRader = 0;   // 実際の距離に対するレーダー上の距離
                                                    //  = distance * ( RADIUS / MAX_DISTANCE )
 
+    public static boolean isModeAR = false;  // ARモードのときtrue
+
 
     // 位置情報が変化したとき
     public static void invalidateLocation( float direction, float dist ) {
@@ -54,6 +56,10 @@ public class RADER_VALUES {
 
     private static void getRotate() {
         // - [端末の向き] + [相手のいる方角]
-        rotation = (float)(-deviceDirection + locationDirection);
+        rotation = (float)( -deviceDirection + locationDirection );
+    }
+
+    public static void switchARMode( boolean bool ) {
+        isModeAR = bool;
     }
 }
