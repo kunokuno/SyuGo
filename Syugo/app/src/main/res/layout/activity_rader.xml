@@ -92,7 +92,12 @@
             android:layout_gravity="top"
             android:paddingTop="15dp"
             android:paddingBottom="10dp"
-            android:onClick="onARSwitchButtonClicked" />
+            android:onClick="onARSwitchButtonClicked"
+            android:shadowColor="#de000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="2.0"
+            />
 
         <ToggleButton
             android:layout_width="wrap_content"
@@ -110,7 +115,12 @@
             android:gravity="center"
             android:paddingTop="15dp"
             android:paddingBottom="10dp"
-            android:onClick="onVibeSwitchClicked" />
+            android:onClick="onVibeSwitchClicked"
+            android:shadowColor="#de000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="2.0"
+            />
 
         <ToggleButton
             android:layout_width="wrap_content"
@@ -127,7 +137,12 @@
             android:gravity="center"
             android:paddingTop="15dp"
             android:paddingBottom="10dp"
-            android:layout_gravity="top" />
+            android:layout_gravity="top"
+            android:shadowColor="#de000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="2.0"
+            />
     </LinearLayout>
 
 

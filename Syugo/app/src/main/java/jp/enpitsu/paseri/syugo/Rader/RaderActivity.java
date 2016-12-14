@@ -472,7 +472,7 @@ public class RaderActivity extends Activity {
         if( results[0] <= 40 && flag_vibrator == true ) {
             // ここでバイブレーション///////////////////////////////////////////
             // 振動
-//            viberation( results[0] );
+            viberation( results[0] );
         }
 
     }
