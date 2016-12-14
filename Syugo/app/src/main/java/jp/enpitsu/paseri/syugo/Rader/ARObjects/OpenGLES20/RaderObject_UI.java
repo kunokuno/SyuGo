@@ -420,7 +420,10 @@ public class RaderObject_UI {
                 indexs[p++] = (byte)(i*nStacks1+j);
                 indexs[p++] = (byte)((i+1)*nStacks1+j);
             }
+            indexs[p] = indexs[p-3];
+            indexs[p+1] = indexs[p-2];
         }
+
         arcRing_vertexBuffer = makeFloatBuffer(vertexs);
         arcRing_indexBuffer = makeByteBuffer( indexs );
         arcRing_normalBuffer = makeFloatBuffer(normals);
@@ -557,7 +560,7 @@ public class RaderObject_UI {
                     if ( RADER_VALUES.distanceOnRader <= RADER_VALUES.BORDER_NEAREST ) { // [めっちゃ近い]圏内
                         if( RADER_VALUES.distance_state != 0 ) { // 状態が変化する場合
                             RADER_VALUES.distance_state = 0;
-                            initArcRing( RADER_VALUES.BORDER_NEAREST, 0f, 30, 1 );
+                            initArcRing( RADER_VALUES.BORDER_NEAREST, 0f, 50, 1 );
                         }
                     }
                     else {
@@ -771,13 +774,10 @@ public class RaderObject_UI {
         setMaterial( r, g, b, a );
         arcRing_indexBuffer.position( 0 );
         GLES20.glDrawElements( GLES20.GL_TRIANGLE_STRIP,
-                arcRing_indexBuffer.capacity(), GLES20.GL_UNSIGNED_BYTE, arcRing_indexBuffer );
+                33, GLES20.GL_UNSIGNED_BYTE, arcRing_indexBuffer );
         arcRing_indexBuffer.position( 0 );
         GLES20.glDrawElements( GLES20.GL_TRIANGLE_STRIP,
                 3, GLES20.GL_UNSIGNED_BYTE, arcRing_indexBuffer );
-//        arcRing_indexBuffer.position( arcRing_indexBuffer.capacity()-9 );
-//        GLES20.glDrawElements( GLES20.GL_TRIANGLE_STRIP,
-//                9, GLES20.GL_UNSIGNED_BYTE, arcRing_indexBuffer );
     }
 
     //円弧（線）の描画
