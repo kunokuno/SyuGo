@@ -49,6 +49,7 @@ import jp.enpitsu.paseri.syugo.R;
 import jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20.RADER_VALUES;
 import jp.enpitsu.paseri.syugo.WiFiDirect.WiFiDirect;
 import jp.enpitsu.paseri.syugo.Registor.RegActivity;
+import jp.enpitsu.paseri.syugo.WiFiDirect.WiFiDirectEventListener;
 
 /**
  * Created by iyobe on 2016/09/26.
@@ -177,6 +178,23 @@ public class RaderActivity extends Activity {
         wfd = new WiFiDirect( RaderActivity.this );
         wfd.setCompoundButton( button_WifiDirect );
         wfd.setTextView( textView_WifiDirectMessage );
+        // WifiDirectのイベントリスナ
+        wfd.setWiFiDirectEventListener(new WiFiDirectEventListener() {
+            @Override
+            public void receiveChat(String str) {
+                wfd.toast( str );
+                Log.d( "recieveChat@RaderAct", str );
+            }
+
+            @Override
+            public void receiveGPSLocation(LocationData loc) {
+                wfd.toast( loc.dump() );
+                oppLocationData = loc; // 相手の位置情報更新
+                getDistance();            // 距離更新
+
+                Log.d( "recieveChat@RaderAct", loc.dump() );
+            }
+        });
 
 
 
@@ -323,7 +341,7 @@ public class RaderActivity extends Activity {
                                 @Override
                                 public void postExecute(LocationData result) {
                                     oppLocationData = result;
-                                    getDistance();
+                                    getDistance(); // 相手の位置情報更新
                                 }
                             }
                     );

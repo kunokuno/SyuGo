@@ -417,8 +417,8 @@ public class WiFiDirect {
         @Override
         public void onCheckedChanged(CompoundButton view, boolean isChecked) {
             if (isChecked){
-                wfd_textView.setText("");
-                wfd_textView.setVisibility( View.VISIBLE );
+                if( wfd_textView != null )
+                    wfd_textView.setVisibility( View.VISIBLE );
                 startConnection();
             }else {
 //                wfd_textView.setVisibility( View.GONE );

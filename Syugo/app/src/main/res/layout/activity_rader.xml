@@ -66,7 +66,7 @@
     </LinearLayout>
 
 
-    <!--下側のタン群 -->
+    <!--下側のボタン群+wifiDirectのメッセージ表示テキスト -->
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -78,7 +78,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/colorWhite"
             android:id="@+id/textView_WifiDirectMessage"
-            android:text="No Message"
+            android:text=""
             android:layout_gravity="center_horizontal"
             android:background="@color/colorButtonPressedBackground"
             android:visibility="gone"
