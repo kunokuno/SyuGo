@@ -79,7 +79,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
                 60.0f,  //Y方向の画角
                 aspect, //アスペクト比
                 0.1f,   //ニアクリップ
-                100.0f);//ファークリップ
+                1000.0f);//ファークリップ
 
         //光源位置の指定
         GLES20.glUniform4f(GLES.lightPosHandle,0f,0f,0f,1.0f);
