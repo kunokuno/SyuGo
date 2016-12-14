@@ -23,6 +23,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.TextureView;
@@ -73,8 +74,11 @@ public class RaderActivity extends Activity {
     TextView textView_reqNameAR;
     TextView textView_distanceAR;
 
+
     //WiFiDirect
     WiFiDirect wfd;
+
+    TextView textView_WifiDirectMessage;
 
     Button button_info;
     TextView textView_info;
@@ -162,9 +166,17 @@ public class RaderActivity extends Activity {
         textView_reqNameAR.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
         textView_distanceAR.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
 
+
+        textView_WifiDirectMessage = (TextView)findViewById( R.id.textView_WifiDirectMessage );
+        textView_WifiDirectMessage.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        textView_WifiDirectMessage.setMovementMethod( ScrollingMovementMethod.getInstance() );
+
         //WiFiDirectクラスのインスタンス作成とボタンの登録
         wfd = new WiFiDirect( RaderActivity.this );
         wfd.setCompoundButton( button_WifiDirect );
+        wfd.setTextView( textView_WifiDirectMessage );
+
+
 
         textureView = (TextureView) findViewById( R.id.texture_view );
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
