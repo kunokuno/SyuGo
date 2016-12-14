@@ -55,8 +55,6 @@ import jp.enpitsu.paseri.syugo.Registor.RegActivity;
  */
 public class RaderActivity extends Activity {
     private Camera2 mCamera;
-    private float[] mCamAngle = null;
-    private GraphView graphView;
 
     private MyGLSurfaceView glView;
 
@@ -262,8 +260,6 @@ public class RaderActivity extends Activity {
                     if( sensorFilter.isSampleEnable() ) {
                         fAttitude = sensorFilter.getParam();
 
-                        Log.d("ARActivity", "rotation : " + fAttitude[0] + ", " + fAttitude[1] + ", " + fAttitude[2]);
-
                         double direction =  fAttitude[0];           // 端末の向いてる方向
                         double elevation = rad2deg( fAttitude[1] ); // 端末の前後の傾き
                         if( direction < 0 ) {
@@ -312,20 +308,27 @@ public class RaderActivity extends Activity {
                 Log.d("Location", "onLcationChanged");
                 myLocationData = new LocationData( location.getLatitude(), location.getLongitude(), location.getAccuracy() );
 
-                // 自分の位置情報をグローバルクラスにセット
-                HttpCommunication httpCommunication = new HttpCommunication(
-                        new HttpCommunication.AsyncTaskCallback() {
-                            @Override
-                            public void postExecute(LocationData result) {
-                                getDistance( result );
+                if ( button_WifiDirect.isChecked() == true ) { // WifiダイレクトのボタンがONになっている場合
+                    // Wifiダイレクトの接続状況はわかんないけどとりあえず位置情報投げてみる方針
+                    wfd.sendGPSLocation( myLocationData );
+                }
+                else {
+                    // 自分の位置情報をグローバルクラスにセット
+                    HttpCommunication httpCommunication = new HttpCommunication(
+                            new HttpCommunication.AsyncTaskCallback() {
+                                @Override
+                                public void postExecute(LocationData result) {
+                                    getDistance(result);
+                                }
                             }
-                        }
-                );
-                httpCommunication.setID( myID, oppID );
-                httpCommunication.setLocation( myLocationData );
-                httpCommunication.executeOnExecutor( AsyncTask.THREAD_POOL_EXECUTOR );
+                    );
+                    httpCommunication.setID(myID, oppID);
+                    httpCommunication.setLocation(myLocationData);
+                    httpCommunication.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
 
-                Log.d( "MyLocation", location.getLatitude() + ", " + location.getLongitude() + " ( " + location.getAccuracy() + " )" );
+
+//                Log.d( "MyLocation", location.getLatitude() + ", " + location.getLongitude() + " ( " + location.getAccuracy() + " )" );
 
             }
         };
@@ -477,7 +480,7 @@ public class RaderActivity extends Activity {
         //        [2] : 終点から始点までの方位角
         Location.distanceBetween( myLocationData.lat, myLocationData.lon, data.lat, data.lon, results);
 //        Location.distanceBetween( lat, lon, 36.56815810607431, 140.6476289042621, results);
-        Log.d( "DISTANCE", "distance`getDistance = " + results[0] );
+//        Log.d( "DISTANCE", "distance`getDistance = " + results[0] );
 
         if( results[1] < 0 ) {
             // 0～360度の値にする
@@ -589,7 +592,6 @@ public class RaderActivity extends Activity {
 
     // [振動止める/つける]ボタン押下
     public void onVibeSwitchClicked( View v ) {
-        Log.d("onButtonClick", "onButtonClick");
         if( button_Vibration.isChecked() == true ) { // OFF → ONのとき
             flag_vibrator = true;
         }

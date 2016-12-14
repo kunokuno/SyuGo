@@ -56,7 +56,7 @@ public class HttpCommunication extends AsyncTask<Integer, Integer, LocationData>
         try {
             url = new URL(uri.toString());
         } catch( MalformedURLException e ) {
-            Log.d("HttpRes", e.toString());
+            Log.d("Http", e.toString());
         }
 
         HttpURLConnection urlConnection = null;
@@ -81,7 +81,7 @@ public class HttpCommunication extends AsyncTask<Integer, Integer, LocationData>
 
 
         } catch( IOException e ) {
-            Log.d("HttpRes", e.toString());
+            Log.d("Http", e.toString());
         } finally {
             urlConnection.disconnect();
         }
@@ -92,7 +92,7 @@ public class HttpCommunication extends AsyncTask<Integer, Integer, LocationData>
         //if( HttpStatus.SC_OK == status ) {
         if( !result.equals("") ) { // データを受け取れている場合
             try {
-                Log.d("Httpfhasuiogb", result);
+                Log.d("Http", result);
                 // ","で分割
                 // items [0]名前, [1]高度, [2]緯度, [3]経度, [4]精度, [5]macアドレス, [6]データ取得時間
                 String[] items = result.split(",");
