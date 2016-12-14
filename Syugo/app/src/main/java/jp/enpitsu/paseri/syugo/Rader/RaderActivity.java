@@ -18,6 +18,7 @@ import android.location.LocationListener;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -73,6 +74,7 @@ public class RaderActivity extends Activity {
     TextView textView_reqNameAR;
     TextView textView_distanceAR;
 
+    Handler handler;
 
     //WiFiDirect
     WiFiDirect wfd;
@@ -335,7 +337,7 @@ public class RaderActivity extends Activity {
                     wfd.sendGPSLocation( myLocationData );
                 }
                 else {
-                    // 自分の位置情報をグローバルクラスにセット
+                    // 自分の位置情報を送信しつつ相手の位置情報を得る
                     HttpCommunication httpCommunication = new HttpCommunication(
                             new HttpCommunication.AsyncTaskCallback() {
                                 @Override
@@ -390,9 +392,34 @@ public class RaderActivity extends Activity {
             this.finish();
         }
 
+        // 色々初期化したりするよ
         initViewsAndItems();
         useSensors();
         useGPS();
+
+        // 定期実行したいよ
+        handler = new Handler(); // 定期実行するためのHandler
+        // 5秒ごとにgetDistanceしてくれるはず
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // 自分の位置情報を送信しつつ相手の位置情報を得る
+                HttpCommunication httpCommunication = new HttpCommunication(
+                        new HttpCommunication.AsyncTaskCallback() {
+                            @Override
+                            public void postExecute(LocationData result) {
+                                oppLocationData = result;
+                                getDistance(); // 相手の位置情報更新
+                            }
+                        }
+                );
+                httpCommunication.setID( myID, oppID );
+                httpCommunication.setLocation( myLocationData );
+                httpCommunication.executeOnExecutor( AsyncTask.THREAD_POOL_EXECUTOR );
+
+                handler.postDelayed( this, 5000 );
+            }
+        }, 5000);
     }
 
 
@@ -480,6 +507,8 @@ public class RaderActivity extends Activity {
     protected void onDestroy(){
         super.onDestroy();
         wfd.onDestroy();
+
+        handler.removeCallbacksAndMessages( null );
     }
 
 
