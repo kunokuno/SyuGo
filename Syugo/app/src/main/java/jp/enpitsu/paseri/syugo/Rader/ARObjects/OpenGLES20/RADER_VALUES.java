@@ -34,7 +34,7 @@ public class RADER_VALUES {
         // 角度更新
         locationDirection = direction;
         // 距離更新
-        distance =dist;
+        distance = dist;
         distanceOnRader = distance * ( RADIUS / MAX_DISTANCE );
 
         // rotationを更新

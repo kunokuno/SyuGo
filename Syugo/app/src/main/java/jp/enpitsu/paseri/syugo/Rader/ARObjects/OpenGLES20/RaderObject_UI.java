@@ -469,67 +469,28 @@ public class RaderObject_UI {
 
 
     public void draw() {
-
-        Log.d( "RaderObject", "onDrawFrame___draw" );
-
         if ( RADER_VALUES.isModeAR == true ) {
             //光源位置の指定
-            GLES20.glUniform4f(GLES.lightPosHandle,0f,10f,0f,1.0f);
+            GLES20.glUniform4f(GLES.lightPosHandle, 0f, 10f, 0f, 1.0f);
 
             GLES.glPushMatrix();
-            Matrix.translateM( GLES.mMatrix, 0, 0, -1, -2 ); // 初期配置（画面下側に寄せる）
+            Matrix.translateM(GLES.mMatrix, 0, 0, -1.4f, -5); // 初期配置（画面下側に寄せる）
+            Matrix.scaleM(GLES.mMatrix, 0, 0.8f, 0.8f, 0.8f); // 渾身の微調整（ごり押し）
 
             GLES.glPushMatrix();
-            Matrix.rotateM( GLES.mMatrix, 0, -90, 1, 0, 0 ); // 遠近感ある感じに回転
-
-            GLES.glPushMatrix();
-            Matrix.rotateM(GLES.mMatrix, 0, RADER_VALUES.northDirection, 0, 0, 1); // 北の方向に回転
-//            Matrix.rotateM(GLES.mMatrix, 0, -rotation, 0, 0, 1); // 位置情報等に合わせて回転
-            GLES.updateMatrix();
-            drawFrameLines( 0f, 150f/255f, 255f/255f, 1f );      // レーダーの枠線等
-            Matrix.rotateM(GLES.mMatrix, 0, RADER_VALUES.ROTATE_TO_DEFAULT, 0, 0, 1); // 初期配置（レーダーが真上を指すように回転）
-            Matrix.rotateM(GLES.mMatrix, 0, -RADER_VALUES.rotation, 0, 0, 1); // 初期配置（レーダーが真上を指すように回転）
-
-            GLES.updateMatrix();
-            drawFillCircle( 0f, 0f, 0f, 0.2f );   // 半透明の円
-            drawFillArc( 1,1,1,0.3f );       // 円弧
-
-            drawRing( 1f, 1f, 1f, 0.03f );         // なんか輪
-
-            // それっぽく回るやつ
-            GLES.glPushMatrix();
-            Matrix.rotateM( GLES.mMatrix, 0, -RADER_VALUES.rotation + frameCount, 0f, 0f, -1f );
-            GLES.updateMatrix();
-            drawBar( 0f, 150f/255f, 255f/255f, 0.2f );
-            GLES.glPopMatrix();
-
-            // 相手の位置の描画
-            // 相手との距離がMAX_DISTANCEm以内のとき
-            if( RADER_VALUES.distance <= RADER_VALUES.MAX_DISTANCE ) {
-                GLES.glPushMatrix();
-                Matrix.rotateM(GLES.mMatrix, 0, -RADER_VALUES.ROTATE_TO_DEFAULT, 0, 0, 1); // 初期配置（レーダーが指す範囲の中心に来るように）
-
-                // 1m当たりのレーダー上での距離 = RADIUS[レーダーの半径]/MAX_DISTANCE[距離(m)]
-                Matrix.translateM(GLES.mMatrix, 0, 0f, (float)RADER_VALUES.distanceOnRader, 0f);
-                GLES.updateMatrix();
-                drawTarget( 1f, 0.2f, 0.5f, 0.3f );       // レーダー上の相手の位置
-                GLES.glPopMatrix();
-            }
-
-            GLES.glPopMatrix();
-            GLES.glPopMatrix();
-            GLES.glPopMatrix();
+            Matrix.rotateM(GLES.mMatrix, 0, -90, 1, 0, 0); // 遠近感ある感じに回転
         }
         else { // ARモードでないとき
             //光源位置の指定
             GLES20.glUniform4f(GLES.lightPosHandle,0f,0f,0f,1.0f);
 
             GLES.glPushMatrix();
+            GLES.glPushMatrix(); // 倍プッシュ（ARモードのときと同じ回数pushしたい）
             Matrix.translateM(GLES.mMatrix, 0, 0, 0, -6f);    // レーダーが真正面に来るように移動
+        }
 
             GLES.glPushMatrix();
             Matrix.rotateM(GLES.mMatrix, 0, RADER_VALUES.northDirection, 0, 0, 1); // 北の方向に回転
-//            Matrix.rotateM(GLES.mMatrix, 0, -rotation, 0, 0, 1); // 位置情報等に合わせて回転
             GLES.updateMatrix();
             drawFrameLines( 0f, 150f/255f, 255f/255f, 1f );      // レーダーの枠線等
             Matrix.rotateM(GLES.mMatrix, 0, RADER_VALUES.ROTATE_TO_DEFAULT, 0, 0, 1); // 初期配置（レーダーが真上を指すように回転）
@@ -602,11 +563,9 @@ public class RaderObject_UI {
                 GLES.glPopMatrix();
             }
 
-
             GLES.glPopMatrix();
             GLES.glPopMatrix();
-        }
-        Log.d( "RaderObject", "onDrawFrame___draw" );
+            GLES.glPopMatrix();
 
         frameCount = ( frameCount + 2 ) % 360;
     }
