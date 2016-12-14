@@ -110,30 +110,9 @@ public class RaderActivity extends Activity {
     /** 最新のユーザー位置情報。本サンプルでは位置情報が取得されているかどうかの判定で使われています（※本サンプルではコードはありますが実質的には使っていません）。*/
     protected Location lastKnownLocaton;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
-        syugoApp = (SyugoApp)this.getApplication(); // グローバルクラス
-        // グローバルクラスから自分・相手のID読み込み
-        myID = syugoApp.getSelfUserId();
-        oppID = syugoApp.getOpponentUserId();
-        oppName = syugoApp.getOpponentUserName();
-
-        // 例外処理
-        Intent intent;
-        if ( myID.equals("") ) {
-            Toast.makeText(this, "自分のユーザ名を入力し、\nIDを取得してください", Toast.LENGTH_LONG).show();
-            intent = new Intent( RaderActivity.this, RegActivity.class );
-            startActivity( intent );
-            this.finish();
-        }
-        else if ( oppID.equals("") || oppName.equals("") ) {
-            Toast.makeText( this, "相手のユーザIDを検索し、\nユーザ名を確認してください", Toast.LENGTH_LONG ).show();
-            intent = new Intent( RaderActivity.this, LookActivity.class );
-            startActivity( intent );
-            this.finish();
-        }
+    // ボタンとかいろいろ初期化
+    private void initViewsAndItems() {
 
         glView = new MyGLSurfaceView( this );
         glView.setZOrderOnTop(true);
@@ -141,7 +120,6 @@ public class RaderActivity extends Activity {
         permissionManager = new PermissionManager( this );
 
         final View view = this.getLayoutInflater().inflate(R.layout.activity_rader, null);
-//        // [参考] http://language-and-engineering.hatenablog.jp/entry/20110908/p1
 
         // GLSurfaceViewを最初にセット
         this.setContentView( glView,
@@ -151,6 +129,7 @@ public class RaderActivity extends Activity {
         // カメラプレビュー・コンパスのレイアウトをセット
         this.addContentView( view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT ));
+
 
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
@@ -210,11 +189,10 @@ public class RaderActivity extends Activity {
 //                glView.setCameraAngle( mCamAngle );
             }
         });
-//
-////        Log.d( "mew Camera", "start" );
-//        mCamera = new Camera(textureView, this);
-////        Log.d( "mew Camera", "end" );
+    }
 
+    // 磁気・加速度センサの利用
+    private void useSensors() {
         ////////////////////////////////////////////////////////////////////////////////////////////
         // センサのコピペ //////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -288,8 +266,10 @@ public class RaderActivity extends Activity {
             public void onAccuracyChanged (Sensor sensor, int accuracy) {}
         };
         ////////////////////////////////////////////////////////////////////////////////////////////
+    }
 
-
+    // 位置情報（GPS）の利用
+    private void useGPS() {
         ////////////////////////////////////////////////////////////////////////////////////////////
         // 位置情報関連のコピペ ////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -345,6 +325,37 @@ public class RaderActivity extends Activity {
     }
 
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        syugoApp = (SyugoApp)this.getApplication(); // グローバルクラス
+        // グローバルクラスから自分・相手のID読み込み
+        myID = syugoApp.getSelfUserId();
+        oppID = syugoApp.getOpponentUserId();
+        oppName = syugoApp.getOpponentUserName();
+
+        // 例外処理
+        Intent intent;
+        if ( myID.equals("") ) {
+            Toast.makeText(this, "自分のユーザ名を入力し、\nIDを取得してください", Toast.LENGTH_LONG).show();
+            intent = new Intent( RaderActivity.this, RegActivity.class );
+            startActivity( intent );
+            this.finish();
+        }
+        else if ( oppID.equals("") || oppName.equals("") ) {
+            Toast.makeText( this, "相手のユーザIDを検索し、\nユーザ名を確認してください", Toast.LENGTH_LONG ).show();
+            intent = new Intent( RaderActivity.this, LookActivity.class );
+            startActivity( intent );
+            this.finish();
+        }
+
+        initViewsAndItems();
+        useSensors();
+        useGPS();
+    }
+
+
     protected void onStart() { // ⇔ onStop
         super.onStart();
 
@@ -379,7 +390,8 @@ public class RaderActivity extends Activity {
         super.onResume();
         wfd.onResume();
 
-        // LocationProviderのライフサイクルメソッド「onResume」を呼び出す必要があります。通常、Resumeが通知されると位置情報の収集が再開され、ステータスバーのGPSインジケーターが点灯します。
+        // LocationProviderのライフサイクルメソッド「onResume」を呼び出す必要があります。
+        // 通常、Resumeが通知されると位置情報の収集が再開され、ステータスバーのGPSインジケーターが点灯します。
         if (this.locationProvider != null) {
             try {
                 this.locationProvider.onResume();
