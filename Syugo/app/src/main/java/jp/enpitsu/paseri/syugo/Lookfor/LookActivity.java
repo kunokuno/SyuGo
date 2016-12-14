@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.media.Image;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -54,6 +55,17 @@ public class LookActivity extends Activity {
         id.setText(reqID);
         id2.setText(reqID);
         name.setText(oppName);
+
+        // URLから暗黙的intentで起動
+        Intent intent = getIntent();
+        Uri uri = intent.getData();  // uriの取得
+        if( uri != null ) { // nullでないとき
+            // uriは，「 syugo://shareID/[reqID] 」の形で来る
+            String[] parse = uri.toString().split("/"); // "/"で分割
+            reqID = parse[ parse.length-1 ]; // 一番最後の要素が共有されたID
+        }
+        id.setText( reqID );
+
 
         //フォント設定
         id2.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
