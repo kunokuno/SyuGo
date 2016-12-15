@@ -121,7 +121,7 @@ public class LookActivity extends Activity {
     // コードでユーザー検索"name,mac"
     private View.OnClickListener searchListener = new View.OnClickListener() {
         public void onClick(View v) {
-
+            e_message.setText( "" );
             if ( TextUtils.isEmpty( id.getText().toString() ) == false ) { // 検索するIDが入力されている場合
                 reqID = id.getText().toString(); // 相手ID入力テキストボックスから相手のID取得
 
@@ -168,6 +168,9 @@ public class LookActivity extends Activity {
                 httpComLookFor.setUserInfo(reqID);
                 httpComLookFor.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             } // if ( TextUtils.isEmpty(oppName) == false )...
+            else {
+                e_message.setText( "IDを入力してください。" );
+            }
         }  // onClick
     };
 
