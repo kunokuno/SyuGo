@@ -501,6 +501,8 @@ public class RaderActivity extends Activity {
     protected void onPause(){
         super.onPause();
         wfd.onPause();
+
+        vibrator.cancel();
     }
 
     @Override
@@ -508,6 +510,7 @@ public class RaderActivity extends Activity {
         super.onDestroy();
         wfd.onDestroy();
 
+//        vibrator = null;
         handler.removeCallbacksAndMessages( null );
     }
 

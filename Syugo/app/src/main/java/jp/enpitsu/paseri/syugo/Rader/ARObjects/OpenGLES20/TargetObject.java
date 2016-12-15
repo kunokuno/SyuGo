@@ -44,6 +44,8 @@ public class TargetObject {
 
         // テクスチャ生成
         texID = makeTexture( this.bmpTexture );
+        bmpTexture.recycle();
+        bmpTexture = null;
 
         initTarget();
     }
