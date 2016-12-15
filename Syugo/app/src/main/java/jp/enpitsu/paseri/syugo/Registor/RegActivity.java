@@ -195,7 +195,11 @@ public class RegActivity extends Activity {
                     Intent intent_sha = new Intent();
                     intent_sha.setAction(Intent.ACTION_SEND);
                     intent_sha.setType("text/plain");
-                    intent_sha.putExtra(Intent.EXTRA_TEXT, "集GO!しよう(*・・)ノ\n 私( "+ user_name +" )のIDは \n" + text_idshow.getText().toString() + " \nです．");
+                    intent_sha.putExtra(Intent.EXTRA_TEXT,
+                            "集GO!しよう(*・・)ノ\n" +
+                            " 私( "+ user_name +" )のIDは " + text_idshow.getText().toString() + " です。\n" +
+                            "集GO!を起動する→syugo://shareID/" + text_idshow.getText().toString()
+                    );
                     startActivity(intent_sha);
                 } catch (Exception e) {
                     Log.d("ActionSend", "intent other app error");
