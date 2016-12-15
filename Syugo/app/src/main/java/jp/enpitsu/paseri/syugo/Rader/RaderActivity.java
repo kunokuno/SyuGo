@@ -359,7 +359,7 @@ public class RaderActivity extends Activity {
         };
 
         // 位置情報を収集するために使うLocationProviderに、位置情報リスナー（locationListener）を指定してインスタンスを生成・取得
-        this.locationProvider = getLocationProvider(this.locationListener);
+        this.locationProvider = getLocationProvider( this.locationListener );
         Log.d("Location", "LocationProviderにリスナ指定");
 
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -560,6 +560,18 @@ public class RaderActivity extends Activity {
         else textView_AccuracyMessage.setText( "" );
 
 
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // 位置情報取得頻度を変化させる ////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        if ( results[0] <= RADER_VALUES.MAX_DISTANCE ) { // レーダー圏内/圏外で1秒/5秒を変化
+            locationProvider.setLocationUpdateMinTime( true );
+        } else {
+            locationProvider.setLocationUpdateMinTime( false );
+        }
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+
         // デバッグ用にデータを表示したいんじゃよ
         // 表示形式を設定
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy'年'MM'月'dd'日'　kk'時'mm'分'ss'秒'");
@@ -582,7 +594,6 @@ public class RaderActivity extends Activity {
 
         Log.d("Location", myLocationData.gettime + " " + oppLocationData.gettime );
         textView_info.setText( stringInfo );
-
 
         if( results[0] <= 40 && flag_vibrator == true ) {
             // ここでバイブレーション///////////////////////////////////////////
