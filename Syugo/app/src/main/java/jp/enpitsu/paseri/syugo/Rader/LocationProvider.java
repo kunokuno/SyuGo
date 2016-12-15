@@ -100,9 +100,12 @@ public class LocationProvider implements ILocationProvider {
         }
     }
 
+    /*
+     * 位置情報の取得頻度（次の位置情報を取得するまでの最短時間）を設定
+     * 相手との距離（レーダー圏内/圏外）に応じて変化
+     */
     @Override
     public void setLocationUpdateMinTime( boolean isWithInRaderRange ) {
-
         if ( isWithInRaderRange == true ) {
             this.LOCATION_UPDATE_MIN_TIME_GPS = UPDATE_MIN_TIME_IN_RADER_RANGE;
             this.LOCATION_UPDATE_MIN_TIME_NW = UPDATE_MIN_TIME_IN_RADER_RANGE;
