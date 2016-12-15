@@ -644,6 +644,7 @@ public class RaderActivity extends Activity {
     public void startARMode() {
 
         RADER_VALUES.switchARMode( true );
+        button_AR.setChecked( true );
 
         // カメラ起動
         if ( textureView.isAvailable() == true ) {
