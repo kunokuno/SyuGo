@@ -160,6 +160,11 @@ public class RegActivity extends Activity {
                             public void postExecute(String result) {
                                 myID = result.replaceAll("\n", "");
                                 text_idshow.setText(myID);
+                                if ( myID.equals( "error" ) ) {
+                                    error_message.setText("ID発行エラー\n" +
+                                            "通信環境を見直し、再度[REGISTER]ボタンを押してみてください。");
+                                    return;
+                                }
                                 app.setSelfUserInfo(user_name,myID);
                                 app.saveUserInfo();
                                 Log.d("PrilyClass_name",app.getSelfUserName());
