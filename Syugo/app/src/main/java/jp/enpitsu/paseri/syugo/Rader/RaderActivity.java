@@ -24,6 +24,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -400,6 +401,35 @@ public class RaderActivity extends Activity {
             }
         }
     }
+
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        if ( button_AR.isChecked() == true ) {
+            // ARを強制終了
+            RADER_VALUES.switchARMode( false );
+            // カメラ開放
+            mCamera.close();
+            mCamera = null;
+            // 背景差し替え(imageView表示)
+            backgroundImageView.setVisibility( backgroundImageView.VISIBLE );
+            // AR用メッセージ非表示
+            linearLayout_ARMessages.setVisibility( View.GONE );
+            // レーダー用メッセージ表示
+            linearLayout_raderMessages.setVisibility( View.VISIBLE );
+
+            button_AR.setChecked( false );
+
+            // Toast表示
+            Toast toast = Toast.makeText( getApplicationContext(),
+                    "バックグラウンドから復帰。\nARモードを終了しました。", Toast.LENGTH_SHORT );
+            toast.setGravity( Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL, 0, 0 );
+            toast.show();
+        }
+    }
+
 
     @Override
     protected void onPause(){
