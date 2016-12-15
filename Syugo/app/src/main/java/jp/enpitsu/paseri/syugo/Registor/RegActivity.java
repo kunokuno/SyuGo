@@ -160,6 +160,12 @@ public class RegActivity extends Activity {
                             public void postExecute(String result) {
                                 myID = result.replaceAll("\n", "");
                                 text_idshow.setText(myID);
+                                if ( myID.equals( "error" ) ) {
+                                    error_message.setText("ID発行エラー\n" +
+                                            "通信環境を見直し、再度[REGISTER]ボタンを\n押してみてください。");
+                                    myID = null;
+                                    return;
+                                }
                                 app.setSelfUserInfo(user_name,myID);
                                 app.saveUserInfo();
                                 Log.d("PrilyClass_name",app.getSelfUserName());
@@ -176,7 +182,7 @@ public class RegActivity extends Activity {
                     error_message.setText("YourNameが入力されていません．");
                     Log.d("RegActivity", "UserName is null.");
                 }
-                else if(TextUtils.isEmpty(myID) == false) {
+                else if(TextUtils.isEmpty(myID) == false ) {
                     error_message.setText("IDはすでに発行されています．");
                     Log.d("RegActivity", "UserID is showed already.");
                 }

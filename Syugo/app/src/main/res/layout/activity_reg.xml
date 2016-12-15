@@ -59,7 +59,7 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="REGISTOR"
+            android:text="REGISTER"
             android:id="@+id/button_issue"
             android:textColor="@color/colorWhite"
             android:textSize="25dp"
