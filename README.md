@@ -1,6 +1,6 @@
 
 #集GO!
-##集GOってなに？
+##集GO!ってなに？
 集合場所来たのに<font color="RoyalBlue">**待ち合わせ相手が見つからない!**</font><br>
 なんてことはありませんか？<br>
 <blockquote>
@@ -71,7 +71,7 @@ GitHub内の[release](https://github.com/kunokuno/SyuGo/releases)からAPKファ
 [hins]携帯から開いた場合はPC版の画面にしてからダウンロードしてください<br>
 
 ##対応バージョン
-~Android6.0はダメです~<br>
+~~Android6.0はダメです~~<br>
 **Android6.0に対応しました！！！**<br>
 Android5.0以上なら動作確認したので大丈夫です！<br>
 
