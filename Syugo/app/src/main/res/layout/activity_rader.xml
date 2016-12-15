@@ -78,7 +78,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/colorWhite"
             android:id="@+id/textView_WifiDirectMessage"
-            android:text=""
+            android:text="WifiDirect OFF時に\nこのテキストエリアをタップすることで非表示にできます。\n"
             android:layout_gravity="center_horizontal"
             android:background="@color/colorButtonPressedBackground"
             android:visibility="gone"
@@ -90,7 +90,7 @@
             android:paddingRight="30dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:maxLines="3"
+            android:maxLines="15"
             />
 
         <LinearLayout

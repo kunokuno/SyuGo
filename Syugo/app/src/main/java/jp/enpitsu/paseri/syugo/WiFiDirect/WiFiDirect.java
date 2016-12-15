@@ -499,7 +499,11 @@ public class WiFiDirect {
 
     private View.OnClickListener wfd_textView_listener = new View.OnClickListener() {
         public void onClick(View v) {
-            if( wfd_button.isChecked() == false ) wfd_textView.setVisibility( View.GONE );
+            if( wfd_button.isChecked() == false ) {
+                wfd_textView.setVisibility( View.GONE );
+                wfd_textView.setText( "WifiDirect OFF時に\n" +
+                        "このテキストエリアをタップすることで非表示にできます。\n" );
+            }
         }
     };
 }

@@ -675,22 +675,22 @@ public class RaderActivity extends Activity {
         if( distance <= 3 ) {
             vibrator.vibrate(pattern6, -1);
             Log.d("viberation", "pattern6");
-            Toast.makeText( this, "pattern6", Toast.LENGTH_SHORT ).show();
+//            Toast.makeText( this, "pattern6", Toast.LENGTH_SHORT ).show();
         }
         else if( distance <= 5 ) {
             vibrator.vibrate(pattern4, -1);
             Log.d("viberation", "pattern4");
-            Toast.makeText( this, "pattern4", Toast.LENGTH_SHORT ).show();
+//            Toast.makeText( this, "pattern4", Toast.LENGTH_SHORT ).show();
         }
         else if( distance <= 10 ) {
             vibrator.vibrate(pattern2, -1);
             Log.d("viberation", "pattern2");
-            Toast.makeText( this, "pattern2", Toast.LENGTH_SHORT ).show();
+//            Toast.makeText( this, "pattern2", Toast.LENGTH_SHORT ).show();
         }
         else {
             vibrator.vibrate(pattern1, -1);
             Log.d("viberation", "pattern1");
-            Toast.makeText( this, "pattern1", Toast.LENGTH_SHORT ).show();
+//            Toast.makeText( this, "pattern1", Toast.LENGTH_SHORT ).show();
         }
     }
 
