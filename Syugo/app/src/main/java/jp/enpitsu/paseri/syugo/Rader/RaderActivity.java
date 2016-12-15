@@ -18,11 +18,13 @@ import android.location.LocationListener;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.TextureView;
@@ -42,20 +44,18 @@ import java.util.List;
 
 import jp.enpitsu.paseri.syugo.Global.SyugoApp;
 import jp.enpitsu.paseri.syugo.Lookfor.LookActivity;
-import jp.enpitsu.paseri.syugo.Rader.ARObjects.Graph.GraphView;
 import jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20.MyGLSurfaceView;
 import jp.enpitsu.paseri.syugo.R;
 import jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20.RADER_VALUES;
 import jp.enpitsu.paseri.syugo.WiFiDirect.WiFiDirect;
 import jp.enpitsu.paseri.syugo.Registor.RegActivity;
+import jp.enpitsu.paseri.syugo.WiFiDirect.WiFiDirectEventListener;
 
 /**
  * Created by iyobe on 2016/09/26.
  */
 public class RaderActivity extends Activity {
     private Camera2 mCamera;
-    private float[] mCamAngle = null;
-    private GraphView graphView;
 
     private MyGLSurfaceView glView;
 
@@ -73,8 +73,12 @@ public class RaderActivity extends Activity {
     TextView textView_reqNameAR;
     TextView textView_distanceAR;
 
+    Handler handler;
+
     //WiFiDirect
     WiFiDirect wfd;
+
+    TextView textView_WifiDirectMessage;
 
     Button button_info;
     TextView textView_info;
@@ -100,7 +104,8 @@ public class RaderActivity extends Activity {
     String myID, oppID;
     String oppName; // 相手ユーザ名
 
-    private LocationData myLocationData;
+    private LocationData myLocationData;  // 自分の位置情報
+    private LocationData oppLocationData; // 相手の位置情報
 
     /** 位置情報の更新を受信するためのリスナー。これを、ARchitectViewに通知して、ARchitect Worldの位置情報を更新します。*/
     protected LocationListener locationListener;
@@ -114,6 +119,9 @@ public class RaderActivity extends Activity {
 
     // ボタンとかいろいろ初期化
     private void initViewsAndItems() {
+
+        myLocationData  = new LocationData( 30, 30, 30 );
+        oppLocationData = new LocationData( 30, 30, 30 );
 
         glView = new MyGLSurfaceView( this );
         glView.setZOrderOnTop(true);
@@ -162,9 +170,34 @@ public class RaderActivity extends Activity {
         textView_reqNameAR.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
         textView_distanceAR.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
 
+
+        textView_WifiDirectMessage = (TextView)findViewById( R.id.textView_WifiDirectMessage );
+        textView_WifiDirectMessage.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        textView_WifiDirectMessage.setMovementMethod( ScrollingMovementMethod.getInstance() );
+
         //WiFiDirectクラスのインスタンス作成とボタンの登録
         wfd = new WiFiDirect( RaderActivity.this );
         wfd.setCompoundButton( button_WifiDirect );
+        wfd.setTextView( textView_WifiDirectMessage );
+        // WifiDirectのイベントリスナ
+        wfd.setWiFiDirectEventListener(new WiFiDirectEventListener() {
+            @Override
+            public void receiveChat(String str) {
+                wfd.toast( str );
+                Log.d( "recieveChat@RaderAct", str );
+            }
+
+            @Override
+            public void receiveGPSLocation(LocationData loc) {
+                wfd.toast( loc.dump() );
+                oppLocationData = loc; // 相手の位置情報更新
+                getDistance();            // 距離更新
+
+                Log.d( "recieveChat@RaderAct", loc.dump() );
+            }
+        });
+
+
 
         textureView = (TextureView) findViewById( R.id.texture_view );
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
@@ -250,8 +283,6 @@ public class RaderActivity extends Activity {
                     if( sensorFilter.isSampleEnable() ) {
                         fAttitude = sensorFilter.getParam();
 
-                        Log.d("ARActivity", "rotation : " + fAttitude[0] + ", " + fAttitude[1] + ", " + fAttitude[2]);
-
                         double direction =  fAttitude[0];           // 端末の向いてる方向
                         double elevation = rad2deg( fAttitude[1] ); // 端末の前後の傾き
                         if( direction < 0 ) {
@@ -300,20 +331,29 @@ public class RaderActivity extends Activity {
                 Log.d("Location", "onLcationChanged");
                 myLocationData = new LocationData( location.getLatitude(), location.getLongitude(), location.getAccuracy() );
 
-                // 自分の位置情報をグローバルクラスにセット
-                HttpCommunication httpCommunication = new HttpCommunication(
-                        new HttpCommunication.AsyncTaskCallback() {
-                            @Override
-                            public void postExecute(LocationData result) {
-                                getDistance( result );
+                if ( button_WifiDirect.isChecked() == true ) { // WifiダイレクトのボタンがONになっている場合
+                    // Wifiダイレクトの接続状況はわかんないけどとりあえず位置情報投げてみる方針
+                    wfd.sendGPSLocation( myLocationData );
+                }
+                else {
+                    // 自分の位置情報を送信しつつ相手の位置情報を得る
+                    HttpCommunication httpCommunication = new HttpCommunication(
+                            new HttpCommunication.AsyncTaskCallback() {
+                                @Override
+                                public void postExecute(LocationData result) {
+                                    oppLocationData = result;
+                                    getDistance(); // 相手の位置情報更新
+                                }
                             }
-                        }
-                );
-                httpCommunication.setID( myID, oppID );
-                httpCommunication.setLocation( myLocationData );
-                httpCommunication.executeOnExecutor( AsyncTask.THREAD_POOL_EXECUTOR );
+                    );
+                    httpCommunication.setID( myID, oppID );
+                    httpCommunication.setLocation( myLocationData );
+                    httpCommunication.executeOnExecutor( AsyncTask.THREAD_POOL_EXECUTOR );
+                }
 
-                Log.d( "MyLocation", location.getLatitude() + ", " + location.getLongitude() + " ( " + location.getAccuracy() + " )" );
+                getDistance(); // 自分の位置情報更新
+
+//                Log.d( "MyLocation", location.getLatitude() + ", " + location.getLongitude() + " ( " + location.getAccuracy() + " )" );
 
             }
         };
@@ -351,9 +391,34 @@ public class RaderActivity extends Activity {
             this.finish();
         }
 
+        // 色々初期化したりするよ
         initViewsAndItems();
         useSensors();
         useGPS();
+
+        // 定期実行したいよ
+        handler = new Handler(); // 定期実行するためのHandler
+        // 5秒ごとにgetDistanceしてくれるはず
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // 自分の位置情報を送信しつつ相手の位置情報を得る
+                HttpCommunication httpCommunication = new HttpCommunication(
+                        new HttpCommunication.AsyncTaskCallback() {
+                            @Override
+                            public void postExecute(LocationData result) {
+                                oppLocationData = result;
+                                getDistance(); // 相手の位置情報更新
+                            }
+                        }
+                );
+                httpCommunication.setID( myID, oppID );
+                httpCommunication.setLocation( myLocationData );
+                httpCommunication.executeOnExecutor( AsyncTask.THREAD_POOL_EXECUTOR );
+
+                handler.postDelayed( this, 5000 );
+            }
+        }, 5000);
     }
 
 
@@ -435,12 +500,17 @@ public class RaderActivity extends Activity {
     protected void onPause(){
         super.onPause();
         wfd.onPause();
+
+        vibrator.cancel();
     }
 
     @Override
     protected void onDestroy(){
         super.onDestroy();
         wfd.onDestroy();
+
+//        vibrator = null;
+        handler.removeCallbacksAndMessages( null );
     }
 
 
@@ -457,15 +527,16 @@ public class RaderActivity extends Activity {
     }
 
 
-    void getDistance( LocationData data ) {
+    void getDistance() {
         float[] results = new float[3];
         // 距離を計算 ///////////////////////////
         // results[0] : 距離（メートル）
         //        [1] : 始点から終点までの方位角
         //        [2] : 終点から始点までの方位角
-        Location.distanceBetween( myLocationData.lat, myLocationData.lon, data.lat, data.lon, results);
+        Location.distanceBetween( myLocationData.lat, myLocationData.lon,
+                                    oppLocationData.lat, oppLocationData.lon, results);
 //        Location.distanceBetween( lat, lon, 36.56815810607431, 140.6476289042621, results);
-        Log.d( "DISTANCE", "distance`getDistance = " + results[0] );
+//        Log.d( "DISTANCE", "distance`getDistance = " + results[0] );
 
         if( results[1] < 0 ) {
             // 0～360度の値にする
@@ -482,9 +553,9 @@ public class RaderActivity extends Activity {
         else textView_DistanceMessage.setText("遠いよ");
 
         // 精度メッセージ変更
-        if( data.acc <= 3 ) textView_AccuracyMessage.setText("精度良好かも");
-        else if( data.acc > 3 && data.acc <= 10 ) textView_AccuracyMessage.setText("ふつうの精度");
-        else if ( data.acc >= 15 ) textView_AccuracyMessage.setText("精度ひどいよ");
+        if( oppLocationData.acc <= 3 ) textView_AccuracyMessage.setText("精度良好かも");
+        else if( oppLocationData.acc > 3 && oppLocationData.acc <= 10 ) textView_AccuracyMessage.setText("ふつうの精度");
+        else if ( oppLocationData.acc >= 15 ) textView_AccuracyMessage.setText("精度ひどいよ");
 //        else if ( data.acc >= 15 ) textView_AccuracyMessage.setText("不安な精度");
         else textView_AccuracyMessage.setText( "" );
 
@@ -510,16 +581,18 @@ public class RaderActivity extends Activity {
                 "lon : " + myLocationData.lon + "\n" +
                 "acc : " + myLocationData.acc + "\n" +
                 "【 相手( "+ oppID + " ) 】\n" +
-                "lat : " + data.lat + "\n" +
-                "lon : " + data.lon + "\n" +
-                "acc : " + data.acc + "\n" +
+                "lat : " + oppLocationData.lat + "\n" +
+                "lon : " + oppLocationData.lon + "\n" +
+                "acc : " + oppLocationData.acc + "\n" +
                 "\n"+
                 "【 距離 】 " + results[0] + "m\n" +
                 "【 自 → 相 】 " + results[1] + "\n" +
                 "【 相 → 自 】 " + results[2] + "\n" +
                 "【 取得時刻 】\n" +
-                "(自)" + sdf.format( new Date(myLocationData.gettime) ) + "\n" +
-                "(相)" + sdf.format( new Date(data.gettime) );
+                "(自)" + sdf.format( new Date( myLocationData.gettime ) ) + "\n" +
+                "(相)" + sdf.format( new Date( oppLocationData.gettime ) );
+
+        Log.d("Location", myLocationData.gettime + " " + oppLocationData.gettime );
         textView_info.setText( stringInfo );
 
         if( results[0] <= 40 && flag_vibrator == true ) {
@@ -588,7 +661,6 @@ public class RaderActivity extends Activity {
 
     // [振動止める/つける]ボタン押下
     public void onVibeSwitchClicked( View v ) {
-        Log.d("onButtonClick", "onButtonClick");
         if( button_Vibration.isChecked() == true ) { // OFF → ONのとき
             flag_vibrator = true;
         }
@@ -616,22 +688,22 @@ public class RaderActivity extends Activity {
         if( distance <= 3 ) {
             vibrator.vibrate(pattern6, -1);
             Log.d("viberation", "pattern6");
-            Toast.makeText( this, "pattern6", Toast.LENGTH_SHORT ).show();
+//            Toast.makeText( this, "pattern6", Toast.LENGTH_SHORT ).show();
         }
         else if( distance <= 5 ) {
             vibrator.vibrate(pattern4, -1);
             Log.d("viberation", "pattern4");
-            Toast.makeText( this, "pattern4", Toast.LENGTH_SHORT ).show();
+//            Toast.makeText( this, "pattern4", Toast.LENGTH_SHORT ).show();
         }
         else if( distance <= 10 ) {
             vibrator.vibrate(pattern2, -1);
             Log.d("viberation", "pattern2");
-            Toast.makeText( this, "pattern2", Toast.LENGTH_SHORT ).show();
+//            Toast.makeText( this, "pattern2", Toast.LENGTH_SHORT ).show();
         }
         else {
             vibrator.vibrate(pattern1, -1);
             Log.d("viberation", "pattern1");
-            Toast.makeText( this, "pattern1", Toast.LENGTH_SHORT ).show();
+//            Toast.makeText( this, "pattern1", Toast.LENGTH_SHORT ).show();
         }
     }
 

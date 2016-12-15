@@ -122,6 +122,10 @@ public class WiFiDirect {
     // Toast
     Toast wfd_toast;
 
+
+    // TextView
+    TextView wfd_textView; // Manipulated by parent Activity
+
     public WiFiDirect(Activity activity) {
         // app, activity
         this.activity = activity;
@@ -392,6 +396,12 @@ public class WiFiDirect {
         wfd_toast = Toast.makeText(activity, str, Toast.LENGTH_SHORT);
         wfd_toast.setGravity(Gravity.CENTER,0,0);
         wfd_toast.show();
+
+        if ( wfd_textView != null ) {
+            String existText = wfd_textView.getText().toString();
+            if ( !existText.equals("") ) existText += "\n";
+            wfd_textView.setText( existText + str );
+        }
     }
 
     /* -----------------------------------------------------------
@@ -407,8 +417,11 @@ public class WiFiDirect {
         @Override
         public void onCheckedChanged(CompoundButton view, boolean isChecked) {
             if (isChecked){
+                if( wfd_textView != null )
+                    wfd_textView.setVisibility( View.VISIBLE );
                 startConnection();
             }else {
+//                wfd_textView.setVisibility( View.GONE );
                 endConnection();
             }
         }
@@ -468,4 +481,29 @@ public class WiFiDirect {
             communicator.listener = listener;
         }
     }
+
+
+
+
+
+
+
+    /* -----------------------------------------------------------
+    TextView
+    -------------------------------------------------------------- */
+
+    public void setTextView( TextView textView ){
+        wfd_textView = textView;
+        wfd_textView.setOnClickListener( wfd_textView_listener );
+    }
+
+    private View.OnClickListener wfd_textView_listener = new View.OnClickListener() {
+        public void onClick(View v) {
+            if( wfd_button.isChecked() == false ) {
+                wfd_textView.setVisibility( View.GONE );
+                wfd_textView.setText( "WifiDirect OFF時に\n" +
+                        "このテキストエリアをタップすることで非表示にできます。\n" );
+            }
+        }
+    };
 }

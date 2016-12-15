@@ -42,9 +42,10 @@ public class TargetObject {
             e.printStackTrace();
         }
 
-        Log.d( "tex", bmpTexture.getWidth() + ", " + bmpTexture.getHeight() );
         // テクスチャ生成
         texID = makeTexture( this.bmpTexture );
+        bmpTexture.recycle();
+        bmpTexture = null;
 
         initTarget();
     }
