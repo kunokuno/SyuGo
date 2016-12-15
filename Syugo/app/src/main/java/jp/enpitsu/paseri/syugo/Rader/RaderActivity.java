@@ -3,6 +3,9 @@ package jp.enpitsu.paseri.syugo.Rader;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -305,7 +308,8 @@ public class RaderActivity extends Activity {
         ////////////////////////////////////////////////////////////////////////////////////////////
         // 位置情報関連のコピペ ////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////////////
-        permissionManager.requestLocationInfoPermission();
+//        permissionManager.requestLocationInfoPermission();
+        showDialogFragment();
         if (this.isFinishing()) return;
 
         //  位置情報のリスナーを登録します。全ての位置情報更新はここで処理され、ここから本アプリ内で一元的に位置情報を管理するプロバイダー「locationProvider」に引き渡されます。
@@ -370,6 +374,9 @@ public class RaderActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // ユーザID等の取得 ////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////
         syugoApp = (SyugoApp)this.getApplication(); // グローバルクラス
         // グローバルクラスから自分・相手のID読み込み
         myID = syugoApp.getSelfUserId();
@@ -390,6 +397,7 @@ public class RaderActivity extends Activity {
             startActivity( intent );
             this.finish();
         }
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         // 色々初期化したりするよ
         initViewsAndItems();
@@ -719,6 +727,31 @@ public class RaderActivity extends Activity {
         } else {
             textView_info.setVisibility(View.GONE);
             isInfoVisible = false;
+        }
+    }
+
+
+    // ダイアログ表示のためのフラグメント
+    protected void showDialogFragment() {
+        FragmentManager manager = getFragmentManager();
+        DialogFragmentSample dialog = new DialogFragmentSample();
+        dialog.show(manager, "dialog");
+        dialog.setCancelable( false ); // ダイアログの外部タッチでダイアログが閉じるのを無効にする
+                                        // DialogFragment使う場合は，Dialog#setCancelableを直接呼んでもだめらしい
+                                        // 代わりにDiaogFragment#setCancelableを設定する
+    }
+
+    public static class DialogFragmentSample extends DialogFragment {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            Log.d("TAG", "tag: " + getTag());
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("Fragment Dialog");
+            builder.setMessage("フラグメントの\nダイアログの\nサンプル");
+            builder.setPositiveButton("はい", null);
+            AlertDialog dialog = builder.create();
+            return dialog;
         }
     }
 }
