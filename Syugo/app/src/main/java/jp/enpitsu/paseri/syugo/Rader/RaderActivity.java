@@ -44,7 +44,6 @@ import java.util.List;
 
 import jp.enpitsu.paseri.syugo.Global.SyugoApp;
 import jp.enpitsu.paseri.syugo.Lookfor.LookActivity;
-import jp.enpitsu.paseri.syugo.Rader.ARObjects.Graph.GraphView;
 import jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20.MyGLSurfaceView;
 import jp.enpitsu.paseri.syugo.R;
 import jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20.RADER_VALUES;
