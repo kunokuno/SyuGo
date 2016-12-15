@@ -32,7 +32,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:id="@+id/linearLayout_raderMessages">
 
         <TextView
             android:layout_width="wrap_content"
@@ -91,7 +92,12 @@
             android:layout_gravity="top"
             android:paddingTop="15dp"
             android:paddingBottom="10dp"
-            android:onClick="onARSwitchButtonClicked" />
+            android:onClick="onARSwitchButtonClicked"
+            android:shadowColor="#de000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="2.0"
+            />
 
         <ToggleButton
             android:layout_width="wrap_content"
@@ -109,7 +115,12 @@
             android:gravity="center"
             android:paddingTop="15dp"
             android:paddingBottom="10dp"
-            android:onClick="onVibeSwitchClicked" />
+            android:onClick="onVibeSwitchClicked"
+            android:shadowColor="#de000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="2.0"
+            />
 
         <ToggleButton
             android:layout_width="wrap_content"
@@ -126,7 +137,12 @@
             android:gravity="center"
             android:paddingTop="15dp"
             android:paddingBottom="10dp"
-            android:layout_gravity="top" />
+            android:layout_gravity="top"
+            android:shadowColor="#de000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="2.0"
+            />
     </LinearLayout>
 
 
@@ -157,6 +173,44 @@
             android:layout_gravity="right|bottom"
             android:onClick="onClickButtonInfo"
             android:background="@drawable/custom_button_state"
+            />
+    </LinearLayout>
+
+    
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorTransparentBlack"
+        android:id="@+id/linearLayout_ARMassages"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="reqName"
+            android:textColor="@color/colorWhite"
+            android:id="@+id/textView_reqNameAR"
+            android:shadowColor="#de000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="2.0"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Distance"
+            android:textColor="@color/colorWhite"
+            android:id="@+id/textView_distanceAR"
+            android:shadowColor="#de000000"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="2.0"
             />
     </LinearLayout>
 

@@ -1,13 +1,16 @@
 package jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20;
 
+import android.content.Context;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -18,22 +21,13 @@ public class MyRenderer implements GLSurfaceView.Renderer {
     private float aspect;//アスペクト比
 
     private  MyGLSurfaceView glView;
-
-//    private  RaderObject raderObject;
     private  RaderObject_UI raderObject;
-
-    private float rotation;
-    private double locationDirection, deviceDirection;
-
-    private boolean isModeAR =false;
+    private TargetObject targetObject;
 
     // コンストラクタ
-    MyRenderer( MyGLSurfaceView glView ) {
+    MyRenderer( MyGLSurfaceView glView, Context context ) {
         this.glView = glView;
-
-        rotation = 0f;
-        locationDirection = 0;
-        deviceDirection = 0;
+        GLES.context = context;
 
 //        mCamAngle = new float[] { 60f, 60f }; // カメラアングルを60度に初期化
     }
@@ -60,8 +54,8 @@ public class MyRenderer implements GLSurfaceView.Renderer {
         GLES20.glUniform4f(GLES.lightDiffuseHandle,0.7f,0.7f,0.7f,1.0f);
         GLES20.glUniform4f(GLES.lightSpecularHandle,0.0f,0.0f,0.0f,1.0f);
 
-//        raderObject = new RaderObject();
         raderObject = new RaderObject_UI();
+        targetObject = new TargetObject();
     }
 
     //画面サイズ変更時に呼ばれる
@@ -85,7 +79,7 @@ public class MyRenderer implements GLSurfaceView.Renderer {
                 60.0f,  //Y方向の画角
                 aspect, //アスペクト比
                 0.1f,   //ニアクリップ
-                10000.0f);//ファークリップ
+                1000.0f);//ファークリップ
 
         //光源位置の指定
         GLES20.glUniform4f(GLES.lightPosHandle,0f,0f,0f,1.0f);
@@ -98,81 +92,10 @@ public class MyRenderer implements GLSurfaceView.Renderer {
                 0.0f,0.0f,-0.01f, //カメラの焦点
                 0.0f,1.0f,0.0f);//カメラの上方向
 
+        // ARのターゲット描画
+        targetObject.draw();
         // レーダー描画
-        raderObject.draw( isModeAR );
+        raderObject.draw();
 
     }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    // MyGLSurfaceViewからRaderObjectへ中継貿易
-    // 端末の傾きが変わった時
-    public void invalidateRader( String tag, float direction ) {
-        Log.d( "RaderObject", "invalidateRader" );
-        if( raderObject != null ) {
-            // 角度更新
-            this.deviceDirection = direction;
-            Log.d("RaderObject", "onDeviceDirectionChanged");
-
-            // rotation更新
-            getRotate();
-        }
-//        if( tag.equals("Location Changed") ) this.onLocationChanged( direction );
-//        else if( tag.equals("Device Direction Changed") ) this.onDeviceDirectionChanged( direction );
-    }
-    // ロケーションが変わった時
-    public void invalidateRader( String tag, float direction, float distance ) {
-        Log.d( "RaderObject", "invalidateRader" );
-        if( raderObject != null ) {
-            // 角度更新
-            this.locationDirection = direction;
-            // rotationを更新
-            getRotate();
-            Log.d( "DISTANCE", "distance@MyRenderer = " + distance );
-            // 距離更新
-            raderObject.invalidateDistance( distance );
-        }
-    }
-
-    public void onLocationChanged( float direction ) {
-        // 角度更新
-        this.locationDirection = direction;
-
-        // rotationを更新
-        getRotate();
-    }
-
-    // 端末の向きを取得し、rotationを更新
-    public void onDeviceDirectionChanged( double direction ) {
-        // 角度更新
-        this.deviceDirection = direction;
-        Log.d( "RaderObject", "onDeviceDirectionChanged" );
-
-        // rotation更新
-        getRotate();
-    }
-
-    private void getRotate() {
-        // - [端末の向き] + [相手のいる方角]
-        rotation = (float)(-deviceDirection + locationDirection);
-        Log.d( "RaderObject", "getRotate" );
-        glView.requestRender();
-        Log.d( "RaderObject", "RequestRender" );
-
-        if ( raderObject != null ) {
-//            raderObject.invalidateRotation(rotation);
-            raderObject.invalidateNorthDirection( (float)deviceDirection );
-            raderObject.invalidateRotation( (float)locationDirection );
-        }
-    }
-
-    // 仰角更新
-//    public void invalidateElevation( double elevation ) {
-//        if ( effectObject != null )
-//            effectObject.invalidateElevation( (float)elevation );
-//    }
-
-    public void switchModeAR( boolean isModeAR ) {
-        this.isModeAR = isModeAR;
-    }
-
 }

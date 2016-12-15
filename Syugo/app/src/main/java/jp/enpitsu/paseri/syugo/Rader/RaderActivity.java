@@ -24,11 +24,13 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -43,6 +45,7 @@ import jp.enpitsu.paseri.syugo.Lookfor.LookActivity;
 import jp.enpitsu.paseri.syugo.Rader.ARObjects.Graph.GraphView;
 import jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20.MyGLSurfaceView;
 import jp.enpitsu.paseri.syugo.R;
+import jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20.RADER_VALUES;
 import jp.enpitsu.paseri.syugo.WiFiDirect.WiFiDirect;
 import jp.enpitsu.paseri.syugo.Registor.RegActivity;
 
@@ -62,8 +65,13 @@ public class RaderActivity extends Activity {
     ImageView backgroundImageView;
     TextureView textureView;
 
+    LinearLayout linearLayout_raderMessages;
     TextView textView_DistanceMessage;
     TextView textView_AccuracyMessage;
+
+    LinearLayout linearLayout_ARMessages;
+    TextView textView_reqNameAR;
+    TextView textView_distanceAR;
 
     //WiFiDirect
     WiFiDirect wfd;
@@ -89,16 +97,10 @@ public class RaderActivity extends Activity {
     Vibrator vibrator;
     private boolean flag_vibrator = true; // 振動させるかさせないか
 
+    String myID, oppID;
+    String oppName; // 相手ユーザ名
 
-    //    String myID = "r3uhr3";
-//    String reqID = "4hfeu";
-    String myID;
-//    String reqID = "r3uhr3";
-    String reqID; // TODO: 自分のIDは外部ファイルから読んでくる
-    String macAdr, oppName; // 相手のMACアドレスとユーザ名
-
-    private double lat = 30;
-    private double lon = 30;
+    private LocationData myLocationData;
 
     /** 位置情報の更新を受信するためのリスナー。これを、ARchitectViewに通知して、ARchitect Worldの位置情報を更新します。*/
     protected LocationListener locationListener;
@@ -109,30 +111,9 @@ public class RaderActivity extends Activity {
     /** 最新のユーザー位置情報。本サンプルでは位置情報が取得されているかどうかの判定で使われています（※本サンプルではコードはありますが実質的には使っていません）。*/
     protected Location lastKnownLocaton;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
-        syugoApp = (SyugoApp)this.getApplication(); // グローバルクラス
-        // グローバルクラスから自分・相手のID読み込み
-        myID = syugoApp.getSelfUserId();
-        reqID = syugoApp.getOpponentUserId();
-
-        // 例外処理
-        Intent intent;
-        if ( myID.equals("") ) {
-            Toast.makeText(this, "自分のユーザ名を入力し、\nIDを取得してください", Toast.LENGTH_LONG).show();
-            intent = new Intent( RaderActivity.this, RegActivity.class );
-            startActivity( intent );
-            this.finish();
-        }
-//        else if ( reqID.equals("") ) {
-//            Toast.makeText( this, "相手のユーザIDを検索し、\nユーザ名を確認してください", Toast.LENGTH_LONG ).show();
-//            intent = new Intent( RaderActivity.this, LookActivity.class );
-//            startActivity( intent );
-//            this.finish();
-//        }
-
+    // ボタンとかいろいろ初期化
+    private void initViewsAndItems() {
 
         glView = new MyGLSurfaceView( this );
         glView.setZOrderOnTop(true);
@@ -140,7 +121,6 @@ public class RaderActivity extends Activity {
         permissionManager = new PermissionManager( this );
 
         final View view = this.getLayoutInflater().inflate(R.layout.activity_rader, null);
-//        // [参考] http://language-and-engineering.hatenablog.jp/entry/20110908/p1
 
         // GLSurfaceViewを最初にセット
         this.setContentView( glView,
@@ -151,6 +131,7 @@ public class RaderActivity extends Activity {
         this.addContentView( view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT ));
 
+
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
         backgroundImageView = (ImageView)findViewById( R.id.backgroundImageView );
@@ -159,9 +140,14 @@ public class RaderActivity extends Activity {
         button_Vibration  = (ToggleButton)findViewById( R.id.button_Vibe );
         button_WifiDirect = (ToggleButton)findViewById( R.id.button_wifiDirect );
 
-//        textView_Message = (TextView)findViewById( R.id.textView_Message );
+        linearLayout_raderMessages = (LinearLayout)findViewById( R.id.linearLayout_raderMessages );
         textView_DistanceMessage = (TextView)findViewById( R.id.textView_DistanceMessage );
         textView_AccuracyMessage = (TextView)findViewById( R.id.textView_AccuracyMessage );
+
+        linearLayout_ARMessages = (LinearLayout)findViewById( R.id.linearLayout_ARMassages );
+        textView_reqNameAR = (TextView)findViewById( R.id.textView_reqNameAR );
+        textView_distanceAR = (TextView)findViewById( R.id.textView_distanceAR );
+        textView_reqNameAR.setText( oppName ); // 相手のユーザ名セット
 
         // デバッグ用
         button_info = (Button)findViewById( R.id.button_info );
@@ -173,6 +159,8 @@ public class RaderActivity extends Activity {
         button_Vibration.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
         textView_DistanceMessage.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
         textView_AccuracyMessage.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        textView_reqNameAR.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        textView_distanceAR.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
 
         //WiFiDirectクラスのインスタンス作成とボタンの登録
         wfd = new WiFiDirect( RaderActivity.this );
@@ -202,11 +190,10 @@ public class RaderActivity extends Activity {
 //                glView.setCameraAngle( mCamAngle );
             }
         });
-//
-////        Log.d( "mew Camera", "start" );
-//        mCamera = new Camera(textureView, this);
-////        Log.d( "mew Camera", "end" );
+    }
 
+    // 磁気・加速度センサの利用
+    private void useSensors() {
         ////////////////////////////////////////////////////////////////////////////////////////////
         // センサのコピペ //////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -272,17 +259,18 @@ public class RaderActivity extends Activity {
                             direction = 360f + direction;
                         }
                         // レーダー更新
-//                        graphView.onDeviceDirectionChanged( direction );
-                        glView.invalidateRader( "Device Direction Changed", (float)direction );
-//                        glView.invalidateElevation( elevation );
+                        RADER_VALUES.invalidateDeviceDirection( (float)direction );
+                        RADER_VALUES.invalidateElevation( (float) elevation );
                     }
                 }
             }
             public void onAccuracyChanged (Sensor sensor, int accuracy) {}
         };
         ////////////////////////////////////////////////////////////////////////////////////////////
+    }
 
-
+    // 位置情報（GPS）の利用
+    private void useGPS() {
         ////////////////////////////////////////////////////////////////////////////////////////////
         // 位置情報関連のコピペ ////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -310,25 +298,19 @@ public class RaderActivity extends Activity {
             @Override
             public void onLocationChanged(final Location location) {
                 Log.d("Location", "onLcationChanged");
-                lat = location.getLatitude();
-                lon = location.getLongitude();
+                myLocationData = new LocationData( location.getLatitude(), location.getLongitude(), location.getAccuracy() );
 
                 // 自分の位置情報をグローバルクラスにセット
-                // TODO: ロケーションデータに日時追加・セッタとゲッタ
-
-
                 HttpCommunication httpCommunication = new HttpCommunication(
                         new HttpCommunication.AsyncTaskCallback() {
                             @Override
                             public void postExecute(LocationData result) {
                                 getDistance( result );
-
-//                                glView.invalidateRader( "Location Changed", direction );
                             }
                         }
                 );
-                httpCommunication.setID( myID, reqID );
-                httpCommunication.setLocation( location.getLatitude(), location.getLongitude(), location.getAccuracy() );
+                httpCommunication.setID( myID, oppID );
+                httpCommunication.setLocation( myLocationData );
                 httpCommunication.executeOnExecutor( AsyncTask.THREAD_POOL_EXECUTOR );
 
                 Log.d( "MyLocation", location.getLatitude() + ", " + location.getLongitude() + " ( " + location.getAccuracy() + " )" );
@@ -341,6 +323,37 @@ public class RaderActivity extends Activity {
         Log.d("Location", "LocationProviderにリスナ指定");
 
         ////////////////////////////////////////////////////////////////////////////////////////////
+    }
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        syugoApp = (SyugoApp)this.getApplication(); // グローバルクラス
+        // グローバルクラスから自分・相手のID読み込み
+        myID = syugoApp.getSelfUserId();
+        oppID = syugoApp.getOpponentUserId();
+        oppName = syugoApp.getOpponentUserName();
+
+        // 例外処理
+        Intent intent;
+        if ( myID.equals("") ) {
+            Toast.makeText(this, "自分のユーザ名を入力し、\nIDを取得してください", Toast.LENGTH_LONG).show();
+            intent = new Intent( RaderActivity.this, RegActivity.class );
+            startActivity( intent );
+            this.finish();
+        }
+        else if ( oppID.equals("") || oppName.equals("") ) {
+            Toast.makeText( this, "相手のユーザIDを検索し、\nユーザ名を確認してください", Toast.LENGTH_LONG ).show();
+            intent = new Intent( RaderActivity.this, LookActivity.class );
+            startActivity( intent );
+            this.finish();
+        }
+
+        initViewsAndItems();
+        useSensors();
+        useGPS();
     }
 
 
@@ -378,7 +391,8 @@ public class RaderActivity extends Activity {
         super.onResume();
         wfd.onResume();
 
-        // LocationProviderのライフサイクルメソッド「onResume」を呼び出す必要があります。通常、Resumeが通知されると位置情報の収集が再開され、ステータスバーのGPSインジケーターが点灯します。
+        // LocationProviderのライフサイクルメソッド「onResume」を呼び出す必要があります。
+        // 通常、Resumeが通知されると位置情報の収集が再開され、ステータスバーのGPSインジケーターが点灯します。
         if (this.locationProvider != null) {
             try {
                 this.locationProvider.onResume();
@@ -388,6 +402,35 @@ public class RaderActivity extends Activity {
         }
     }
 
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        if ( button_AR.isChecked() == true ) {
+            // ARを強制終了
+            RADER_VALUES.switchARMode( false );
+            // カメラ開放
+            mCamera.close();
+            mCamera = null;
+            // 背景差し替え(imageView表示)
+            backgroundImageView.setVisibility( backgroundImageView.VISIBLE );
+            // AR用メッセージ非表示
+            linearLayout_ARMessages.setVisibility( View.GONE );
+            // レーダー用メッセージ表示
+            linearLayout_raderMessages.setVisibility( View.VISIBLE );
+
+            button_AR.setChecked( false );
+
+            // Toast表示
+            Toast toast = Toast.makeText( getApplicationContext(),
+                    "バックグラウンドから復帰。\nARモードを終了しました。", Toast.LENGTH_SHORT );
+            toast.setGravity( Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL, 0, 0 );
+            toast.show();
+        }
+    }
+
+
     @Override
     protected void onPause(){
         super.onPause();
@@ -396,7 +439,7 @@ public class RaderActivity extends Activity {
 
     @Override
     protected void onDestroy(){
-        super.onPause();
+        super.onDestroy();
         wfd.onDestroy();
     }
 
@@ -420,7 +463,7 @@ public class RaderActivity extends Activity {
         // results[0] : 距離（メートル）
         //        [1] : 始点から終点までの方位角
         //        [2] : 終点から始点までの方位角
-        Location.distanceBetween( lat, lon, data.lat, data.lon, results);
+        Location.distanceBetween( myLocationData.lat, myLocationData.lon, data.lat, data.lon, results);
 //        Location.distanceBetween( lat, lon, 36.56815810607431, 140.6476289042621, results);
         Log.d( "DISTANCE", "distance`getDistance = " + results[0] );
 
@@ -430,10 +473,10 @@ public class RaderActivity extends Activity {
         }
 
         // 円グラフを回転
-        glView.invalidateRader( "Location Changed", results[1], results[0] );
-//        graphView.onLocationChanged( results[1] );
+        RADER_VALUES.invalidateLocation( results[1], results[0] );
 
         // 距離メッセージ変更
+        textView_distanceAR.setText( (int)results[0] + "m");
         if( results[0] <= 20 ) textView_DistanceMessage.setText("近いよ");
         else if( results[0] == 0 ) textView_DistanceMessage.setText("やばいよ");
         else textView_DistanceMessage.setText("遠いよ");
@@ -447,23 +490,24 @@ public class RaderActivity extends Activity {
 
 
         // デバッグ用にデータを表示したいんじゃよ
-        // 現在の時刻を取得
-        Date date = new Date();
         // 表示形式を設定
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy'年'MM'月'dd'日'　kk'時'mm'分'ss'秒'");
 
         String stringInfo = "【 自分( "+ myID + " ) 】\n" +
-                "lat : " + this.lat + "\n" +
-                "lon : " + this.lon + "\n" +
-//                "acc : " + this.acc + "\n" +
-                "【 相手( "+ reqID + " ) 】\n" +
+                "lat : " + myLocationData.lat + "\n" +
+                "lon : " + myLocationData.lon + "\n" +
+                "acc : " + myLocationData.acc + "\n" +
+                "【 相手( "+ oppID + " ) 】\n" +
                 "lat : " + data.lat + "\n" +
                 "lon : " + data.lon + "\n" +
                 "acc : " + data.acc + "\n" +
+                "\n"+
                 "【 距離 】 " + results[0] + "m\n" +
                 "【 自 → 相 】 " + results[1] + "\n" +
                 "【 相 → 自 】 " + results[2] + "\n" +
-                "【 "+ sdf.format( date ) +" 】";    // 更新日時
+                "【 取得時刻 】\n" +
+                "(自)" + sdf.format( new Date(myLocationData.gettime) ) + "\n" +
+                "(相)" + sdf.format( new Date(data.gettime) );
         textView_info.setText( stringInfo );
 
 
@@ -500,17 +544,21 @@ public class RaderActivity extends Activity {
         }
         else { // ON → OFFのとき
             // ARモード終了
-            glView.switchModeAR( false );
+            RADER_VALUES.switchARMode( false );
             // カメラ開放
             mCamera.close();
             mCamera = null;
             // 背景差し替え(imageView表示)
             backgroundImageView.setVisibility( backgroundImageView.VISIBLE );
+            // AR用メッセージ非表示
+            linearLayout_ARMessages.setVisibility( View.GONE );
+            // レーダー用メッセージ表示
+            linearLayout_raderMessages.setVisibility( View.VISIBLE );
         }
     }
 
     public void startARMode() {
-        glView.switchModeAR( true );
+        RADER_VALUES.switchARMode( true );
         // カメラ起動
         if ( textureView.isAvailable() == true ) {
             mCamera = new Camera2(textureView, this);
@@ -519,6 +567,11 @@ public class RaderActivity extends Activity {
 
         // 背景差し替え（imageView非表示）
         backgroundImageView.setVisibility( backgroundImageView.INVISIBLE );
+        // AR用メッセージ表示
+        linearLayout_ARMessages.setVisibility( View.VISIBLE );
+        // レーダー用メッセージ非表示
+        linearLayout_raderMessages.setVisibility( View.GONE );
+
     }
 
 
