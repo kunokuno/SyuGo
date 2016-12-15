@@ -312,11 +312,6 @@ public class RaderObject_UI {
             indexs[ count+2 ] = (byte)(i+2);
             count += 3;
         }
-        String str = "";
-        for( int i = 0; i < indexs.length; ++i ) {
-            str = str + indexs[i] + ", ";
-        }
-        Log.d( "indexBuffer", str );
         bar_vertexBuffer = makeFloatBuffer( vertexs );
         bar_indexBuffer = makeByteBuffer( indexs );
 
@@ -515,7 +510,6 @@ public class RaderObject_UI {
             if( RADER_VALUES.distance <= RADER_VALUES.MAX_DISTANCE ) {
                 GLES.glPushMatrix();
                 Matrix.rotateM(GLES.mMatrix, 0, -RADER_VALUES.ROTATE_TO_DEFAULT, 0, 0, 1); // 初期配置（レーダーが指す範囲の中心に来るように）
-                Log.d( "DISTANCE", "distance@RaderObject_draw = " + RADER_VALUES.distance );
 
                 if( RADER_VALUES.distanceOnRader <= RADER_VALUES.BORDER_NEAR ) { // [近い]圏内
                     if ( RADER_VALUES.distanceOnRader <= RADER_VALUES.BORDER_NEAREST ) { // [めっちゃ近い]圏内
