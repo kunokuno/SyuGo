@@ -13,4 +13,6 @@ public interface ILocationProvider {
      */
     public void onPause();
 
+    public void setLocationUpdateMinTime( boolean isWithInRaderRange );
+
 }

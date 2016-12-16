@@ -11,6 +11,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Calendar;
+import java.util.Date;
 
 
 // HttpUrlConnection
@@ -23,15 +25,10 @@ import java.net.URL;
 
 public class HttpCommunication extends AsyncTask<Integer, Integer, LocationData>
 {
-    String myID, reqID;
+    String myID, oppID;
 
     double lat, lon, acc;
-
-    boolean TorF = false;
-
-    RaderActivity activity;
-
-    TextView tv_response, tv_distance;
+    long gettime;
 
     // Activiyへのコールバック用interface
     public interface AsyncTaskCallback {
@@ -51,8 +48,8 @@ public class HttpCommunication extends AsyncTask<Integer, Integer, LocationData>
 
         StringBuilder uri = new StringBuilder(
                 "http://ubermensch.noor.jp/enPiT/get_gps.php?" +
-                        "code=" + myID + "&opponentcode=" + reqID + "&alt=30" +
-                        "&lat=" + lat + "&lan=" + lon + "&accuracy=" + acc + "&etime=20" );
+                        "code=" + myID + "&opponentcode=" + oppID + "&alt=30" +
+                        "&lat=" + lat + "&lan=" + lon + "&accuracy=" + acc + "&gettime="+ gettime );
 
         Log.d("HttpURL", uri.toString());
 
@@ -60,7 +57,7 @@ public class HttpCommunication extends AsyncTask<Integer, Integer, LocationData>
         try {
             url = new URL(uri.toString());
         } catch( MalformedURLException e ) {
-            Log.d("HttpRes", e.toString());
+            Log.d("Http", e.toString());
         }
 
         HttpURLConnection urlConnection = null;
@@ -85,25 +82,48 @@ public class HttpCommunication extends AsyncTask<Integer, Integer, LocationData>
 
 
         } catch( IOException e ) {
-            Log.d("HttpRes", e.toString());
+            Log.d("Http", e.toString());
         } finally {
             urlConnection.disconnect();
         }
 
 
 
-        LocationData data = new LocationData( 30, 30, 30 );
+        LocationData data = new LocationData( 30, 30, 30, 30 );
         //if( HttpStatus.SC_OK == status ) {
         if( !result.equals("") ) { // データを受け取れている場合
             try {
-                Log.d("Httpfhasuiogb", result);
+                Log.d("Http", result);
                 // ","で分割
-                // items [0]名前, [1]高度, [2]緯度, [3]経度, [4]精度
+                // items [0]名前, [1]高度, [2]緯度, [3]経度, [4]精度, [5]macアドレス, [6]データ取得時間
                 String[] items = result.split(",");
 
                 // 結果をdataに格納
-                data = new LocationData( Double.parseDouble(items[2]), Double.parseDouble(items[3]), Double.parseDouble(items[4]) );
+                if( items.length == 7 && !items[6].equals("") ) {
+                    // items[6] には「yyyy-mm-dd kk:mm:ss」の形で取得時間が入っている
+                    String[] date_time = items[6].split(" "); // " "で分割→ [0] 年月日, [1]時刻 となる
+                    String[] date = date_time[0].split("-");  // "-"で分割→ [0] 年, [1] 月, [2] 日
+                    String[] time = date_time[1].split(":");  // ":"で分割→ [0] 時, [1] 分, [2] 秒
 
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.clear();
+                    calendar.set( Integer.parseInt( date[0] ),   // 年
+                                  Integer.parseInt( date[1] )-1, // 月(Calendarクラスは0月～11月の12か月らしいぜ)
+                                  Integer.parseInt( date[2] ),   // 日
+                                  Integer.parseInt( time[0] ),   // 時
+                                  Integer.parseInt( time[1] ),   // 分
+                                  Integer.parseInt( time[2] )    // 秒
+                                );
+//                    Log.d("CALENDAR", "items[6]  : " + items[6] );
+//                    Log.d("CALENDAR", "date_time : " + date_time[0] + ", " + date_time[1] );
+//                    Log.d("CALENDAR", "date      : " + date[0] + ", " + date[1] + ", " + date[2] );
+//                    Log.d("CALENDAR", "time      : " + time[0] + ", " + time[1] + ", " + time[2] );
+
+                    data = new LocationData(
+                            Double.parseDouble(items[2]), Double.parseDouble(items[3]), Double.parseDouble(items[4]), calendar.getTimeInMillis() );
+                }
+                else data = new LocationData(
+                        Double.parseDouble(items[2]), Double.parseDouble(items[3]), Double.parseDouble(items[4]) );
             } catch( Exception e ) {
                 Log.d("Http", e.toString());
             }
@@ -147,15 +167,16 @@ public class HttpCommunication extends AsyncTask<Integer, Integer, LocationData>
         return out;
     }
 
-    void setID( String myID, String reqID ) {
+    void setID( String myID, String oppID ) {
         this.myID = myID;
-        this.reqID = reqID;
+        this.oppID = oppID;
     }
 
-    void setLocation( double lat, double lon, double acc ) {
-        this.lon = lon;
-        this.lat = lat;
-        this.acc = acc;
+    void setLocation( LocationData locationData ) {
+        this.lon = locationData.lon;
+        this.lat = locationData.lat;
+        this.acc = locationData.acc;
+        this.gettime = locationData.gettime;
     }
 
 }

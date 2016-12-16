@@ -18,25 +18,6 @@ import java.util.ArrayList;
  */
 public class RaderObject_UI {
 
-    float rotation; // 北側からの相手の方向
-    float northDdirection; // 北側の方向
-    // 相手の方向 = direction + rotation
-    float distance; // 相手との距離
-
-    float RADIUS;           // レーダーの半径
-    float MAX_DISTANCE;    // レーダー中に表示される最大距離[m]
-
-    float ROTATE_TO_DEFAULT; // レーダーを初期状態にするための角度
-
-    int distance_state;     // 距離の状況
-    // めっちゃ近い : 0 , 近い : 1, 遠い : 2, 圏外 : -1
-    float BORDER_NEAR;
-    float BORDER_NEAREST;
-
-    double locationDirection;
-    double deviceDirection;
-    double distanceOnRader;
-
     float frameCount;
 
     //バッファ
@@ -70,49 +51,31 @@ public class RaderObject_UI {
     private ByteBuffer  arcRing_indexBuffer; //インデックスバッファ
     private FloatBuffer arcRing_normalBuffer;//法線バッファ
 
+    private FloatBuffer arcLine_vertexBuffer;//頂点バッファ
+    private ByteBuffer  arcLine_indexBuffer; //インデックスバッファ
+    private FloatBuffer arcLine_normalBuffer;//法線バッファ
+
 
 
     RaderObject_UI() {
-        // 各変数の初期化
-        rotation = 0;
-        northDdirection = 0;
-        distance = 9999;
-        distanceOnRader = 0;
-
-        locationDirection = 0;
-        deviceDirection = 0;
-
-        frameCount = 0.0f;
-
-        distance_state = -1; // 初期状態は圏外
-
-        RADIUS = 2f;         // レーダーの半径
-        MAX_DISTANCE = 40;  // レーダー中に表示される最大距離[m]
-//        ROTATE_TO_DEFAULT = 60 - 30.5f; // レーダーを初期位置にするための角度
-        ROTATE_TO_DEFAULT = 60; // レーダーを初期位置にするための角度
-//        ROTATE_TO_DEFAULT = 117; // レーダーを初期位置にするための角度
-
-        BORDER_NEAR = (RADIUS*2)/3;  // [遠い]と[近い]の境界
-        BORDER_NEAREST = RADIUS/3;  // [近い]と[めっちゃ近い]の境界
-
-
         circleBuffersesList = new ArrayList<CircleBuffers>();
 
-        for( float i = RADIUS; i >= RADIUS - 0.05f; i = i - 0.007f ) {
+        for( float i = RADER_VALUES.RADIUS; i >= RADER_VALUES.RADIUS - 0.05f; i = i - 0.007f ) {
             initCircle( 0f, 0f, 0f, i );
         }
-        initFillArc( 0f, 0f, 0f, RADIUS - 0.1f );
+        initFillArc( 0f, 0f, 0f, RADER_VALUES.RADIUS - 0.01f );
 
-        initFillCircle( 0f, 0f, 0f, RADIUS );
+        initFillCircle( 0f, 0f, 0f, RADER_VALUES.RADIUS );
 
         initTarget( 0f, 0f, 0f, 0.07f );
 
-        initBar( 0f, 0f, 0f, RADIUS-0.01f );
+        initBar( 0f, 0f, 0f, RADER_VALUES.RADIUS-0.01f );
         //外側の半径，内側の半径，台形近似する台形の数，台形を高さ方向分割する数
-        initRing( (RADIUS*2)/3, RADIUS/3, 50, 1 );
-        initArcRing( (RADIUS*2)/3, RADIUS/3, 50, 1 );
+        initRing( (RADER_VALUES.RADIUS*2)/3, RADER_VALUES.RADIUS/3, 50, 1 );
+        initArcRing( (RADER_VALUES.RADIUS*2)/3, RADER_VALUES.RADIUS/3, 50, 1 );
 
-        initFrameLines( 0f, 0f, 0f, RADIUS );
+        initFrameLines( 0f, 0f, 0f, RADER_VALUES.RADIUS );
+        initArcLine( 0f, 0f, 0f, RADER_VALUES.RADIUS );
     }
 
 
@@ -349,11 +312,6 @@ public class RaderObject_UI {
             indexs[ count+2 ] = (byte)(i+2);
             count += 3;
         }
-        String str = "";
-        for( int i = 0; i < indexs.length; ++i ) {
-            str = str + indexs[i] + ", ";
-        }
-        Log.d( "indexBuffer", str );
         bar_vertexBuffer = makeFloatBuffer( vertexs );
         bar_indexBuffer = makeByteBuffer( indexs );
 
@@ -457,137 +415,151 @@ public class RaderObject_UI {
                 indexs[p++] = (byte)(i*nStacks1+j);
                 indexs[p++] = (byte)((i+1)*nStacks1+j);
             }
+            indexs[p] = indexs[p-3];
+            indexs[p+1] = indexs[p-2];
         }
+
         arcRing_vertexBuffer = makeFloatBuffer(vertexs);
         arcRing_indexBuffer = makeByteBuffer( indexs );
         arcRing_normalBuffer = makeFloatBuffer(normals);
     }
 
-    public void draw( boolean isModeAR ) {
+    // 円弧（線）を描画する準備
+    private void initArcLine( float centerX, float centerY, float centerZ, float r ) {
+        int length = 100;
 
-        Log.d( "RaderObject", "onDrawFrame___draw" );
+        float [] vertexs = new float[ ( length * 3 ) ];//頂点の数はn角形の場合はn*3*2になる
+        byte [] indexs = new byte[ length * 2 ];
 
-        if ( isModeAR == true ) {
+        //頂点配列情報
+        for (int j = 0; j < length/6; j++) {
+            float angle = (float) (2 * Math.PI * j / length);
+            vertexs[ j * 3 + 0] = (float) (centerX + Math.cos(angle) * r);
+            vertexs[ j * 3 + 1] = (float) (-centerY + Math.sin(angle) * r);
+            vertexs[ j * 3 + 2] = centerZ;
+//            indexs[ j ] = (byte) j;
+        }
+        int count = 0;
+        for( int j = 0; (j+1) < (length/6); ++j ) {
+            indexs[ count++ ] = (byte) j;
+            indexs[ count++ ] = (byte) (j+1);
+        }
+
+
+        //法線バッファの生成
+        float[] normals= new float[ vertexs.length ];
+        for( int j = 0; j < vertexs.length; j += 3 ) {
+            normals[j  ] = 0.0f;
+            normals[j+1] = 0.0f;
+            normals[j+2] = 1.0f;
+        }
+        float div=(float)Math.sqrt(
+                (1.0f*1.0f)+(1.0f*1.0f)+(1.0f*1.0f));
+        for (int i=0;i<normals.length;i++) normals[i]/=div;
+
+        arcLine_vertexBuffer = makeFloatBuffer( vertexs );
+        arcLine_indexBuffer  = makeByteBuffer( indexs );
+        arcLine_normalBuffer = makeFloatBuffer( normals );
+    }
+
+
+    public void draw() {
+        if ( RADER_VALUES.isModeAR == true ) {
             //光源位置の指定
-            GLES20.glUniform4f(GLES.lightPosHandle,0f,10f,0f,1.0f);
+            GLES20.glUniform4f(GLES.lightPosHandle, 0f, 10f, 0f, 1.0f);
 
             GLES.glPushMatrix();
-            Matrix.translateM( GLES.mMatrix, 0, 0, -1, -2 ); // 初期配置（画面下側に寄せる）
+            Matrix.translateM(GLES.mMatrix, 0, 0, -1.4f, -5); // 初期配置（画面下側に寄せる）
+            Matrix.scaleM(GLES.mMatrix, 0, 0.8f, 0.8f, 0.8f); // 渾身の微調整（ごり押し）
 
             GLES.glPushMatrix();
-            Matrix.rotateM( GLES.mMatrix, 0, -90, 1, 0, 0 ); // 遠近感ある感じに回転
-
-            GLES.glPushMatrix();
-            Matrix.rotateM(GLES.mMatrix, 0, northDdirection, 0, 0, 1); // 北の方向に回転
-//            Matrix.rotateM(GLES.mMatrix, 0, -rotation, 0, 0, 1); // 位置情報等に合わせて回転
-            GLES.updateMatrix();
-            drawFrameLines( 0f, 150f/255f, 255f/255f, 1f );      // レーダーの枠線等
-            Matrix.rotateM(GLES.mMatrix, 0, ROTATE_TO_DEFAULT, 0, 0, 1); // 初期配置（レーダーが真上を指すように回転）
-            Matrix.rotateM(GLES.mMatrix, 0, -rotation, 0, 0, 1); // 初期配置（レーダーが真上を指すように回転）
-
-            GLES.updateMatrix();
-            drawFillCircle( 0f, 0f, 0f, 0.2f );   // 半透明の円
-            drawFillArc( 1,1,1,0.3f );       // 円弧
-
-            drawRing( 1f, 1f, 1f, 0.05f );         // なんか輪
-
-            // それっぽく回るやつ
-            GLES.glPushMatrix();
-            Matrix.rotateM( GLES.mMatrix, 0, -rotation + frameCount, 0f, 0f, -1f );
-            GLES.updateMatrix();
-            drawBar( 0f, 150f/255f, 255f/255f, 0.2f );
-            GLES.glPopMatrix();
-
-            // 相手の位置の描画
-            // 相手との距離がMAX_DISTANCEm以内のとき
-            if( distance <= MAX_DISTANCE ) {
-                GLES.glPushMatrix();
-                Matrix.rotateM(GLES.mMatrix, 0, -ROTATE_TO_DEFAULT, 0, 0, 1); // 初期配置（レーダーが指す範囲の中心に来るように）
-                Log.d( "DISTANCE", "distance@RaderObject_draw = " + distance );
-                distanceOnRader = distance * ( RADIUS / MAX_DISTANCE );
-
-                // 1m当たりのレーダー上での距離 = RADIUS[レーダーの半径]/MAX_DISTANCE[距離(m)]
-                Matrix.translateM(GLES.mMatrix, 0, 0f, (float)distanceOnRader, 0f);
-                GLES.updateMatrix();
-                drawTarget( 1f, 0.2f, 0.5f, 0.3f );       // レーダー上の相手の位置
-                GLES.glPopMatrix();
-            }
-
-            GLES.glPopMatrix();
-            GLES.glPopMatrix();
-            GLES.glPopMatrix();
+            Matrix.rotateM(GLES.mMatrix, 0, -90, 1, 0, 0); // 遠近感ある感じに回転
         }
         else { // ARモードでないとき
             //光源位置の指定
             GLES20.glUniform4f(GLES.lightPosHandle,0f,0f,0f,1.0f);
 
             GLES.glPushMatrix();
+            GLES.glPushMatrix(); // 倍プッシュ（ARモードのときと同じ回数pushしたい）
             Matrix.translateM(GLES.mMatrix, 0, 0, 0, -6f);    // レーダーが真正面に来るように移動
+        }
 
             GLES.glPushMatrix();
-            Matrix.rotateM(GLES.mMatrix, 0, northDdirection, 0, 0, 1); // 北の方向に回転
-//            Matrix.rotateM(GLES.mMatrix, 0, -rotation, 0, 0, 1); // 位置情報等に合わせて回転
+            Matrix.rotateM(GLES.mMatrix, 0, RADER_VALUES.northDirection, 0, 0, 1); // 北の方向に回転
             GLES.updateMatrix();
             drawFrameLines( 0f, 150f/255f, 255f/255f, 1f );      // レーダーの枠線等
-            Matrix.rotateM(GLES.mMatrix, 0, ROTATE_TO_DEFAULT, 0, 0, 1); // 初期配置（レーダーが真上を指すように回転）
-            Matrix.rotateM(GLES.mMatrix, 0, -rotation, 0, 0, 1); // 初期配置（レーダーが真上を指すように回転）
+            Matrix.rotateM(GLES.mMatrix, 0, RADER_VALUES.ROTATE_TO_DEFAULT, 0, 0, 1); // 初期配置（レーダーが真上を指すように回転）
+            Matrix.rotateM(GLES.mMatrix, 0, -RADER_VALUES.rotation, 0, 0, 1); // 初期配置（レーダーが真上を指すように回転）
 
             GLES.updateMatrix();
             drawFillCircle( 0f, 0f, 0f, 0.2f );   // 半透明の円
-            drawFillArc( 1,1,1,0.3f );       // 円弧
-
-            drawRing( 1f, 1f, 1f, 0.05f );         // なんか輪
+            if( RADER_VALUES.distance_state == -1 ) {
+                drawFillArc( 1f, 0.2f, 0.5f, 0.025f);       // 円弧
+            }
+            drawRing( 1f, 1f, 1f, 0.03f );         // なんか輪
 
             // それっぽく回るやつ
             GLES.glPushMatrix();
-            Matrix.rotateM( GLES.mMatrix, 0, -rotation + frameCount, 0f, 0f, -1f );
+            Matrix.rotateM( GLES.mMatrix, 0, -RADER_VALUES.rotation + frameCount, 0f, 0f, -1f );
             GLES.updateMatrix();
             drawBar( 0f, 150f/255f, 255f/255f, 0.2f );
             GLES.glPopMatrix();
 
             // 相手の位置の描画
             // 相手との距離がMAX_DISTANCEm以内のとき
-            if( distance <= MAX_DISTANCE ) {
+            if( RADER_VALUES.distance <= RADER_VALUES.MAX_DISTANCE ) {
                 GLES.glPushMatrix();
-                Matrix.rotateM(GLES.mMatrix, 0, -ROTATE_TO_DEFAULT, 0, 0, 1); // 初期配置（レーダーが指す範囲の中心に来るように）
-                Log.d( "DISTANCE", "distance@RaderObject_draw = " + distance );
-                distanceOnRader = distance * ( RADIUS / MAX_DISTANCE );
+                Matrix.rotateM(GLES.mMatrix, 0, -RADER_VALUES.ROTATE_TO_DEFAULT, 0, 0, 1); // 初期配置（レーダーが指す範囲の中心に来るように）
 
-
-                if( distanceOnRader <= BORDER_NEAR ) { // [近い]圏内
-                    if (distanceOnRader <= BORDER_NEAREST) { // [めっちゃ近い]圏内
-                        if( distance_state != 0 ) { // 状態が変化する場合
-                            distance_state = 0;
-                            initArcRing( 0f, BORDER_NEAREST, 30, 1 );
+                if( RADER_VALUES.distanceOnRader <= RADER_VALUES.BORDER_NEAR ) { // [近い]圏内
+                    if ( RADER_VALUES.distanceOnRader <= RADER_VALUES.BORDER_NEAREST ) { // [めっちゃ近い]圏内
+                        if( RADER_VALUES.distance_state != 0 ) { // 状態が変化する場合
+                            RADER_VALUES.distance_state = 0;
+                            initArcRing( RADER_VALUES.BORDER_NEAREST, 0f, 50, 1 );
                         }
                     }
                     else {
-                        if( distance_state != 1 ) { // 状態が変化する場合
-                            distance_state = 1;
-                            initArcRing( BORDER_NEAREST, BORDER_NEAR, 50, 1 );
+                        if( RADER_VALUES.distance_state != 1 ) { // 状態が変化する場合
+                            RADER_VALUES.distance_state = 1;
+                            initArcRing( RADER_VALUES.BORDER_NEAR, RADER_VALUES.BORDER_NEAREST, 50, 1 );
                         }
                     }
                 }
                 else {
-                    if( distance_state != 2 ) { // 状態が変化する場合
-                        distance_state = 2;
-                        initArcRing( BORDER_NEAR, MAX_DISTANCE, 50, 1 );
+                    if( RADER_VALUES.distance_state != 2 ) { // 状態が変化する場合
+                        RADER_VALUES.distance_state = 2;
+                        initArcRing( RADER_VALUES.RADIUS-0.01f, RADER_VALUES.BORDER_NEAR, 50, 1 );
                     }
                 }
+                GLES.glPushMatrix();
+                Matrix.rotateM(GLES.mMatrix, 0, 30.5f, 0f, 0f, 1f);
+                GLES.updateMatrix();
+                drawArcRing(1f, 0.2f, 0.5f, 0.08f);
+                GLES.glPopMatrix();
 
                 // 1m当たりのレーダー上での距離 = RADIUS[レーダーの半径]/MAX_DISTANCE[距離(m)]
-                Matrix.translateM(GLES.mMatrix, 0, 0f, (float)distanceOnRader, 0f);
+                GLES.glPushMatrix();
+                Matrix.translateM(GLES.mMatrix, 0, 0f, (float)RADER_VALUES.distanceOnRader, 0f);
                 GLES.updateMatrix();
-                drawTarget( 1f, 0.2f, 0.5f, 0.3f );       // レーダー上の相手の位置
+                drawTarget( 1f, 0.2f, 0.5f, 0.5f );       // レーダー上の相手の位置
                 GLES.glPopMatrix();
+
             } else {
-                distance_state = -1; // レーダー圏外
+                if( RADER_VALUES.distance_state != -1 ) // 上体が変化するとき
+                    RADER_VALUES.distance_state = -1; // レーダー圏外
+            }
+
+            if( RADER_VALUES.distance_state == -1 ) {
+                GLES.glPushMatrix();
+                Matrix.rotateM(GLES.mMatrix, 0, 3f, 0f, 0f, 1f);
+                GLES.updateMatrix();
+                drawArcLine( 1f, 0.2f, 0.5f, 0.3f );
+                GLES.glPopMatrix();
             }
 
             GLES.glPopMatrix();
             GLES.glPopMatrix();
-        }
-        Log.d( "RaderObject", "onDrawFrame___draw" );
+            GLES.glPopMatrix();
 
         frameCount = ( frameCount + 2 ) % 360;
     }
@@ -753,28 +725,30 @@ public class RaderObject_UI {
 
         //描画
         setMaterial( r, g, b, a );
-        arcRing_indexBuffer.position(0);
+        arcRing_indexBuffer.position( 0 );
         GLES20.glDrawElements( GLES20.GL_TRIANGLE_STRIP,
-                arcRing_indexBuffer.capacity(), GLES20.GL_UNSIGNED_BYTE, arcRing_indexBuffer );
-//        ring_indexBuffer.position(0);
-//        GLES20.glDrawElements( GLES20.GL_TRIANGLE_STRIP,
-//                3, GLES20.GL_UNSIGNED_BYTE, arcRing_indexBuffer );
-//        ring_indexBuffer.position(ring_indexBuffer.capacity()-3);
-//        GLES20.glDrawElements( GLES20.GL_TRIANGLE_STRIP,
-//                3, GLES20.GL_UNSIGNED_BYTE, ring_indexBuffer );
+                33, GLES20.GL_UNSIGNED_BYTE, arcRing_indexBuffer );
+        arcRing_indexBuffer.position( 0 );
+        GLES20.glDrawElements( GLES20.GL_TRIANGLE_STRIP,
+                3, GLES20.GL_UNSIGNED_BYTE, arcRing_indexBuffer );
     }
 
+    //円弧（線）の描画
+    private void drawArcLine( float r, float g, float b, float a ) {
+        //頂点バッファの指定
+        GLES20.glVertexAttribPointer( GLES.positionHandle, 3,
+                GLES20.GL_FLOAT, false, 0, arcLine_vertexBuffer );
 
-    public void invalidateRotation( float rotation ) {
-        this.rotation = rotation;
-    }
-    public void invalidateNorthDirection( float northDirection ) {
-        this.northDdirection = northDirection;
-    }
+        //法線バッファの指定
+        GLES20.glVertexAttribPointer( GLES.normalHandle, 3,
+                GLES20.GL_FLOAT, false, 0, arcLine_normalBuffer );
 
-    public void invalidateDistance( float distance ) {
-        Log.d( "DISTANCE", "distance@RaderObject_invalidate = " + distance );
-        this.distance = distance;
+        //描画
+        setMaterial( r, g, b, a );
+        arcLine_indexBuffer.position(0);
+        GLES20.glLineWidth( 7f );
+        GLES20.glDrawElements( GLES20.GL_LINES,
+                arcLine_indexBuffer.capacity(), GLES20.GL_UNSIGNED_BYTE, arcLine_indexBuffer );
     }
 
     //マテリアルの指定

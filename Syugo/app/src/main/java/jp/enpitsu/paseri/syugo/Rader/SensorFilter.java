@@ -14,6 +14,10 @@ public class SensorFilter {
     private ArrayList<Float> mSecond    = new ArrayList<Float>();
     private ArrayList<Float> mThrad     = new ArrayList<Float>();
 
+    private ArrayList<Float> mFirst_diff360     = new ArrayList<Float>();
+    private ArrayList<Float> mSecond_diff360    = new ArrayList<Float>();
+    private ArrayList<Float> mThrad_diff360     = new ArrayList<Float>();
+
     public int sampleCount=9;//サンプリング数
     public int sampleNum = 5;//サンプリングした値の使用値のインデックス
 
@@ -42,6 +46,12 @@ public class SensorFilter {
         mSecond.add(sample[1]);
         mThrad.add(sample[2]);
 
+        mFirst_diff360.add(sample[0] -360f);
+        mSecond_diff360.add(sample[1]-360f);
+        mThrad_diff360.add(sample[2]-360f);
+
+
+
         for( int i = 0; i < sample.length; ++i ) {
             if( sample[i] < 0 ) sample[i] = sample[i] + 360;
         }
@@ -59,16 +69,40 @@ public class SensorFilter {
             //その値にさらにローパスフィルタをかける
 
             ArrayList<Float> lst = (ArrayList<Float>) mFirst.clone();
+            ArrayList<Float> lst_diff = (ArrayList<Float>) mFirst_diff360.clone();
             Collections.sort(lst);
-            mParam[0] =(mParam[0]*0.9f) + lst.get(sampleNum)*0.1f;
+            Collections.sort(lst_diff);
+            float tmp0 =  (mParam[0]*0.9f) + lst.get(sampleNum)*0.1f;
+            float tmp0_diff =(mParam[0]*0.9f) + lst_diff.get(sampleNum)*0.1f;
+
+            if ( Math.abs(mParam[0] - tmp0) > Math.abs(mParam[0] - tmp0_diff)  ) {
+                mParam[0] = tmp0_diff;
+            } else mParam[0] = tmp0;
+
 
             lst = (ArrayList<Float>) mSecond.clone();
+            lst_diff = (ArrayList<Float>) mSecond_diff360.clone();
             Collections.sort(lst);
-            mParam[1] = (mParam[1]*0.9f) +lst.get(sampleNum)*0.1f;
+            Collections.sort(lst_diff);
+            float tmp1 =  (mParam[1]*0.9f) + lst.get(sampleNum)*0.1f;
+            float tmp1_diff =(mParam[1]*0.9f) + lst_diff.get(sampleNum)*0.1f;
+
+            if ( Math.abs(mParam[1] - tmp0) > Math.abs(mParam[1] - tmp0_diff)  ) {
+                mParam[1] = tmp0_diff;
+            } else mParam[1] = tmp0;
+
 
             lst = (ArrayList<Float>) mThrad.clone();
+            lst_diff = (ArrayList<Float>) mThrad_diff360.clone();
             Collections.sort(lst);
-            mParam[2] = (mParam[2]*0.9f) +lst.get(sampleNum)*0.1f;
+            Collections.sort(lst_diff);
+            float tmp2 =  (mParam[2]*0.9f) + lst.get(sampleNum)*0.1f;
+            float tmp2_diff =(mParam[2]*0.9f) + lst_diff.get(sampleNum)*0.1f;
+
+            if ( Math.abs(mParam[2] - tmp0) > Math.abs(mParam[2] - tmp0_diff)  ) {
+                mParam[2] = tmp0_diff;
+            } else mParam[2] = tmp0;
+
 
             mSampleEnable = true;
 
@@ -76,6 +110,11 @@ public class SensorFilter {
             mFirst.remove(0);
             mSecond.remove(0);
             mThrad.remove(0);
+
+            mFirst_diff360.remove(0);
+            mSecond_diff360.remove(0);
+            mThrad_diff360.remove(0);
+
         }
     }
 

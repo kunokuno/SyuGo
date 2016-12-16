@@ -1,13 +1,21 @@
 package jp.enpitsu.paseri.syugo.Start;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
+import jp.enpitsu.paseri.syugo.Develop.SecretActivity;
+import jp.enpitsu.paseri.syugo.Global.SyugoApp;
 import jp.enpitsu.paseri.syugo.Lookfor.LookActivity;
 import jp.enpitsu.paseri.syugo.R;
 import jp.enpitsu.paseri.syugo.Registor.RegActivity;
@@ -17,26 +25,50 @@ import jp.enpitsu.paseri.syugo.Registor.RegActivity;
  */
 public class StartActivity extends Activity {
 
-    LinearLayout btn_registmode;
-    LinearLayout btn_searchmode;
+    Button btn_hide;
+    ImageButton imbtn_registmode;
+    ImageButton imbtn_searchmode;
+    TextView first_msg,text_get,text_lets;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        btn_registmode = (LinearLayout) findViewById(R.id.button_regist);
-        btn_searchmode = (LinearLayout) findViewById(R.id.button_search);
+        btn_hide = (Button)findViewById(R.id.button);
+        imbtn_registmode = (ImageButton)findViewById(R.id.imageButton_regist);
+        imbtn_searchmode = (ImageButton)findViewById(R.id.imageButton_search);
+        first_msg = (TextView)findViewById(R.id.first_msg);
+        text_get = (TextView)findViewById(R.id.text_getid);
+        text_lets = (TextView)findViewById(R.id.text_lets);
 
-        btn_registmode.setOnClickListener(regListener);
-        btn_searchmode.setOnClickListener(seaListener);
+        //フォント適用
+        first_msg.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        text_get.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+        text_lets.setTypeface( Typeface.createFromAsset( getAssets(), "FLOPDesignFont.ttf" ), Typeface.NORMAL );
+
+        btn_hide.setOnClickListener(hideListener);
+        imbtn_registmode.setOnClickListener(regListener);
+        imbtn_searchmode.setOnClickListener(seaListener);
     }
+
+    //隠しボタン
+    private View.OnClickListener hideListener =new View.OnClickListener() {
+        public void onClick(View v) {
+            Intent intent_hide = new Intent(StartActivity.this, SecretActivity.class);
+            try {
+                startActivity(intent_hide);
+            } catch (Exception e){
+                Log.d("StartActivity","intent error to SecretActivity");
+            }
+        }
+    };
 
     //ユーザ登録ボタンの処理
     private View.OnClickListener regListener = new View.OnClickListener() {
         public void onClick(View v) {
             Intent intent_reg = new Intent(StartActivity.this, RegActivity.class);
             try {
-                    startActivity(intent_reg);
+                startActivity(intent_reg);
             } catch (Exception e){
                 Log.d("StartActivity","intent error to RegActivity");
             }

@@ -1,6 +1,6 @@
 
 #集GO!
-##集GOってなに？
+##集GO!ってなに？
 集合場所来たのに<font color="RoyalBlue">**待ち合わせ相手が見つからない!**</font><br>
 なんてことはありませんか？<br>
 <blockquote>
@@ -33,17 +33,18 @@
 を解決するアプリです
 
 ##画面イメージ
-![image2](images/10.22.23.png?raw=true)
+![image2](images/mockup.png?raw=true)
 
-##機能説明
+##使い方の説明
 ###1.IDを発行する
 待ち合わせ相手に自分の居場所を教えるためにIDを発行しましょう！<br>
 名前を登録したらIDがその場で発行されます<br>
 下の[Share]ボタンからLINEやTwitterを開いて...<br>
 このIDを待ち合わせ相手に教えましょう！<br>
+相手からIDをもらったら下の[Search]ボタンから相手のIDを入力しに行きましょう！<br>
 <br>
-名前は[ぱせ]さん.IDは[ya7hr2]のようです<br>
-![image3](images/function1.png?raw=true)
+例：[きゃりー]さんのIDは[0uxy]のようですね<br>
+![image3](images/disp_reg.png?raw=true)
 
 ###2.ARで待ち合わせ相手を探す
 待ち合わせ相手からIDが送られてきましたか？<br>
@@ -61,11 +62,23 @@ ARとレーダーが示す方向に待ち合わせ相手が！！！<br>
 ~~会いたくて会いたくて震える♪~~
 <br>
 
-![image4](images/function3.png?raw=true)
-![image5](images/function4.png?raw=true)
+![image4](images/disp_AR.png?raw=true)
+![image5](images/disp_rad.png?raw=true)
+ARやバイブレーションのON/OFFは画面下をタッチ！！！
+
 ##ダウンロード方法
 GitHub内の[release](https://github.com/kunokuno/SyuGo/releases)からAPKファイルをダウンロードしてください<br>
-@携帯から開いた場合はPC版の画面にしてからダウンロードしてください<br>
+[hins]携帯から開いた場合はPC版の画面にしてからダウンロードしてください<br>
+
+##対応バージョン
+~~Android6.0はダメです~~<br>
+**Android6.0に対応しました！！！**<br>
+Android5.0以上なら動作確認したので大丈夫です！<br>
+
+
+Android5.0から導入されたカメラAPIを使用しているので、**5.0以上(APIレベル21以上)の端末**じゃないと正常に動作しない可能性があります...<br>
+>起動しない等の問題があれば機種とバージョン、症状を[ここ](https://github.com/kunokuno/SyuGo/issues)に書いてくれると嬉しいです...<br>書き方とか気にせずてきとーに書いてください
+
 
 
 

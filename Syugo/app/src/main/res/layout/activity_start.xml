@@ -1,83 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:paddingBottom="16dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="16dp"
-    android:background="@color/colorBackground">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        >
+        android:layout_height="match_parent"
+        android:src="@drawable/menu_bg2"
+        android:scaleType="fitXY"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="25dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textColor="@color/colorWhite"
-            android:layout_weight="1.5"
-            android:text="どっちのモードで使う？"
-            android:layout_gravity="center"
-            android:textSize="25dp" />
-
-        <LinearLayout
-            android:orientation="horizontal"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/custom_button_green_state"
-            android:id="@+id/button_regist"
-            >
-
-            <ImageView
-                android:layout_width="180dp"
-                android:layout_height="180dp"
-                android:background="@drawable/registor_icon" />
+            android:layout_height="wrap_content">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#00000000"
+                android:id="@+id/button" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorWhite"
-                android:layout_weight="1"
-                android:text="ユーザー登録をして\n相手にIDを知らせます"
-                android:layout_gravity="center" />
+                android:textColor="#96ffffff"
+                android:text="集GO!"
+                android:id="@+id/first_msg"
+                android:textSize="50dp"
+                android:gravity="bottom"
+                android:paddingTop="15dp"
+                android:paddingBottom="5dp"
+                android:layout_weight="0.1"/>
+        </FrameLayout>
 
-        </LinearLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="5">
+
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageButton_regist"
+                android:background="@drawable/button_getid"
+                android:scaleType="fitXY"
+                android:paddingBottom="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text=" Get ID"
+                android:id="@+id/text_getid"
+                android:textSize="40dp"
+                android:gravity="left|bottom"
+                android:paddingBottom="5dp" />
+        </FrameLayout>
 
         <Space
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1.5" />
-
-        <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/custom_button_green_state"
-            android:id="@+id/button_search"
-            >
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            android:layout_margin="10dp" />
 
-            <ImageView
-                android:layout_width="180dp"
-                android:layout_height="180dp"
-                android:background="@drawable/search_icon"
-                android:layout_gravity="center" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="5">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <ImageButton
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorWhite"
-                android:layout_weight="1"
-                android:text="集GO！しよう"
-                android:layout_gravity="center" />
+                android:id="@+id/imageButton_search"
+                android:background="@drawable/button_lets_syugo"
+                android:layout_gravity="center"
+                android:scaleType="fitXY"
+                android:paddingBottom="10dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
+                android:layout_weight="0.8"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text=" Let's 集GO!"
+                android:id="@+id/text_lets"
+                android:textSize="40dp"
+                android:gravity="left|bottom"
+                android:paddingBottom="5dp" />
+        </FrameLayout>
 
-        </LinearLayout>
     </LinearLayout>
+</FrameLayout>
 
-
-</LinearLayout>

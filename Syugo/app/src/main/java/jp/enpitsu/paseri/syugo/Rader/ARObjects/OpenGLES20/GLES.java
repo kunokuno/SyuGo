@@ -1,8 +1,10 @@
 package jp.enpitsu.paseri.syugo.Rader.ARObjects.OpenGLES20;
 
+import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
+import java.net.ContentHandler;
 import java.util.ArrayList;
 
 //シェーダ操作
@@ -31,42 +33,59 @@ public class GLES {
                     "attribute vec4 a_Position;"+//位置
                     "attribute vec3 a_Normal;"+  //法線
 
+                    // UV情報
+                    "attribute vec2 a_UV;"+
+                    "varying vec2 v_UV;"+
+
                     //出力
                     "varying vec4 v_Color;"+
                     "void main(){"+
-                    //環境光の計算
-                    "vec4 ambient=u_LightAmbient*u_MaterialAmbient;"+
+                        //環境光の計算
+                        "vec4 ambient=u_LightAmbient*u_MaterialAmbient;"+
 
-                    //拡散光の計算
-                    "vec3 P=vec3(u_MMatrix*a_Position);"+
-                    "vec3 L=normalize(vec3(u_LightPos)-P);"+
-                    "vec3 N=normalize(mat3(u_NormalMatrix)*a_Normal);"+
-                    "vec4 diffuseP=vec4(max(dot(L,N),0.0));"+
-                    "vec4 diffuse=diffuseP*u_LightDiffuse*u_MaterialDiffuse;"+
+                        //拡散光の計算
+                        "vec3 P=vec3(u_MMatrix*a_Position);"+
+                        "vec3 L=normalize(vec3(u_LightPos)-P);"+
+                        "vec3 N=normalize(mat3(u_NormalMatrix)*a_Normal);"+
+                        "vec4 diffuseP=vec4(max(dot(L,N),0.0));"+
+                        "vec4 diffuse=diffuseP*u_LightDiffuse*u_MaterialDiffuse;"+
 
-                    //鏡面光の計算
-                    "vec3 S=normalize(L+vec3(0.0,0.0,1.0));"+
-                    "float specularP=pow(max(dot(N,S),0.0),u_MaterialShininess);"+
-                    "vec4 specular=specularP*u_LightSpecular*u_MaterialSpecular;"+
+                        //鏡面光の計算
+                        "vec3 S=normalize(L+vec3(0.0,0.0,1.0));"+
+                        "float specularP=pow(max(dot(N,S),0.0),u_MaterialShininess);"+
+                        "vec4 specular=specularP*u_LightSpecular*u_MaterialSpecular;"+
 
-                    //色の指定
-                    "v_Color=ambient+diffuse+specular;"+
+                        //色の指定
+                        "v_Color=ambient+diffuse+specular;"+
 
-                    //位置の指定
-                    "gl_Position=u_PMatrix*u_MMatrix*a_Position;"+
+                        //位置の指定
+                        "gl_Position=u_PMatrix*u_MMatrix*a_Position;"+
+
+                        "v_UV=a_UV;"+
                     "}";
 
     //フラグメントシェーダのコード
     private final static String FRAGMENT_CODE=
             "precision mediump float;"+
-                    "varying vec4 v_Color;"+
+                    //テクスチャ
+                    "uniform sampler2D u_Tex;"+ // テクスチャ
+                    "uniform int u_UseTex;"+    //テクスチャ利用
+
+                    // 入力
+                    "varying vec4 v_Color;"+ // 色
+                    "varying vec2 v_UV;"+    // UV
                     "void main(){"+
-                    "gl_FragColor=v_Color;"+
+                        "if (u_UseTex==1){"+
+                            "gl_FragColor=texture2D(u_Tex,v_UV);"+
+                        "}else {"+
+                            "gl_FragColor=v_Color;"+
+                        "}"+
                     "}";
 
 
     //システム
     private static int program;//プログラムオブジェクト
+    public static Context context;
 
     //光源のハンドル
     public static int lightAmbientHandle; //光源の環境光色ハンドル
@@ -88,6 +107,11 @@ public class GLES {
     //頂点のハンドル
     public static int positionHandle;//位置ハンドル
     public static int normalHandle;  //法線ハンドル
+    public static int uvHandle;      //UVハンドル
+
+    // テクスチャ関連のハンドル
+    public static int texHandle;     //テクスチャハンドル
+    public static int useTexHandle;   //テクスチャの利用ハンドル
 
     //行列
     public static float[] mMatrix=new float[16];//モデルビュー行列
@@ -128,6 +152,14 @@ public class GLES {
         //頂点のハンドルの取得
         positionHandle=GLES20.glGetAttribLocation(program,"a_Position");
         normalHandle=GLES20.glGetAttribLocation(program,"a_Normal");
+        uvHandle =GLES20.glGetAttribLocation(program,"a_UV");
+
+        // テクスチャ関連のハンドルの取得
+        texHandle=GLES20.glGetUniformLocation(program,"u_Tex");
+        useTexHandle=GLES20.glGetUniformLocation(program,"u_UseTex");
+
+        //初期値
+        GLES20.glUniform1f( useTexHandle, 0 );
 
         //プログラムオブジェクトの利用開始
         GLES20.glUseProgram(program);
