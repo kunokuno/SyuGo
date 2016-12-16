@@ -64,11 +64,11 @@ ARとレーダーが示す方向に待ち合わせ相手が！！！<br>
 
 ![image4](images/disp_AR.png?raw=true)
 ![image5](images/disp_rad.png?raw=true)
-ARやバイブレーションのON/OFFは画面下をタッチ！！！
+<br>ARやバイブレーションのON/OFFは画面下をタッチ！！！
 
 ##ダウンロード方法
 GitHub内の[release](https://github.com/kunokuno/SyuGo/releases)からAPKファイルをダウンロードしてください<br>
-[hins]携帯から開いた場合はPC版の画面にしてからダウンロードしてください<br>
+[hints]携帯から開いた場合はPC版の画面にしてからダウンロードしてください<br>
 
 ##対応バージョン
 ~~Android6.0はダメです~~<br>
