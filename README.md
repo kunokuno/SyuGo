@@ -15,6 +15,9 @@
 待ち合わせ相手をすぐに見つけることができます！**<br>
 </font>
 <br><br>
+<iframe src="https://player.vimeo.com/video/196139893" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<p><a href="https://vimeo.com/196139893">集GO!</a> from <a href="https://vimeo.com/user54317908">TOMOYA MOROHOSHI</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
+<br>
 集GO!は待ち合わせ相手を探す手段として
 
 + AR機能による視覚的な方法
