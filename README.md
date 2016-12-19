@@ -14,7 +14,14 @@
 <font color="Chocolate">**本アプリ集GO!ならこれらの場所でも<br>
 待ち合わせ相手をすぐに見つけることができます！**<br>
 </font>
-<br><br>
+<br>
+
+[![movie](images/vimeo.png?raw=true)](https://player.vimeo.com/video/196139893)<br>
+<a href="https://vimeo.com/196139893">集GO! from TOMOYA MOROHOSHI on Vimeo</a>
+<br>
+<br>
+<br>
+
 集GO!は待ち合わせ相手を探す手段として
 
 + AR機能による視覚的な方法
